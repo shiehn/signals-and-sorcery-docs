@@ -1,7 +1,7 @@
 const { description } = require('../../package')
 
 module.exports = {
-  port: 80, // or any other port number
+  port: 8080,
   /**
    * Ref：https://v1.vuepress.vuejs.org/config/#title
    */
