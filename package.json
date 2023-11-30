@@ -1,0 +1,19 @@
+{
+  "name": "dawnet-docs",
+  "version": "0.0.1",
+  "description": "DAWNet Documentation",
+  "main": "index.js",
+  "authors": {
+    "name": "Steve Hiehn",
+    "email": "stevehiehn@gmail.com"
+  },
+  "repository": "/dawnet-docs",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}
