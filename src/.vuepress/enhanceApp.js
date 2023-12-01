@@ -11,4 +11,15 @@ export default ({
   siteData // site metadata
 }) => {
   // ...apply enhancements for the site.
+    //console.log("EnhanceApp function executed");
+    // rest of your code...
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   document.querySelector('body').classList.add('dark');
+  //   alert("dark mode activated")
+  // });
+
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   //document.body.classList.add('theme-dark');
+  //   //document.querySelector('body').classList.add('dark');
+  // });
 }
