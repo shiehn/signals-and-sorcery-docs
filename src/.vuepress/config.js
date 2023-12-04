@@ -3,7 +3,7 @@ import {defineUserConfig} from 'vuepress'
 import { defaultTheme } from 'vuepress'
 export default {
     lang: 'en-US',
-    title: 'DAWNet',
+    title: ' ',
     description: 'BYOC (bring your own compute)',
     theme: defaultTheme({
         // default theme config

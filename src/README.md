@@ -1,14 +1,14 @@
 ---
-home: true
+home: true 
 actions:
   - text: VST3 (mac)
     link: https://storage.googleapis.com/docs-assets/DAWNet.vst3.zip
     type: primary
-#  - text: Introduction
-#    link: /guide/
-#    type: secondary
+  - text: dawnet-client
+    link: /guide/
+    type: secondary
 heroImageDark: https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png
-heroHeight: 100
+heroHeight: 200
 features:
     - title: DAAAW VST3 Plugin (mac)
       details: Download [Link Text](https://storage.googleapis.com/docs-assets/dawnet-logo.png) to your VST3 folder (~/Library/Audio/Plug-Ins/VST3)
