@@ -1,24 +1,45 @@
-import { defineUserConfig } from 'vuepress'
+import {defineUserConfig} from 'vuepress'
+
 import { defaultTheme } from 'vuepress'
+export default {
+    lang: 'en-US',
+    title: 'DAWNet',
+    description: 'BYOC (bring your own compute)',
+    theme: defaultTheme({
+        // default theme config
+        logoDark: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
+        colorModeSwitch: false,
+        colorMode: 'dark',
+        navbar: [
+            {
+                text: 'Getting Started',
+                link: '/getting-started/',
+            },
+            {
+                text: 'DAWNet Client',
+                link: '/client/',
+            },
+            {
+                text: 'Remote Compute',
+                link: '/remote-compute/',
+            },
+            {
+                text: 'Community Remotes',
+                link: '/community-remotes/',
+            },
+        ],
+    })
+}
 
-export default defineUserConfig({
-  lang: 'en-US',
-  title: "VST3",
+// export default defineUserConfig({
 
-  theme: defaultTheme({
-    // default theme config
-    colorModeSwitch: false,
-    colorMode: 'dark',
-    navbar: false,
-  }),
-})
+//
+//
+//     theme: defaultTheme(,
+//
+//
+// })
 
-// navbar: [
-//   {
-//     text: 'Home',
-//     link: '/',
-//   },
-// ],
 
 // const { description } = require('../../package')
 //

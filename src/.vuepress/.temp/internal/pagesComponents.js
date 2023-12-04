@@ -2,13 +2,19 @@ import { defineAsyncComponent } from 'vue'
 
 export const pagesComponents = {
   // path: /
-  "v-8daa1a0e": defineAsyncComponent(() => import(/* webpackChunkName: "v-8daa1a0e" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/index.html.vue")),
+  "v-8daa1a0e": defineAsyncComponent(() => import(/* webpackChunkName: "v-8daa1a0e" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/index.html.vue")),
+  // path: /client/
+  "v-c55e0eaa": defineAsyncComponent(() => import(/* webpackChunkName: "v-c55e0eaa" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/client/index.html.vue")),
+  // path: /community-remotes/
+  "v-b08e8602": defineAsyncComponent(() => import(/* webpackChunkName: "v-b08e8602" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/community-remotes/index.html.vue")),
   // path: /config/
-  "v-ba934fd8": defineAsyncComponent(() => import(/* webpackChunkName: "v-ba934fd8" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/config/index.html.vue")),
-  // path: /guide/
-  "v-fffb8e28": defineAsyncComponent(() => import(/* webpackChunkName: "v-fffb8e28" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/guide/index.html.vue")),
-  // path: /guide/using-vue.html
-  "v-79e93bb0": defineAsyncComponent(() => import(/* webpackChunkName: "v-79e93bb0" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/guide/using-vue.html.vue")),
+  "v-ba934fd8": defineAsyncComponent(() => import(/* webpackChunkName: "v-ba934fd8" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/config/index.html.vue")),
+  // path: /getting-started/
+  "v-ccdc4da0": defineAsyncComponent(() => import(/* webpackChunkName: "v-ccdc4da0" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/getting-started/index.html.vue")),
+  // path: /getting-started/assets.html
+  "v-1461dff4": defineAsyncComponent(() => import(/* webpackChunkName: "v-1461dff4" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/getting-started/assets.html.vue")),
+  // path: /remote-compute/
+  "v-bdb4d734": defineAsyncComponent(() => import(/* webpackChunkName: "v-bdb4d734" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/remote-compute/index.html.vue")),
   // path: /404.html
-  "v-3706649a": defineAsyncComponent(() => import(/* webpackChunkName: "v-3706649a" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/404.html.vue")),
+  "v-3706649a": defineAsyncComponent(() => import(/* webpackChunkName: "v-3706649a" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/404.html.vue")),
 }
