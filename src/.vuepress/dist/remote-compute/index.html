@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-rc.0">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>Config |  </title><meta name="description" content="BYOC (bring your own compute)">
+    <link rel="preload" href="/assets/style-pBmjJHNx.css" as="style"><link rel="stylesheet" href="/assets/style-pBmjJHNx.css">
+    <link rel="modulepreload" href="/assets/app-6-D9EMow.js"><link rel="modulepreload" href="/assets/index.html-AWIgMNRI.js"><link rel="modulepreload" href="/assets/index.html--66XbXx-.js">
+    <link rel="prefetch" href="/assets/index.html-9qdzH7g3.js" as="script"><link rel="prefetch" href="/assets/index.html-vnHLI_zO.js" as="script"><link rel="prefetch" href="/assets/index.html-cjHqXeHG.js" as="script"><link rel="prefetch" href="/assets/index.html-A4OWpjx2.js" as="script"><link rel="prefetch" href="/assets/index.html-pphhamF9.js" as="script"><link rel="prefetch" href="/assets/404.html-6Yl8cQE3.js" as="script"><link rel="prefetch" href="/assets/index.html-GI25WDe-.js" as="script"><link rel="prefetch" href="/assets/index.html-8OYPWGUN.js" as="script"><link rel="prefetch" href="/assets/index.html-M5AplayF.js" as="script"><link rel="prefetch" href="/assets/index.html-EYqmZu9E.js" as="script"><link rel="prefetch" href="/assets/index.html-g3Ct0ltU.js" as="script"><link rel="prefetch" href="/assets/404.html-gZxorOZy.js" as="script">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header class="navbar"><div class="toggle-sidebar-button" title="toggle sidebar" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/" class=""><img class="logo" src="https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png" alt=" "><span class="site-name can-hide"> </span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><nav class="navbar-items can-hide"><!--[--><div class="navbar-item"><a href="/getting-started/" class="" aria-label="Getting Started"><!--[--><!--]--> Getting Started <!--[--><!--]--></a></div><div class="navbar-item"><a href="/plugin/" class="" aria-label="Plugin"><!--[--><!--]--> Plugin <!--[--><!--]--></a></div><div class="navbar-item"><a href="/client/" class="" aria-label="Client"><!--[--><!--]--> Client <!--[--><!--]--></a></div><div class="navbar-item"><a aria-current="page" href="/remote-compute/" class="router-link-active router-link-exact-active router-link-active" aria-label="Remote"><!--[--><!--]--> Remote <!--[--><!--]--></a></div><div class="navbar-item"><a href="/community-remotes/" class="" aria-label="Community"><!--[--><!--]--> Community <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><!----><!----></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><nav class="navbar-items"><!--[--><div class="navbar-item"><a href="/getting-started/" class="" aria-label="Getting Started"><!--[--><!--]--> Getting Started <!--[--><!--]--></a></div><div class="navbar-item"><a href="/plugin/" class="" aria-label="Plugin"><!--[--><!--]--> Plugin <!--[--><!--]--></a></div><div class="navbar-item"><a href="/client/" class="" aria-label="Client"><!--[--><!--]--> Client <!--[--><!--]--></a></div><div class="navbar-item"><a aria-current="page" href="/remote-compute/" class="router-link-active router-link-exact-active router-link-active" aria-label="Remote"><!--[--><!--]--> Remote <!--[--><!--]--></a></div><div class="navbar-item"><a href="/community-remotes/" class="" aria-label="Community"><!--[--><!--]--> Community <!--[--><!--]--></a></div><!--]--></nav><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading">Config <!----></p><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/remote-compute/#foo" class="router-link-active router-link-exact-active sidebar-item" aria-label="foo"><!--[--><!--]--> foo <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/remote-compute/#bar" class="router-link-active router-link-exact-active sidebar-item" aria-label="bar"><!--[--><!--]--> bar <!--[--><!--]--></a><!----></li><!--]--></ul></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><!--]--><div><h1 id="config" tabindex="-1"><a class="header-anchor" href="#config" aria-hidden="true">#</a> Config</h1><h2 id="foo" tabindex="-1"><a class="header-anchor" href="#foo" aria-hidden="true">#</a> foo</h2><ul><li>Type: <code>string</code></li><li>Default: <code>/</code></li></ul><h2 id="bar" tabindex="-1"><a class="header-anchor" href="#bar" aria-hidden="true">#</a> bar</h2><ul><li>Type: <code>string</code></li><li>Default: <code>/</code></li></ul></div><!--[--><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">Last Updated: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">Contributors: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: stevehiehn@gmail.com">stevehiehn</span><!----><!--]--><!--]--></span></div></footer><!----><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/assets/app-6-D9EMow.js" defer></script>
+  </body>
+</html>

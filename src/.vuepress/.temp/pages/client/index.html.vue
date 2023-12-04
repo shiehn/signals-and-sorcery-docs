@@ -1,14 +1,12 @@
-<template><div><h1 id="config" tabindex="-1"><a class="header-anchor" href="#config" aria-hidden="true">#</a> Config</h1>
-<h2 id="foo" tabindex="-1"><a class="header-anchor" href="#foo" aria-hidden="true">#</a> foo</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
-<h2 id="bar" tabindex="-1"><a class="header-anchor" href="#bar" aria-hidden="true">#</a> bar</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
+<template><div><h1 id="vst3-plugin" tabindex="-1"><a class="header-anchor" href="#vst3-plugin" aria-hidden="true">#</a> VST3 Plugin</h1>
+<h2 id="what-is-it" tabindex="-1"><a class="header-anchor" href="#what-is-it" aria-hidden="true">#</a> What is it?</h2>
+<p>The DAWNet client is a python3 pip package.  It is used to register remote functions with the DAWNet discovery server. After a function has been registered it can be remotely executed from within a DAW via the DAWNet plugin.</p>
+<h2 id="installation" tabindex="-1"><a class="header-anchor" href="#installation" aria-hidden="true">#</a> Installation</h2>
+<div class="language-python line-numbers-mode" data-ext="py"><pre v-pre class="language-python"><code>pip install <span class="token operator">-</span>i https<span class="token punctuation">:</span><span class="token operator">//</span>test<span class="token punctuation">.</span>pypi<span class="token punctuation">.</span>org<span class="token operator">/</span>simple<span class="token operator">/</span> dawnet<span class="token operator">-</span>client
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><div class="custom-container warning"><p class="custom-container-title">WARNING</p>
+<p>NOTE: The plugin is in a pre-alpha state.  It has only been tested on Ableton 11 on MAC M1.</p>
+</div>
+<h2 id="usage" tabindex="-1"><a class="header-anchor" href="#usage" aria-hidden="true">#</a> Usage</h2>
 </div></template>
 
 

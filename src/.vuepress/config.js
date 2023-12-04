@@ -6,8 +6,7 @@ export default {
     title: ' ',
     description: 'BYOC (bring your own compute)',
     theme: defaultTheme({
-        // default theme config
-        logoDark: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
+        logo: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
         colorModeSwitch: false,
         colorMode: 'dark',
         navbar: [
@@ -16,15 +15,19 @@ export default {
                 link: '/getting-started/',
             },
             {
-                text: 'DAWNet Client',
+                text: 'Plugin',
+                link: '/plugin/',
+            },
+            {
+                text: 'Client',
                 link: '/client/',
             },
             {
-                text: 'Remote Compute',
+                text: 'Remote',
                 link: '/remote-compute/',
             },
             {
-                text: 'Community Remotes',
+                text: 'Community',
                 link: '/community-remotes/',
             },
         ],

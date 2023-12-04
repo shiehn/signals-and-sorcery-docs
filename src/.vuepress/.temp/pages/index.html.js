@@ -1,14 +1,1 @@
-export const data = JSON.parse("{\"key\":\"v-8daa1a0e\",\"path\":\"/\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{\"home\":true,\"actions\":[{\"text\":\"VST3 (mac)\",\"link\":\"https://storage.googleapis.com/docs-assets/DAWNet.vst3.zip\",\"type\":\"primary\"},{\"text\":\"dawnet-client\",\"link\":\"/guide/\",\"type\":\"secondary\"}],\"heroImageDark\":\"https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png\",\"heroHeight\":200,\"features\":[{\"title\":\"DAAAW VST3 Plugin (mac)\",\"details\":\"Download [Link Text](https://storage.googleapis.com/docs-assets/dawnet-logo.png) to your VST3 folder (~/Library/Audio/Plug-Ins/VST3)\"},{\"title\":\"Integrate remote compute from your DAW\",\"details\":\"bitch fucker\"},{\"title\":\"Ready to use Google Colabs\",\"details\":\"Find pre-trained models and colabs to get started (https://colab.research.google.com/drive/1WS9uvJljZpSJtvfKVvaB-UPjP17HGDF0)\"}],\"footer\":\"Made by Steve Hiehn with ❤️\"},\"headers\":[],\"git\":{\"updatedTime\":1701651573000,\"contributors\":[{\"name\":\"stevehiehn\",\"email\":\"stevehiehn@gmail.com\",\"commits\":1}]},\"filePathRelative\":\"README.md\"}")
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updatePageData) {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ data }) => {
-    __VUE_HMR_RUNTIME__.updatePageData(data)
-  })
-}
+export const data = JSON.parse("{\"key\":\"v-8daa1a0e\",\"path\":\"/\",\"title\":\"\",\"lang\":\"en-US\",\"frontmatter\":{\"home\":true,\"actions\":[{\"text\":\"VST3 (mac)\",\"link\":\"https://storage.googleapis.com/docs-assets/DAWNet.vst3.zip\",\"type\":\"primary\"},{\"text\":\"dawnet-client\",\"link\":\"https://test.pypi.org/project/dawnet-client/\",\"type\":\"secondary\"}],\"heroImageDark\":\"https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png\",\"heroHeight\":200,\"features\":[{\"title\":\"VST3 Plugin (mac)\",\"details\":\"Send data for remote processing and get the results without leaving the DAW.\"},{\"title\":\"Execute Remote Code\",\"details\":\"Host arbitrary python functions locally, in Google Colabs, or any remote server.\"},{\"title\":\"Ready to use Google Colabs\",\"details\":\"Find Google colabs and pre-trained models ready to use with DAWNet.\"}],\"footer\":\"Made by Steve Hiehn with ❤️\"},\"headers\":[],\"git\":{\"updatedTime\":1701651917000,\"contributors\":[{\"name\":\"stevehiehn\",\"email\":\"stevehiehn@gmail.com\",\"commits\":2}]},\"filePathRelative\":\"README.md\"}")

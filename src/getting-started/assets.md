@@ -1,1 +1,0 @@
-![Mushroom](./mush_one.png)
