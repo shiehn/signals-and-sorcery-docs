@@ -2,14 +2,18 @@
 sidebar: auto
 ---
 
-# Config
+# REMOTE COMPUTE
 
-## foo
+remote compute narrative ... 
 
-- Type: `string`
-- Default: `/`
+## Google Collab
 
-## bar
+explain google colab ...
 
-- Type: `string`
-- Default: `/`
+## Virtual Machine / GPU
+
+explain setting up a gpu somewhere ...
+
+## Local GPU
+
+explain local gpu ...

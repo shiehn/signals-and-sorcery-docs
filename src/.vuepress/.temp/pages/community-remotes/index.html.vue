@@ -1,14 +1,18 @@
-<template><div><h1 id="config" tabindex="-1"><a class="header-anchor" href="#config" aria-hidden="true">#</a> Config</h1>
-<h2 id="foo" tabindex="-1"><a class="header-anchor" href="#foo" aria-hidden="true">#</a> foo</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
-<h2 id="bar" tabindex="-1"><a class="header-anchor" href="#bar" aria-hidden="true">#</a> bar</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
+<template><div><h1 id="resources" tabindex="-1"><a class="header-anchor" href="#resources" aria-hidden="true">#</a> Resources</h1>
+<h2 id="google-colabs" tabindex="-1"><a class="header-anchor" href="#google-colabs" aria-hidden="true">#</a> Google Colabs</h2>
+<blockquote>
+<p>NAME: Demucs Stemify<br/>
+DESCRIPTION: A wrapper for the OS Demucs Stemifier</p>
+</blockquote>
+<blockquote>
+<p>NAME: MusicLM<br/>
+DESCRIPTION: A wrapper for Googles MusicLM project</p>
+</blockquote>
+<blockquote>
+<p>NAME: MusicGen<br/>
+DESCRIPTION: A wrapper for Meta's MusicGen project</p>
+</blockquote>
+<h1 id="feedback" tabindex="-1"><a class="header-anchor" href="#feedback" aria-hidden="true">#</a> Feedback</h1>
 </div></template>
 
 

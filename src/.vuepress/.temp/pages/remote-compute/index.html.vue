@@ -1,14 +1,11 @@
-<template><div><h1 id="config" tabindex="-1"><a class="header-anchor" href="#config" aria-hidden="true">#</a> Config</h1>
-<h2 id="foo" tabindex="-1"><a class="header-anchor" href="#foo" aria-hidden="true">#</a> foo</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
-<h2 id="bar" tabindex="-1"><a class="header-anchor" href="#bar" aria-hidden="true">#</a> bar</h2>
-<ul>
-<li>Type: <code v-pre>string</code></li>
-<li>Default: <code v-pre>/</code></li>
-</ul>
+<template><div><h1 id="remote-compute" tabindex="-1"><a class="header-anchor" href="#remote-compute" aria-hidden="true">#</a> REMOTE COMPUTE</h1>
+<p>remote compute narrative ...</p>
+<h2 id="google-collab" tabindex="-1"><a class="header-anchor" href="#google-collab" aria-hidden="true">#</a> Google Collab</h2>
+<p>explain google colab ...</p>
+<h2 id="virtual-machine-gpu" tabindex="-1"><a class="header-anchor" href="#virtual-machine-gpu" aria-hidden="true">#</a> Virtual Machine / GPU</h2>
+<p>explain setting up a gpu somewhere ...</p>
+<h2 id="local-gpu" tabindex="-1"><a class="header-anchor" href="#local-gpu" aria-hidden="true">#</a> Local GPU</h2>
+<p>explain local gpu ...</p>
 </div></template>
 
 
