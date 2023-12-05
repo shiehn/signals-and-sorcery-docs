@@ -11,6 +11,10 @@ export default {
         colorMode: 'dark',
         navbar: [
             {
+                text: 'Intro',
+                link: '/intro/',
+            },
+            {
                 text: 'Getting Started',
                 link: '/getting-started/',
             },

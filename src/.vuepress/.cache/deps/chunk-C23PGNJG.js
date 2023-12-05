@@ -12,8 +12,8 @@ var EMPTY_ARR = true ? Object.freeze([]) : [];
 var NOOP = () => {
 };
 var NO = () => false;
-var onRE = /^on[^a-z]/;
-var isOn = (key) => onRE.test(key);
+var isOn = (key) => key.charCodeAt(0) === 111 && key.charCodeAt(1) === 110 && // uppercase letter
+(key.charCodeAt(2) > 122 || key.charCodeAt(2) < 97);
 var isModelListener = (key) => key.startsWith("onUpdate:");
 var extend = Object.assign;
 var remove = (arr, el) => {
@@ -302,4 +302,4 @@ export {
   looseIndexOf,
   toDisplayString
 };
-//# sourceMappingURL=chunk-GGDNJH4I.js.map
+//# sourceMappingURL=chunk-C23PGNJG.js.map

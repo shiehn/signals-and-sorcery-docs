@@ -1,21 +1,9 @@
-# What is DAWNet?
-
-DAWNet is a way to execute Python code hosted in the cloud.  It's a plugin, a server, and a pip package. &&&&&&&&&&&& It    The code is standard, arbitrary Python3 functions.  The [dawnet-client](/client/) is used to register, call functions, and send data back and forth from the DAW to the remote compute.  
-
-## How does it work?
-
-DAWNet is a P2P system (kinda?) made of three core components. 1. A network discovery server.  Essentially a system that brokers data transfer between the DAWNet VST and the remote compute.  2) A Python3 pip package dawnet-client. The package is responsible for registering a function for remote execution.  3)  A native DAW plugin.  The plugin is essentially a web-form.  An interface generated from the remote function's signature.  The plugin allows the user to drag/drop audio/midi files from the DAW into plugin, which is then transferred to the remote compute instance  
-
 ## How do I try it?
   
-1. Download the plugin. Install it.
-2. Choose a community `remote`, AKA a Google Colab notebook. Load it in colab.    
-3. Generate & Copy a "token" from the DAWNet VST interface (top bar).  
-4. Paste the "token" into Colab.  Find the token variable (called something similar to `dawnet_token`).  Set the value.
-5. At this point the Plugin and the Colab server should have `found` each other via the underlying web-socket server.
-6. If a Python function was registered it will be translated into a web form/interface in the plugin.  Files, e.x Audio & MIDI files can be dragged from the host DAW's timeline into the plugin.  The plugin will handle transferring files and other input params over the network to the remote compute.    
-
-![Mushroom](/mush_one.png)
-
-
-[Link Text](https://storage.googleapis.com/docs-assets/dawnet-logo.png)
+1. Download the plugin installer. Run it.
+2. Choose a community [remote](/remote-compute/), AKA Google Colab notebook. Load it in Colab.    
+3. Open [https://www.ableton.com/](Ableton).  Find the plugin in Ableton at `Plugin-Ins -> SignalsAndSorcery -> DAWNet.vst3`.  (If you don't see the plugin go to `options -> preferences -> "Use VST3 plugin system folder" -> rescan`)
+4. Generate & Copy a "token" from the DAWNet VST interface (top bar).  
+5. Paste the "token" into Colab.  Find the token variable (called something similar to `dawnet_token`).  Set the value.
+6. At this point the Plugin and the Colab server should have `found` each other via the underlying web-socket server.
+7. If a Python function was registered it will be translated into a web form/interface in the plugin.  Files, e.x Audio & MIDI files can be dragged from the host DAW's timeline into the plugin.  The plugin will handle transferring files and other input params over the network to the remote compute.    
