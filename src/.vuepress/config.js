@@ -1,8 +1,7 @@
 import {defineUserConfig} from 'vuepress'
 
 import { defaultTheme } from 'vuepress'
-export default {
-    port: 80,
+export default { 
     lang: 'en-US',
     title: ' ',
     description: 'BYOC (bring your own compute)',
