@@ -1,0 +1,3 @@
+[submodule "src/.vuepress/dist"]
+	path = src/.vuepress/dist
+	url = git@github.com:shiehn/dawnet-docs-gh-pages.git
