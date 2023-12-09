@@ -15,7 +15,7 @@ NOTE: The plugin is in an active development, pre-alpha state.  It has only been
 ## Usage
 
 - Once the plugin becomes available in the DAW, add it to a track. 
-- Next, you will need to connect it to a remote compute instance.  The easy way to get started is to use a pre-made [DAWNet remote](/remote-compute/) and host it in Google CoLab.
+- Next, you will need to connect it to a remote compute instance.  The easy way to get started is to use a pre-made [DAWNet remote](/remote/) and host it in Google CoLab.
 - We can now connect the plugin to the `DAWNet Remote`.  To do this open the plugin and generate/copy a token from the top bar in the GUI.  
 - Paste this token in the `DAWNet Remote` and run it.  
 - Within a few seconds the plugin and remote should "discover" each other via the discovery server.
