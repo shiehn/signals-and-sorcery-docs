@@ -17,19 +17,23 @@ DAWNet remotes are python scripts that are registered with the DAWNet discovery 
 6. At this point the Plugin and the Colab server should have `found` each other via the underlying web-socket server.
 7. Fill in values & files in the colab form.  Click "Run" in the colab form.
  
-## Google Colabs (TODO)
+## Google Colabs
 
 >Name: **Demucs Stemify**<br/>
 Description: A wrapper for the OS Demucs Stemifier.  Send an audio file and get stems back.<br/>
 Link: [DAWNet Demucs](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Demucs.ipynb)
 
+>Name: **Text-To-Audio MusicGen**<br/>
+Description: A wrapper for Meta's MusicGen project.  Send a text description and get back audio.<br/>
+Link: [Text-To-Audio](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb)
+
+>Name: **Style Transfer MusicGen**<br/>
+Description: Send an audio file with a text description and get back a file with the description applied.<br/>
+Link: [Style Transfer](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Style_Transfer_MusicGen.ipynb)
+
 >Name: **MusicLM**<br/>
 Description: A wrapper for Googles MusicLM project<br/>
 Link: (TODO)
-
->Name: **MusicGen**<br/>
-Description: A wrapper for Meta's MusicGen project.  Send a text description and get back audio.<br/>
-Link: [MusicGen](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb)
 
 ## Virtual Machine / GPU (TODO)
 

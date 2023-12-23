@@ -8,7 +8,17 @@
 <div class="language-python line-numbers-mode" data-ext="py"><pre v-pre class="language-python"><code>!pip install dawnet<span class="token operator">-</span>client <span class="token operator">-</span><span class="token operator">-</span>upgrade
 </code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div><div class="language-python line-numbers-mode" data-ext="py"><pre v-pre class="language-python"><code><span class="token keyword">import</span> dawnet_client<span class="token punctuation">.</span>core <span class="token keyword">as</span> dawnet
 <span class="token keyword">from</span> dawnet_client <span class="token keyword">import</span> DAWNetFilePath
-</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div></div></div><h2 id="usage" tabindex="-1"><a class="header-anchor" href="#usage" aria-hidden="true">#</a> Usage</h2>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div></div></div><div class="custom-container warning"><p class="custom-container-title">WARNING</p>
+<p>NOTE: ffmpeg is a system requirement</p>
+</div>
+<h3 id="ffmpeg-install-instructions" tabindex="-1"><a class="header-anchor" href="#ffmpeg-install-instructions" aria-hidden="true">#</a> FFMPEG install instructions:</h3>
+<div class="language-text line-numbers-mode" data-ext="text"><pre v-pre class="language-text"><code>- On macOS: Use Homebrew by running 'brew install ffmpeg' in the terminal.
+- On Linux (Debian/Ubuntu): Run 'sudo apt-get install ffmpeg' in the terminal.
+- On Linux (Fedora): Run 'sudo dnf install ffmpeg' in the terminal.
+- On Linux (Arch Linux): Run 'sudo pacman -S ffmpeg' in the terminal.
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>For other operating systems or more detailed instructions, visit the FFMpeg website <br />
+<a href="https://ffmpeg.org/download.html" target="_blank" rel="noopener noreferrer">FFMpeg Download<ExternalLinkIcon/></a></p>
+<h2 id="usage" tabindex="-1"><a class="header-anchor" href="#usage" aria-hidden="true">#</a> Usage</h2>
 <p>This is a simple example of a DAWNet remote script created using the dawnet-client.  The script defines an arbitrary function that takes two arguments, an integer and a DAWNetFilePath.  The function is registered with the DAWNet discovery server.  The script then connects to the DAWNet discovery server and waits for a remote trigger.</p>
 <div class="language-python line-numbers-mode" data-ext="py"><pre v-pre class="language-python"><code><span class="token keyword">import</span> dawnet_client<span class="token punctuation">.</span>core <span class="token keyword">as</span> dawnet
 <span class="token keyword">from</span> dawnet_client <span class="token keyword">import</span> DAWNetFilePath
@@ -30,11 +40,11 @@ TOKEN<span class="token operator">=</span><span class="token string">"0715c132-0
         <span class="token comment"># -----------------------------------------</span>
 
         <span class="token comment"># This is how you send results back to the plugin, when processing is complete.</span>
-        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>results<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>add_file<span class="token punctuation">(</span>b<span class="token punctuation">,</span> <span class="token string">"wav"</span><span class="token punctuation">)</span>
+        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>output<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>add_file<span class="token punctuation">(</span>b<span class="token punctuation">)</span>
         <span class="token comment"># This message is displayed in the plugin.</span>
-        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>results<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>add_message<span class="token punctuation">(</span><span class="token string">"This is a message XYZ"</span><span class="token punctuation">)</span>
+        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>output<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>add_message<span class="token punctuation">(</span><span class="token string">"This is a message XYZ"</span><span class="token punctuation">)</span>
         <span class="token comment"># The send method begins the transfer of results data back to the plugin.</span>
-        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>results<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>send<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">await</span> dawnet<span class="token punctuation">.</span>output<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>send<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
         <span class="token keyword">return</span> <span class="token boolean">True</span>
     <span class="token keyword">except</span> Exception <span class="token keyword">as</span> e<span class="token punctuation">:</span>

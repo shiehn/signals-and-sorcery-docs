@@ -7,7 +7,7 @@
 <h2 id="usage" tabindex="-1"><a class="header-anchor" href="#usage" aria-hidden="true">#</a> Usage</h2>
 <ul>
 <li>Once the plugin becomes available in the DAW, add it to a track.</li>
-<li>Next, you will need to connect it to a remote compute instance.  The easy way to get started is to use a pre-made <RouterLink to="/remote/">DAWNet remote</RouterLink> and host it in Google CoLab.</li>
+<li>Next, you will need to connect it to a remote compute instance.  The easy way to get started is to use a pre-made <RouterLink to="/remotes/">DAWNet remote</RouterLink> and host it in Google CoLab.</li>
 <li>We can now connect the plugin to the <code v-pre>DAWNet Remote</code>.  To do this open the plugin and generate/copy a token from the top bar in the GUI.</li>
 <li>Paste this token in the <code v-pre>DAWNet Remote</code> and run it.</li>
 <li>Within a few seconds the plugin and remote should &quot;discover&quot; each other via the discovery server.</li>

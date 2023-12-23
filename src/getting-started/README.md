@@ -1,7 +1,7 @@
 ## How do I use it?
   
 1. Download the plugin installer. Run it.
-2. Choose a community [remote](/remote/), AKA Google Colab notebook. Load it in Colab.    
+2. Choose a community [remote](/remotes/), AKA Google Colab notebook. Load it in Colab.    
 3. Open [https://www.ableton.com/](Ableton).  Find the plugin in Ableton at `Plugin-Ins -> SignalsAndSorcery -> DAWNet.vst3`.  (If you don't see the plugin go to `options -> preferences -> "Use VST3 plugin system folder" -> rescan`)
 4. Generate & Copy a "token" from the DAWNet VST interface (top bar).  
 5. Paste the "token" into Colab.  Find the token variable (called something similar to `dawnet_token`).  Set the value.

@@ -3,7 +3,7 @@
 <h2 id="google-colabs-todo" tabindex="-1"><a class="header-anchor" href="#google-colabs-todo" aria-hidden="true">#</a> Google Colabs (TODO)</h2>
 <blockquote>
 <p>NAME: Demucs Stemify<br/>
-DESCRIPTION: A wrapper for the OS Demucs Stemifier</p>
+DESCRIPTION: A wrapper for the OS Demucs Stemifier.  Split stems from an audio file.</p>
 </blockquote>
 <blockquote>
 <p>NAME: MusicLM<br/>

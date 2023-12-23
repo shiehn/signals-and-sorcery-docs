@@ -11,21 +11,26 @@
 <li>At this point the Plugin and the Colab server should have <code v-pre>found</code> each other via the underlying web-socket server.</li>
 <li>Fill in values &amp; files in the colab form.  Click &quot;Run&quot; in the colab form.</li>
 </ol>
-<h2 id="google-colabs-todo" tabindex="-1"><a class="header-anchor" href="#google-colabs-todo" aria-hidden="true">#</a> Google Colabs (TODO)</h2>
+<h2 id="google-colabs" tabindex="-1"><a class="header-anchor" href="#google-colabs" aria-hidden="true">#</a> Google Colabs</h2>
 <blockquote>
 <p>Name: <strong>Demucs Stemify</strong><br/>
 Description: A wrapper for the OS Demucs Stemifier.  Send an audio file and get stems back.<br/>
 Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Demucs.ipynb" target="_blank" rel="noopener noreferrer">DAWNet Demucs<ExternalLinkIcon/></a></p>
 </blockquote>
 <blockquote>
+<p>Name: <strong>Text-To-Audio MusicGen</strong><br/>
+Description: A wrapper for Meta's MusicGen project.  Send a text description and get back audio.<br/>
+Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb" target="_blank" rel="noopener noreferrer">Text-To-Audio<ExternalLinkIcon/></a></p>
+</blockquote>
+<blockquote>
+<p>Name: <strong>Style Transfer MusicGen</strong><br/>
+Description: Send an audio file with a text description and get back a file with the description applied.<br/>
+Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Style_Transfer_MusicGen.ipynb" target="_blank" rel="noopener noreferrer">Style Transfer<ExternalLinkIcon/></a></p>
+</blockquote>
+<blockquote>
 <p>Name: <strong>MusicLM</strong><br/>
 Description: A wrapper for Googles MusicLM project<br/>
 Link: (TODO)</p>
-</blockquote>
-<blockquote>
-<p>Name: <strong>MusicGen</strong><br/>
-Description: A wrapper for Meta's MusicGen project.  Send a text description and get back audio.<br/>
-Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb" target="_blank" rel="noopener noreferrer">MusicGen<ExternalLinkIcon/></a></p>
 </blockquote>
 <h2 id="virtual-machine-gpu-todo" tabindex="-1"><a class="header-anchor" href="#virtual-machine-gpu-todo" aria-hidden="true">#</a> Virtual Machine / GPU (TODO)</h2>
 <p>(TODO) explain setting up a gpu somewhere ...</p>

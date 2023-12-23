@@ -23,6 +23,20 @@ import dawnet_client.core as dawnet
 from dawnet_client import DAWNetFilePath
 ```
 
+::: warning
+NOTE: ffmpeg is a system requirement
+:::
+
+### FFMPEG install instructions:
+```
+- On macOS: Use Homebrew by running 'brew install ffmpeg' in the terminal.
+- On Linux (Debian/Ubuntu): Run 'sudo apt-get install ffmpeg' in the terminal.
+- On Linux (Fedora): Run 'sudo dnf install ffmpeg' in the terminal.
+- On Linux (Arch Linux): Run 'sudo pacman -S ffmpeg' in the terminal.
+```
+For other operating systems or more detailed instructions, visit the FFMpeg website <br /> 
+[FFMpeg Download](https://ffmpeg.org/download.html)
+
 ## Usage
 
 This is a simple example of a DAWNet remote script created using the dawnet-client.  The script defines an arbitrary function that takes two arguments, an integer and a DAWNetFilePath.  The function is registered with the DAWNet discovery server.  The script then connects to the DAWNet discovery server and waits for a remote trigger.
@@ -48,11 +62,11 @@ async def arbitrary_method(a: int, b: DAWNetFilePath):
         # -----------------------------------------
 
         # This is how you send results back to the plugin, when processing is complete.
-        await dawnet.results().add_file(b, "wav")
+        await dawnet.output().add_file(b)
         # This message is displayed in the plugin.
-        await dawnet.results().add_message("This is a message XYZ")
+        await dawnet.output().add_message("This is a message XYZ")
         # The send method begins the transfer of results data back to the plugin.
-        await dawnet.results().send()
+        await dawnet.output().send()
 
         return True
     except Exception as e:
