@@ -11,10 +11,10 @@ export const pagesComponents = {
   "v-20f71d1f": defineAsyncComponent(() => import(/* webpackChunkName: "v-20f71d1f" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/community/index.html.vue")),
   // path: /intro/
   "v-f9e30908": defineAsyncComponent(() => import(/* webpackChunkName: "v-f9e30908" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/intro/index.html.vue")),
-  // path: /remotes/
-  "v-8fd2124a": defineAsyncComponent(() => import(/* webpackChunkName: "v-8fd2124a" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/remotes/index.html.vue")),
   // path: /plugin/
   "v-4dabea43": defineAsyncComponent(() => import(/* webpackChunkName: "v-4dabea43" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/plugin/index.html.vue")),
+  // path: /remotes/
+  "v-8fd2124a": defineAsyncComponent(() => import(/* webpackChunkName: "v-8fd2124a" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/remotes/index.html.vue")),
   // path: /404.html
   "v-3706649a": defineAsyncComponent(() => import(/* webpackChunkName: "v-3706649a" */"/home/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/404.html.vue")),
 }
