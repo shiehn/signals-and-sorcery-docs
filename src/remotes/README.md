@@ -4,7 +4,7 @@ sidebar: auto
 
 # DAWNet Remotes
 
-## What is are they?
+## What are they?
 DAWNet remotes are python scripts that are registered with the DAWNet discovery server.  They are triggered remotely by the DAWNet plugin.  They can be run locally, on a remote server, or in Google Colabs.  They can be used to execute arbitrary code, or to wrap existing projects. 
 
 ## How do I use them?

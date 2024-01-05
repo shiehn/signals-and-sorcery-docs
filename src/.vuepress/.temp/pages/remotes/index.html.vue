@@ -1,5 +1,5 @@
 <template><div><h1 id="dawnet-remotes" tabindex="-1"><a class="header-anchor" href="#dawnet-remotes" aria-hidden="true">#</a> DAWNet Remotes</h1>
-<h2 id="what-is-are-they" tabindex="-1"><a class="header-anchor" href="#what-is-are-they" aria-hidden="true">#</a> What is are they?</h2>
+<h2 id="what-are-they" tabindex="-1"><a class="header-anchor" href="#what-are-they" aria-hidden="true">#</a> What are they?</h2>
 <p>DAWNet remotes are python scripts that are registered with the DAWNet discovery server.  They are triggered remotely by the DAWNet plugin.  They can be run locally, on a remote server, or in Google Colabs.  They can be used to execute arbitrary code, or to wrap existing projects.</p>
 <h2 id="how-do-i-use-them" tabindex="-1"><a class="header-anchor" href="#how-do-i-use-them" aria-hidden="true">#</a> How do I use them?</h2>
 <ol>
