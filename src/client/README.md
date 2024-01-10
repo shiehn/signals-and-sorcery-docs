@@ -81,7 +81,7 @@ dawnet.set_name("My Remote Code")
 # The description of the remote.  This is displayed in the plugin.
 dawnet.set_description("This is not a real description.")
 # Register the method with the discovery server.
-dawnet.register_method("arbitrary_method", arbitrary_method)
+dawnet.register_method(arbitrary_method)
 
 # This should be the last line of the script.  It connects to the discovery server and waits for a remote trigger.
 dawnet.connect_to_server()

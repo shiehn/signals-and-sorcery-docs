@@ -59,7 +59,7 @@ dawnet<span class="token punctuation">.</span>set_name<span class="token punctua
 <span class="token comment"># The description of the remote.  This is displayed in the plugin.</span>
 dawnet<span class="token punctuation">.</span>set_description<span class="token punctuation">(</span><span class="token string">"This is not a real description."</span><span class="token punctuation">)</span>
 <span class="token comment"># Register the method with the discovery server.</span>
-dawnet<span class="token punctuation">.</span>register_method<span class="token punctuation">(</span><span class="token string">"arbitrary_method"</span><span class="token punctuation">,</span> arbitrary_method<span class="token punctuation">)</span>
+dawnet<span class="token punctuation">.</span>register_method<span class="token punctuation">(</span>arbitrary_method<span class="token punctuation">)</span>
 
 <span class="token comment"># This should be the last line of the script.  It connects to the discovery server and waits for a remote trigger.</span>
 dawnet<span class="token punctuation">.</span>connect_to_server<span class="token punctuation">(</span><span class="token punctuation">)</span>

@@ -6,7 +6,7 @@ head:
 home: true 
 actions:
   - text: VST3 (mac)
-    link: https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_0_1.zip
+    link: https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_1_5.zip
     type: primary
   - text: dawnet-client
     link: https://pypi.org/project/dawnet-client/
