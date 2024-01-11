@@ -3,10 +3,10 @@ export const pagesData = {
   "v-8daa1a0e": () => import(/* webpackChunkName: "v-8daa1a0e" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/index.html.js").then(({ data }) => data),
   // path: /client/
   "v-c55e0eaa": () => import(/* webpackChunkName: "v-c55e0eaa" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/client/index.html.js").then(({ data }) => data),
-  // path: /community/
-  "v-20f71d1f": () => import(/* webpackChunkName: "v-20f71d1f" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/community/index.html.js").then(({ data }) => data),
   // path: /getting-started/
   "v-ccdc4da0": () => import(/* webpackChunkName: "v-ccdc4da0" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/getting-started/index.html.js").then(({ data }) => data),
+  // path: /community/
+  "v-20f71d1f": () => import(/* webpackChunkName: "v-20f71d1f" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/community/index.html.js").then(({ data }) => data),
   // path: /remotes/
   "v-8fd2124a": () => import(/* webpackChunkName: "v-8fd2124a" */"/Users/stevehiehn/dawnet/dawnet-docs/src/.vuepress/.temp/pages/remotes/index.html.js").then(({ data }) => data),
   // path: /intro/
