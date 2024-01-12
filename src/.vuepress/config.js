@@ -5,7 +5,7 @@ import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
 export default { 
     lang: 'en-US',
     title: ' ',
-    description: 'BYOC (bring your own compute)',
+    description: 'AI Stem separation, Audio style transfer, Text-to-Audio, and more!',
     theme: defaultTheme({
         logo: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
         colorModeSwitch: false,

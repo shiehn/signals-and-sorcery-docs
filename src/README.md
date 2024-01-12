@@ -2,7 +2,7 @@
 head:
   - - meta
     - name: description
-      content: DAWNet is an VST and AU plugin which allows users to execute remote python functions from their DAW. 
+      content: DAWNet is an audio plugin which allows users perform AI stem separation, Text-To-Audio, Style Transfer and more. 
 home: true 
 actions:
   - text: VST3 (mac)
@@ -19,6 +19,6 @@ features:
     - title: Custom Python Code
       details: Compose arbitrary python code. Host it locally, in Google Colab, or any remote server.
     - title: Ready to use Google Colabs
-      details: Find pre-made DAWNet scripts and Google Colabs ready to use.
+      details: Pre-made DAWNet scripts for AI tasks such as Stem Separation, Text-2-Audio, Style Transfer, Feature extraction and more.
 footer: Made by Steve Hiehn with ❤️
 ---

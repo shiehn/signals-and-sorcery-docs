@@ -8,6 +8,11 @@
 <li>At this point the Plugin and the Colab server should have <code v-pre>found</code> each other via the underlying web-socket server.</li>
 <li>If a Python function was registered it will be translated into a web form/interface in the plugin.  Files, e.x Audio &amp; MIDI files can be dragged from the host DAW's timeline into the plugin.  The plugin will handle transferring files and other input params over the network to the remote compute.</li>
 </ol>
-</div></template>
+<h2 id="workflow-example" tabindex="-1"><a class="header-anchor" href="#workflow-example" aria-hidden="true">#</a> Workflow example</h2>
+<p>In this video I demonstrate how to use the DAWNet plugin to perform <code v-pre>audio style transfer</code> powered by Meta's <a href="https://ai.meta.com/resources/models-and-libraries/audiocraft/" target="_blank" rel="noopener noreferrer">MusicGen<ExternalLinkIcon/></a> project.</p>
+<video width="100%" controls>
+  <source src="https://storage.googleapis.com/docs-assets/style-tranfer-demo.mov">
+  Your browser does not support the video tag.
+</video></div></template>
 
 
