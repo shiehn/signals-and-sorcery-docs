@@ -2,6 +2,7 @@ import {defineUserConfig} from 'vuepress'
 
 import { defaultTheme } from 'vuepress'
 import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
+import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default { 
     lang: 'en-US',
     title: ' ',
@@ -40,6 +41,9 @@ export default {
     plugins: [
         googleAnalyticsPlugin({
             id: 'G-B2QMDKHWHF'
+        }),
+        sitemapPlugin({
+            hostname: 'dawnet.tools',
         }),
     ],
 }
