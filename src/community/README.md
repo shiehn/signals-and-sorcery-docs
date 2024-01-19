@@ -4,6 +4,12 @@ sidebar: auto
 
 # Resources
 
+## Source Code
+
+The client are being developed under the GPL 3.0 license:
+* [DAWNet CLIENT](https://github.com/shiehn/dawnet_client)
+* [DAWNet SERVER](https://github.com/shiehn/dawnet-server)
+
 ## Discussion
 
 Please direct all questions, bugs, and feature requests to the
