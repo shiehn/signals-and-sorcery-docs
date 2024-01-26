@@ -13,6 +13,11 @@
 </ol>
 <h2 id="google-colabs" tabindex="-1"><a class="header-anchor" href="#google-colabs" aria-hidden="true">#</a> Google Colabs</h2>
 <blockquote>
+<p>Name: <strong>Remote Template</strong><br/>
+Description: This is a template for making remotes or testing.<br/>
+Link: <a href="https://colab.research.google.com/github/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_template.ipynb" target="_blank" rel="noopener noreferrer">Remote Template<ExternalLinkIcon/></a></p>
+</blockquote>
+<blockquote>
 <p>Name: <strong>Style Transfer - MusicGen</strong><br/>
 Description: Send an audio file with a text description and get back a file with the description applied.<br/>
 Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Style_Transfer_MusicGen.ipynb" target="_blank" rel="noopener noreferrer">Style Transfer<ExternalLinkIcon/></a></p>
@@ -31,6 +36,11 @@ Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_
 <p>Name: <strong>Text-To-Audio MusicGen</strong><br/>
 Description: A wrapper for Meta's MusicGen project.  Send a text description and get an audio clip back.<br/>
 Link: <a href="https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb" target="_blank" rel="noopener noreferrer">Text-To-Audio<ExternalLinkIcon/></a></p>
+</blockquote>
+<blockquote>
+<p>Name: <strong>Beat Detection - BeatNet</strong><br/>
+Description: This is a beat detection using the BeatNet library.   Send an audio file and get a BPM back.<br/>
+Link: <a href="https://colab.research.google.com/github/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_BeatNet.ipynb" target="_blank" rel="noopener noreferrer">BeatNet<ExternalLinkIcon/></a></p>
 </blockquote>
 <h2 id="virtual-machine-gpu-todo" tabindex="-1"><a class="header-anchor" href="#virtual-machine-gpu-todo" aria-hidden="true">#</a> Virtual Machine / GPU (TODO)</h2>
 <p>(TODO) explain setting up a gpu somewhere ...</p>
