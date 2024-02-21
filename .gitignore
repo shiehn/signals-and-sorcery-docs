@@ -1,1 +1,7 @@
 node_modules
+
+src/.vuepress/dist
+src/.vuepress/dist/*
+
+src/.vuepress/.temp
+src/.vuepress/.temp/*
