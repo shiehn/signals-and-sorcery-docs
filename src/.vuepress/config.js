@@ -6,35 +6,39 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default { 
     lang: 'en-US',
     title: ' ',
-    description: 'AI Stem separation, Audio style transfer, Text-to-Audio, and more!',
+    description: 'Package, Share, and Self-Host AI Elixirs.',
     theme: defaultTheme({
         logo: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
         colorModeSwitch: false,
         colorMode: 'dark',
         navbar: [
             {
-                text: 'Intro',
-                link: '/intro/',
+                text: 'Prologue',
+                link: '/prologue/',
             },
             {
                 text: 'Getting Started',
                 link: '/getting-started/',
             },
             {
-                text: 'Plugin',
-                link: '/plugin/',
+                text: 'Oracles',
+                link: '/oracles/',
             },
             {
-                text: 'Client',
-                link: '/client/',
+                text: 'Crucible CLI',
+                link: '/crucible/',
             },
             {
-                text: 'Remotes',
-                link: '/remotes/',
+                text: 'Elixirs',
+                link: '/elixirs/',
             },
             {
-                text: 'Community',
-                link: '/community/',
+                text: 'Vault',
+                link: '/vault/',
+            },
+            {
+                text: 'Guild',
+                link: '/guild/',
             },
         ],
     }),

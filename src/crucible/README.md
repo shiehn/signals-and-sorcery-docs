@@ -2,7 +2,9 @@
 sidebar: auto
 ---
 
-# VST3 Plugin
+![crucible](/sas_oracle.png)
+
+# Crucible CLI
 
 ## Installation
 

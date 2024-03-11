@@ -2,7 +2,7 @@
 head:
   - - meta
     - name: description
-      content: DAWNet is an audio plugin which allows users perform AI stem separation, Text-To-Audio, Style Transfer and more. 
+      content: Signals & Sorcery is a platform for packaging, sharing and consuming machine learning operations. Extend applications with self-hosted AI operations. 
 home: true 
 actions:
   - text: VST3 (mac)
@@ -11,13 +11,13 @@ actions:
   - text: dawnet-client
     link: https://pypi.org/project/dawnet-client/
     type: secondary
-heroImage: https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png
+heroImage: ./sas_logo.png
 heroHeight: 200
 features:
     - title: VST3 Plugin (mac)
       details: Call remote python functions within the DAW.  Have the plugin send data for remote processing, and get the results back.
     - title: Open Source 
-      details: The DAWNet project is open source.  The server and client are released under the GPL-3.0 license.
+      details: DAWNet is the music plugin for InferNet open source platform.  The server and client are released under the GPL-3.0 license.
     - title: Ready to use Google Colabs
       details: Pre-made DAWNet Colabs & scripts for AI tasks such as Stem Separation, Text-2-Audio, Style Transfer, Feature extraction and more.
 footer: Made by Steve Hiehn with ❤️
