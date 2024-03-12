@@ -1,19 +1,15 @@
-## What is DAWNet?
+## What is Signals & Sorcery?
 
-DAWNet is a VST plugin that executes remote python functions.  As an example, a user may want to perform `audio stem splitting` on a remote server.  Using the [DAWNet Client](/client/) they can send data from the DAW to the remote function, and back again. 
-
-<video width="100%" controls>
-  <source src="https://storage.googleapis.com/docs-assets/dawnet-intro.mov" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+Signals & Sorcery is a platform for creating, sharing, and consuming machine learning operations.  A developer can write a python function, publish it, host it, and have it consumed from native applications such as Ableton, Figma, and Final Cut Pro.
 
 ## Who is this for?
 
-The target user for DAWNet is a technical musician/software developer.  Google Colabs are a popular choice when experimenting with self-hosting machine learning models.  However, there is a disconnect between traditional DAWs and remote machine leaning.  DAWNet aims to be a solution for this by developing a native integration with popular DAWs.    
+- Application power users who want to extend their applications with self-hosted SOTA AI operations. ex. META releases a new audio generation model and a user wants to use it in their DAW immediately.
+- Developers who create Colab/Jupyter notebooks and want to use them in the context of a native application.  ex. A developer creates a new audio stem splitting model and wants to use it in their DAW.
 
 ## How does it work?
 
-DAWNet is a P2P system (kinda?) made of three core components. 
-- A network discovery server.  Essentially a system that brokers data transfer between the DAWNet VST and the remote compute.
-- A Python3 pip package dawnet-client. The package is responsible for registering a function for remote execution.  
-- A native DAW plugin.  The plugin is essentially a web-form.  An interface generated from the remote function's signature.  The plugin allows the user to drag/drop audio/midi files from the DAW into plugin, which is then transferred to the remote compute instance  
+Signals & Sorcery is composed of three core components. 
+- A network discovery server.  Essentially a system that brokers data transfer between the `Crucible Plugins` and the `Elixir AI's`.
+- A Python3 pip package `runes-cli`. The package is used to packaging, invoke and publish a python functions as `Elixir AI's`.
+- Native plugins called `Crucible Plugins`.  The plugins are essentially a web-forms.  An interface which is generated from the `Elixir AI's` function signature.  In the case of  `Crucible-Audio` the user can drag/drop audio/midi files from the DAW into plugin, which is then transferred to the `Elixirs` compute instance.

@@ -6,6 +6,15 @@ sidebar: auto
 
 # VST3 Plugin
 
+## What is DAWNet?
+
+DAWNet is a VST plugin that executes remote python functions.  As an example, a user may want to perform `audio stem splitting` on a remote server.  Using the [DAWNet Client](/client/) they can send data from the DAW to the remote function, and back again.
+
+<video width="100%" controls>
+  <source src="https://storage.googleapis.com/docs-assets/dawnet-intro.mov" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Installation
 
 [Download](https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_2_universal.zip) the zip package installer.  Run it.  By default, the `.vst3` file should end up at this location: `/Library/Audio/Plug-Ins/VST3`.  Note: some people prefer plugins in their user directory: ` ~/Library/Audio/Plug-Ins/VST3`.  Move it if you wish.
