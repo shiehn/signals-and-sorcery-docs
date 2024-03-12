@@ -2,9 +2,9 @@
 sidebar: auto
 ---
 
-![crucible](/sas_oracle.png)
+![runes_cli](/sas_runes_cli.png)
 
-# Crucible CLI
+# Runes CLI
 
 ## Installation
 

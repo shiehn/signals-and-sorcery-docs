@@ -2,6 +2,8 @@
 sidebar: auto
 ---
 
+![elixirs](/sas_elixir.png)
+
 # DAWNet Remotes
 
 ## What are they?

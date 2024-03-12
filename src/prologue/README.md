@@ -1,3 +1,5 @@
+![prologue](/sas_prologue.png)
+
 ## What is Signals & Sorcery?
 
 Signals & Sorcery is a platform for creating, sharing, and consuming machine learning operations.  A developer can write a python function, publish it, host it, and have it consumed from native applications such as Ableton, Figma, and Final Cut Pro.

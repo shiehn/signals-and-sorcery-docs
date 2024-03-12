@@ -2,6 +2,8 @@
 sidebar: auto
 ---
 
+![glossary](/sas_glossary.png)
+
 # Glossary Of Terms
 
 ## Crucible Plugins

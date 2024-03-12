@@ -2,7 +2,9 @@
 sidebar: auto
 ---
 
-# Resources
+![guild](/sas_guild.png)
+
+# The Guild
 
 ## Source Code
 

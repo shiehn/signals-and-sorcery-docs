@@ -1,3 +1,7 @@
+
+![getting-started](/sas_getting_started.png)
+
+# Getting Started (end-user music workflow)
 ## How do I use it?
  
 <video width="100%" controls>

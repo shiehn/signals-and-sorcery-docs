@@ -5,10 +5,10 @@ import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
 import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
-    title: 'Signals & Sorcery',
-    description: 'Create, Consume, Share, & Self-Host AI Elixirs.',
+    title: ' ',
+    description: 'Extend your apps with self-hosted AI Elixirs',
     theme: defaultTheme({
-        // logo: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
+        logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
         colorModeSwitch: false,
         colorMode: 'dark',

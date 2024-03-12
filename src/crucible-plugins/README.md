@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![oracle](/sas_oracles.png)
+![crucible-plugins](/sas_crucible.png)
 
 # VST3 Plugin
 
