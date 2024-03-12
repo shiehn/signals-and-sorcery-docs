@@ -5,20 +5,21 @@ head:
       content: Signals & Sorcery is a platform for packaging, sharing and consuming machine learning operations. Extend applications with self-hosted AI operations. 
 home: true 
 actions:
-  - text: VST3 (mac)
+  - text: Users
     link: https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_2_universal.zip
     type: primary
-  - text: dawnet-client
+  - text: Creators
     link: https://pypi.org/project/dawnet-client/
     type: secondary
 heroImage: ./sas_logo.png
 heroHeight: 200
 features:
-    - title: VST3 Plugin (mac)
-      details: Call remote python functions within the DAW.  Have the plugin send data for remote processing, and get the results back.
+    - title: Users
+      details: Install Crucible plugins for audio, video, image & web apps, find AI Elixirs, run them anywhere there is a GPU!
+    - title: Creators
+      details: Write Colab/Jupyter notebooks in Python, package them as AI Elixirs, and expose them to Crucible plugins!
     - title: Open Source 
-      details: DAWNet is the music plugin for InferNet open source platform.  The server and client are released under the GPL-3.0 license.
-    - title: Ready to use Google Colabs
-      details: Pre-made DAWNet Colabs & scripts for AI tasks such as Stem Separation, Text-2-Audio, Style Transfer, Feature extraction and more.
+      details: Signals & Sorcery is a true open source platform released under the GPL-3.0 license.
+    
 footer: Made by Steve Hiehn with ❤️
 ---

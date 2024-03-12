@@ -6,38 +6,42 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default { 
     lang: 'en-US',
     title: ' ',
-    description: 'Package, Share, and Self-Host AI Elixirs.',
+    description: 'Create, Consume, Share, & Self-Host AI Elixirs.',
     theme: defaultTheme({
         logo: "https://storage.googleapis.com/docs-assets/dawnet-docs-logo.png",
         colorModeSwitch: false,
         colorMode: 'dark',
         navbar: [
             {
-                text: 'Prologue',
+                text: 'prologue',
                 link: '/prologue/',
             },
             {
-                text: 'Getting Started',
+                text: 'glossary',
+                link: '/glossary/',
+            },
+            {
+                text: 'getting-started',
                 link: '/getting-started/',
             },
             {
-                text: 'Oracles',
-                link: '/oracles/',
+                text: 'runes-cli',
+                link: '/runes-cli/',
             },
             {
-                text: 'Crucible CLI',
-                link: '/crucible/',
+                text: 'crucible-plugins',
+                link: '/crucible-plugins/',
             },
             {
-                text: 'Elixirs',
+                text: 'elixir-ais',
                 link: '/elixirs/',
             },
             {
-                text: 'Vault',
+                text: 'vault',
                 link: '/vault/',
             },
             {
-                text: 'Guild',
+                text: 'guild',
                 link: '/guild/',
             },
         ],
