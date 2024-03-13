@@ -2,12 +2,12 @@
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a platform for creating, sharing, and consuming machine learning operations.  A developer can write a python function, publish it, host it, and have it consumed from native applications such as Ableton, Figma, and Final Cut Pro.
+Signals & Sorcery is a platform for creating, sharing, and consuming machine learning operations.  A developer can write a python function, publish it, host it, and have it consumed from native applications such as Ableton, Figma, and Chrome Extensions.
 
 ## Who is this for?
 
 - Application power users who want to extend their applications with self-hosted SOTA AI operations. ex. META releases a new audio generation model and a user wants to use it in their DAW immediately.
-- Developers who create Colab/Jupyter notebooks and want to use them in the context of a native application.  ex. A developer creates a new audio stem splitting model and wants to use it in their DAW.
+- Developers creating Colab/Jupyter notebooks who want to use them in the context of a native application.  ex. A developer creates a new audio stem splitting model and wants to use it in int the context of their DAW.
 
 ## How does it work?
 

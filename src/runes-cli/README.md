@@ -6,26 +6,51 @@ sidebar: auto
 
 # Runes CLI
 
-## Installation
+## What is it?
+The `RUNES CLI` is a command line tool for building, running and publishing Elixirs to the Vault. 
 
-[Download](https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_2_universal.zip) the zip package installer.  Run it.  By default, the `.vst3` file should end up at this location: `/Library/Audio/Plug-Ins/VST3`.  Note: some people prefer plugins in their user directory: ` ~/Library/Audio/Plug-Ins/VST3`.  Move it if you wish.
+## Requirements:
+- ensure Python >= 3.x is installed
+```python
+python --version
+```
 
-::: warning
-NOTE: The plugin is in an active development, pre-alpha state.  It has only been tested on Ableton 11 on MAC M1.
-:::
+- ensure Pip is installed
+```python
+pip list
+```
 
-## Usage
+- ensure [Docker](https://www.docker.com/) is installed
+```python
+which docker
+```
 
-- Once the plugin becomes available in the DAW, add it to a track. 
-- Next, you will need to connect it to a remote compute instance.  The easy way to get started is to use a pre-made [DAWNet remote](/remotes/) and host it in Google CoLab.
-- We can now connect the plugin to the `DAWNet Remote`.  To do this open the plugin and generate/copy a token from the top bar in the GUI.  
-- Paste this token in the `DAWNet Remote` and run it.  
-- Within a few seconds the plugin and remote should "discover" each other via the discovery server.
-- At this point you should see a representation of the remote function and are able to run it
+- (if you plan to run GPU dependent functions) ensure [Nvidia Docker Extention](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) is installed
 
-::: tip
-To add an audio file to the plugin from Ableton `opt + mouse drag` the file into the plugin
-To add an output file from the plugin to Ableton `opt + mouse drag` the icon found in the results view, on the right of the file name.
-:::
+### Installation:
+
+```python
+sudo pip install -U runes-cli
+```
+
+### Usage:
+
+```python
+runes
+```
+
+## Usage Examples:
+
+#### As a developer use the runes-cli to:
+
+- build your CoLab/Jupyter notebook (`.ipynb` file) into an Elixir
+- publish your build Elixir to the Vault
+
+#### As an end-user use the runes-cli to:
+
+- search for & install Elixirs listed in the Vault
+- run Elixirs on your local machine or a remote server
+
+
 
 

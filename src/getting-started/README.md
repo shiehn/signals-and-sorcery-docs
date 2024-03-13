@@ -27,9 +27,21 @@
 
 ## Workflow example
 
-In this video I demonstrate how to use the DAWNet plugin to perform `audio style transfer` powered by Meta's [MusicGen](https://ai.meta.com/resources/models-and-libraries/audiocraft/) project.
+In this video I demonstrate how to use a [Crucible plugin](/crucible-plugins) to perform `audio style transfer` powered by Meta's [MusicGen](https://ai.meta.com/resources/models-and-libraries/audiocraft/) project.
 
 <video width="100%" controls>
   <source src="https://storage.googleapis.com/docs-assets/style-tranfer-demo.mov">
   Your browser does not support the video tag.
 </video>
+
+# Getting Started (developing an Elixir)
+
+## Create an Elixir
+1. Launch the Elixir template in either a Google Colab or as a Jyuptyer notebook.
+2. Write your function in the notebook. See the [Elixir](/elixirs/) section for more details.
+3. Test your function by connecting it to a Crucible plugin.  See the [Crucible](/crucible-plugins/) section for more details
+
+## Publish an Elixir to the Vault (coming soon ...)
+1. Install the [RUNES CLI](/runes-cli/)
+2. Build your `.ipynb` file into an Elixir using the `runes-cli`
+3. Publish your Elixir to the Vault using the `runes-cli`
