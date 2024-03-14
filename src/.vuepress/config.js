@@ -34,8 +34,12 @@ export default {
                 link: '/crucible-plugins/',
             },
             {
-                text: 'elixir-ais',
+                text: 'elixirs',
                 link: '/elixirs/',
+            },
+            {
+                text: 'api',
+                link: '/api-server/',
             },
             {
                 text: 'vault',

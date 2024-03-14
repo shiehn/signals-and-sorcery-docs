@@ -4,7 +4,7 @@ sidebar: auto
 
 ![elixirs](/sas_elixir.png)
 
-# DAWNet Remotes
+# Elixirs
 
 ## What are they?
 DAWNet remotes are python scripts that are registered with the DAWNet discovery server.  They are triggered remotely by the DAWNet plugin.  They can be run locally, on a remote server, or in Google Colabs.  They can be used to execute arbitrary code, or to wrap existing projects. 
@@ -21,41 +21,15 @@ DAWNet remotes are python scripts that are registered with the DAWNet discovery 
  
 ## Google Colabs
 
->Name: **Remote Template**<br/>
-Description: This is a template for making remotes or testing.<br/>
-Link: [Remote Template](https://colab.research.google.com/github/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_template.ipynb)
+Find premade Elixirs here: [Google CoLabs](/vault/#google-colabs)
 
->Name: **Style Transfer - MusicGen**<br/>
-Description: Send an audio file with a text description and get back a file with the description applied.<br/>
-Link: [Style Transfer](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Style_Transfer_MusicGen.ipynb)
+# Elixir Client
 
->Name: **Style Transfer - MusicLDM**<br/>
-Description: Send an audio file with a text description and get back a file with the description applied. Note: Meta's MusicGen preforms much better.<br/>
-Link: [Style Transfer](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Style_Transfer_AudioLDM2.ipynb)
+The Elixir client is a Python3 library that allows you to create and run Elixirs from your local machine.  It is a simple wrapper around the DAWNet API.  It is useful for creating and testing Elixirs locally before deploying them to a remote server.  It is also useful for creating Elixirs that are not intended to be run in a remote server.  For example, you may want to create an Elixir that runs on your local machine, but is triggered by a remote DAWNet plugin.
 
->Name: **Stemify - Demucs**<br/>
-Description: Send an audio file and get stems back.<br/>
-Link: [DAWNet Demucs](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_Demucs.ipynb)
-
->Name: **Text-To-Audio MusicGen**<br/>
-Description: A wrapper for Meta's MusicGen project.  Send a text description and get an audio clip back.<br/>
-Link: [Text-To-Audio](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_MusicGen.ipynb)
-
->Name: **Beat Detection - BeatNet**<br/>
-Description: This is a beat detection using the BeatNet library.   Send an audio file and get a BPM back.<br/>
-Link: [BeatNet](https://colab.research.google.com/github/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_BeatNet.ipynb)
-
-
-## Virtual Machine / GPU (TODO)
-
-(TODO) explain setting up a gpu somewhere ...
-
-## Local GPU (TODO)
-
-(TODO) explain local gpu ...
 
 ## How do I make my own?
-Creating your own remote is easy.  Just copy and modify the [DAWNet Remote Template](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_template.ipynb).  You  will see a  commented section indicating where to write your custom code.  You can write any Python3 code you wish.  
+Creating your own Elixir is easy.  Just copy and modify the [DAWNet Remote Template](https://github.com/shiehn/dawnet-remotes/blob/main/DAWNet_Remote_template.ipynb).  You  will see a commented section indicating where to write your custom code.  You can write any Python3 code you wish.  
 
 ::: danger
 NOTE: The system does not guarantee any security.  Do not expose sensitive data in your remotes.

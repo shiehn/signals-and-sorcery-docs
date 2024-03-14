@@ -1,3 +1,7 @@
+---
+sidebar: auto
+---
+
 ![prologue](/sas_prologue.png)
 
 ## What is Signals & Sorcery?

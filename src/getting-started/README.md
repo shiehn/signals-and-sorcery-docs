@@ -1,3 +1,6 @@
+---
+sidebar: auto
+---
 
 ![getting-started](/sas_getting_started.png)
 
