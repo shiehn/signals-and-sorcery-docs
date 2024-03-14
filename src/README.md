@@ -9,7 +9,7 @@ actions:
     link: https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_2_universal.zip
     type: primary
   - text: Creators
-    link: https://pypi.org/project/dawnet-client/
+    link: https://pypi.org/project/elixir-client/
     type: secondary
 heroImage: ./sas_logo.png
 heroHeight: 200

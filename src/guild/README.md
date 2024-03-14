@@ -8,14 +8,15 @@ sidebar: auto
 
 ## Source Code
 
-The client are being developed under the GPL 3.0 license:
-* [DAWNet CLIENT](https://github.com/shiehn/dawnet_client)
-* [DAWNet SERVER](https://github.com/shiehn/dawnet-server)
+The platform is licenced under GPL 3.0:
+* [Runes - cli](https://github.com/shiehn/runes_cli)
+* [Elixir - client](https://github.com/shiehn/elixir_client)
+* [Signals & Sorcery - server](https://github.com/shiehn/signals-and-sorcery-server)
 
 ## Discussion
 
 Please direct all questions, bugs, and feature requests to the
-[DAWNet Discord channel](https://discord.gg/UcHCjfpRkV)
+[Signals & Sorcery Discord channel](https://discord.gg/UcHCjfpRkV)
 
 ## Contact
 

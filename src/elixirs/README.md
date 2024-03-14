@@ -25,7 +25,7 @@ Find premade Elixirs here: [Google CoLabs](/vault/#google-colabs)
 
 # Elixir Client
 
-The Elixir client is a Python3 library that allows you to create and run Elixirs from your local machine.  It is a simple wrapper around the DAWNet API.  It is useful for creating and testing Elixirs locally before deploying them to a remote server.  It is also useful for creating Elixirs that are not intended to be run in a remote server.  For example, you may want to create an Elixir that runs on your local machine, but is triggered by a remote DAWNet plugin.
+The Elixir client is a Python package that enables you to write python functions, package the functions and expose them to Crucible plugins.  It is a simple wrapper around the Signals & Sorcery API.
 
 
 ## How do I make my own?
