@@ -8,8 +8,8 @@ sidebar: auto
 
 ## Crucible Plugins
 
-[Crucible plugins](/crucible-plugins) are a series of native plugins that expose the Exilir AI's functionality in domain specific application. ex:
-- Crucible-Audio for Ableton 
+[Crucible plugins](/crucible-plugins) are a series of native plugins that expose the Elixir AI's functionality in domain specific application. ex:
+- Crucible-Sound for Ableton 
 - Crucible-Image for Figma (coming soon)
 - Crucible-Web for Web Browsers (coming soon)
 - Crucible-Video for Final Cut Pro (coming soon)
@@ -25,7 +25,7 @@ sidebar: auto
 - Elixirs are a collection of machine learning operations that can be run on remote compute instances.  They are packaged and distributed as Docker containers.  
 - When run, they automatically connect to the Signals & Sorcery server.  
 - Users can run Elixirs from the Crucible plugins.
-
+ 
 ## GPU & CPU
 
 - CPU: Central Processing Unit.  The main processor in a computer.  Almost all computers have a CPU.

@@ -17,7 +17,7 @@ Crucible-Audio is a VST plugin that executes remote python functions.  As an exa
 
 ## Installation
 
-[Download](https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_2_universal.zip) the zip package installer.  Run it.  By default, the `.vst3` file should end up at this location: `/Library/Audio/Plug-Ins/VST3`.  Note: some people prefer plugins in their user directory: ` ~/Library/Audio/Plug-Ins/VST3`.  Move it if you wish.
+[Download](https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_5_universal.zip) the zip package installer.  Run it.  By default, the `.vst3` file should end up at this location: `/Library/Audio/Plug-Ins/VST3`.  Note: some people prefer plugins in their user directory: ` ~/Library/Audio/Plug-Ins/VST3`.  Move it if you wish.
 
 ::: warning
 NOTE: The plugin is in an active development, pre-alpha state.  It has only been tested on Ableton 11 on MAC M1.
