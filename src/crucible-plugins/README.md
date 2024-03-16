@@ -6,6 +6,10 @@ sidebar: auto
 
 # Crucible Plugins
 
+## Crucible Web
+
+[CrucibleWeb](http://dawnet.tools) is the best place to get started. Connect, test, and use your Elixirs in the browser. 
+
 ## Crucible Audio
 
 Crucible-Audio is a VST plugin that executes remote python functions.  As an example, a user may want to perform `audio stem splitting` on a remote server.  Using the [DAWNet Client](/client/) they can send data from the DAW to the remote function, and back again.
@@ -36,10 +40,7 @@ NOTE: The plugin is in an active development, pre-alpha state.  It has only been
 To add an audio file to the plugin from Ableton `opt + mouse drag` the file into the plugin
 To add an output file from the plugin to Ableton `opt + mouse drag` the icon found in the results view, on the right of the file name.
 :::
-
-## Crucible Web (Chrome Extension)
-(coming soon ...)
-
+ 
 ## Crucible Video
 (coming soon ...)
 

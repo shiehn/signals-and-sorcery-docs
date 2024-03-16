@@ -6,10 +6,10 @@ head:
 home: true 
 actions:
   - text: Users
-    link: https://storage.googleapis.com/docs-assets/DAWNetInstaller_v0_7_5_universal.zip
+    link: https://dawnet.tools
     type: primary
   - text: Creators
-    link: https://pypi.org/project/elixir-client/
+    link: /elixirs/
     type: secondary
 heroImage: ./sas_logo.png
 heroHeight: 200
