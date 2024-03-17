@@ -6,7 +6,7 @@ head:
 home: true 
 actions:
   - text: Users
-    link: https://dawnet.tools
+    link: http://dawnet.tools
     type: primary
   - text: Creators
     link: /elixirs/
