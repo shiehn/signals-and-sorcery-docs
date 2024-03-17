@@ -12,7 +12,7 @@ DAWNet remotes are python scripts that are registered with the DAWNet discovery 
 ## How do I use them?
 
 1. Install the [DAWNet plugin](/getting-started/#installation).
-2. Generate & Copy a "token" from the DAWNet VST interface (top bar).
+2. Generate & copy a "token" from the DAWNet VST interface (top bar).
 3. Choose a colab below and follow the link. 
 4. Open the colab in Google Colab by clicking the "Open in Colab" button.
 5. Paste the "token" into Colab.  Find the token variable (called something similar to `dawnet_token`).  Set the value.
