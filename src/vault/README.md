@@ -8,8 +8,8 @@ sidebar: auto
 
 ## Google Colabs
 
->Name: **Remote Template**<br/>
-Description: This is a template for making remotes or testing.<br/>
+>Name: **Elixir Template**<br/>
+Description: This is a template for making and testing Elixirs.<br/>
 Link: [Remote Template](https://colab.research.google.com/github/shiehn/elixirs/blob/main/elixir_template.ipynb)
 
 >Name: **Style Transfer - MusicGen**<br/>
