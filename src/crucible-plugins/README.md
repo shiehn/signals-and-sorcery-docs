@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![crucible-plugins](/sas_crucible.png)
+![Patch Bay Two](/sas_patch_bay_two.png)
 
 # Crucible Plugins
 
@@ -18,6 +18,8 @@ Crucible-Audio is a VST plugin that executes remote python functions.  As an exa
   <source src="https://storage.googleapis.com/docs-assets/dawnet-intro.mov" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+![crucible-plugins](/sas_crucible.png)
 
 ## Installation
 

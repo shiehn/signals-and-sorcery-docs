@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![glossary](/sas_glossary.png)
+![Sorceress Two](/sas_sorceress_two.png)
 
 # Glossary Of Terms
 
@@ -38,7 +38,9 @@ sidebar: auto
 ## Runes CLI
 
 - The Runes CLI is a python CLI used to setup & manage [Elixir AI's](/elixirs) on MAC, LINUX and Servers
- 
+
+![glossary](/sas_glossary.png)
+
 ## Vault
 
 The Vault is a secure storage location for [Elixir AI's](/elixirs).  It is a place to store and share Elixirs with other users.

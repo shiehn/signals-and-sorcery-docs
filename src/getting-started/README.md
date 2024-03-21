@@ -4,6 +4,15 @@ sidebar: auto
 
 ![getting-started](/sas_getting_started.png)
 
+# Getting Started (end-user web app workflow)
+## How do I use it?
+
+1. Go to [Crucible Web](https://dawnet.tools)
+2. Copy or generate a new Token
+3. Launch a Google Colab. With the generated Token
+4. Open & use the `Connected Elixir` in the Crucible Web app
+
+
 # Getting Started (end-user music workflow)
 ## How do I use it?
  
@@ -36,6 +45,10 @@ In this video I demonstrate how to use a [Crucible plugin](/crucible-plugins) to
   <source src="https://storage.googleapis.com/docs-assets/style-tranfer-demo.mov">
   Your browser does not support the video tag.
 </video>
+
+
+![getting-started](/sas_patch_bay.png)
+
 
 # Getting Started (developing an Elixir)
 
