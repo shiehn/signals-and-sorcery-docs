@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![prologue](/sas_prologue.png)
+![sorceress](/sas_sorceress.png)
 
 ## API
 
