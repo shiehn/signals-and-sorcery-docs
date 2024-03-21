@@ -1,9 +1,17 @@
 .home .hero img {
-    height: 600px !important;
-    max-width: 100% !important;
-    max-height: 600px !important;
+    height: 640px !important;
+    max-height: 100% !important;
     display: block !important;
     margin: 3rem auto 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .home .hero img {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+        margin: 3rem auto 1.5rem !important;
+    }
 }
 
 .signals-and-sorcery-font {
