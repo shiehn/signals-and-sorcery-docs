@@ -11,8 +11,7 @@ actions:
   - text: Creators
     link: /elixirs/
     type: secondary
-heroImage: ./sas_logo.png
-heroHeight: 200
+heroImage: ./sas_logo_two.png 
 features:
     - title: Users
       details: Install Crucible plugins for audio, video, image & web apps. Find AI Elixirs and run them anywhere there is a GPU!
