@@ -10,6 +10,8 @@ sidebar: auto
 
 [CrucibleWeb](http://dawnet.tools) is the best place to get started. Connect, test, and use your Elixirs in the browser. 
 
+<iframe width="100%" height="400px" src="https://www.youtube.com/embed/K65jKKUyAvQ?si=-4e-xfKmKqjKR4BI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Crucible Audio
 
 Crucible-Audio is a VST plugin that executes remote python functions.  As an example, a user may want to perform `audio stem splitting` on a remote server.  Using the [DAWNet Client](/client/) they can send data from the DAW to the remote function, and back again.
