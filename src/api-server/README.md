@@ -9,7 +9,7 @@ sidebar: auto
 The Signals & Sorcery API is consumed by the following clients:
 - [Crucible Plugins](/crucible-plugins/)
 - [Runes CLI](/runes-cli/)
-- [Elixir Client](/elixirs/)
+- [Runes Client](/runes/)
 
 The API can also be used as a public API for developers who want to create their own clients & plugins.
 

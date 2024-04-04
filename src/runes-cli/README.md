@@ -7,7 +7,7 @@ sidebar: auto
 # Runes CLI
 
 ## What is it?
-The `RUNES CLI` is a command line tool for building, running and publishing Elixirs to the Vault. 
+The `RUNES CLI` is a command line tool for building, running and publishing Runes to the Vault. 
 
 ## Requirements:
 - ensure Python >= 3.x is installed
@@ -43,13 +43,13 @@ runes
 
 #### As a developer use the runes-cli to:
 
-- build your CoLab/Jupyter notebook (`.ipynb` file) into an Elixir
-- publish your build Elixir to the Vault
+- build your CoLab/Jupyter notebook (`.ipynb` file) into an Rune
+- publish your build Rune to the Vault
 
 #### As an end-user use the runes-cli to:
 
-- search for & install Elixirs listed in the Vault
-- run Elixirs on your local machine or a remote server
+- search for & install Runes listed in the Vault
+- run Runes on your local machine or a remote server
 
 <iframe width="100%" height="400px" src="https://www.youtube.com/embed/K65jKKUyAvQ?si=-4e-xfKmKqjKR4BI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 

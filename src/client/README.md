@@ -39,7 +39,7 @@ For other operating systems or more detailed instructions, visit the FFMpeg webs
 
 ## Usage
 
-This is a simple example of a Elixir script created using the elixir-client.  The script defines an arbitrary function that takes two arguments, an integer and a DAWNetFilePath.  The function is registered with the DAWNet discovery server.  The script then connects to the DAWNet discovery server and waits for a remote trigger.
+This is a simple example of a Rune script created using the elixir-client.  The script defines an arbitrary function that takes two arguments, an integer and a DAWNetFilePath.  The function is registered with the DAWNet discovery server.  The script then connects to the DAWNet discovery server and waits for a remote trigger.
 
 ```python
 import elixir_client.core as dawnet

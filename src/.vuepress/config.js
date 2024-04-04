@@ -6,7 +6,7 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
     title: ' ',
-    description: 'Extend your apps with self-hosted AI Elixirs',
+    description: 'Plugins to run generative AI functions',
     theme: defaultTheme({
         logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
@@ -34,8 +34,8 @@ export default {
                 link: '/crucible-plugins/',
             },
             {
-                text: 'elixirs',
-                link: '/elixirs/',
+                text: 'runes',
+                link: '/runes/',
             },
             {
                 text: 'api',

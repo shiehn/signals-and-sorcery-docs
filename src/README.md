@@ -9,14 +9,14 @@ actions:
     link: http://dawnet.tools
     type: primary
   - text: Creators
-    link: /elixirs/
+    link: /runes/
     type: secondary
 heroImage: ./sas_logo_two.png 
 features:
     - title: Users
-      details: Install Crucible plugins for audio, video, image & web apps. Find AI Elixirs and run them anywhere there is a GPU!
+      details: Install Crucible plugins for audio, video, image & web apps. Find AI Runes and run them anywhere there is a GPU!
     - title: Creators
-      details: Write Colab/Jupyter notebooks in Python. Package them as AI Elixirs, and expose them to Crucible plugins!
+      details: Write Colab/Jupyter notebooks in Python. Package them as AI Runes, and expose them to Crucible plugins!
     - title: Open Source 
       details: Signals & Sorcery is an open source platform released under the GPL-3.0 license.
     

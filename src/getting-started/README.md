@@ -10,7 +10,7 @@ sidebar: auto
 1. Go to [Crucible Web](https://dawnet.tools)
 2. Copy or generate a new Token
 3. Launch a Google Colab. With the generated Token
-4. Open & use the `Connected Elixir` in the Crucible Web app
+4. Open & use the `Connected Rune` in the Crucible Web app
 
 
 # Getting Started (end-user music workflow)
@@ -50,14 +50,14 @@ In this video I demonstrate how to use a [Crucible plugin](/crucible-plugins) to
 ![getting-started](/sas_patch_bay.png)
 
 
-# Getting Started (developing an Elixir)
+# Getting Started (developing an AI Rune)
 
-## Create an Elixir
-1. Launch the Elixir template in either a Google Colab or as a Jyuptyer notebook.
-2. Write your function in the notebook. See the [Elixir](/elixirs/) section for more details.
+## Create a Rune
+1. Launch the Rune template in either a Google Colab or as a Jyuptyer notebook.
+2. Write your function in the notebook. See the [Rune](/runes/) section for more details.
 3. Test your function by connecting it to a Crucible plugin.  See the [Crucible](/crucible-plugins/) section for more details
 
-## Publish an Elixir to the Vault (coming soon ...)
+## Publish a Rune to the Vault
 1. Install the [RUNES CLI](/runes-cli/)
-2. Build your `.ipynb` file into an Elixir using the `runes-cli`
-3. Publish your Elixir to the Vault using the `runes-cli`
+2. Build your `.ipynb` file into an Rune using the `runes-cli`
+3. Publish your Rune to the Vault using the `runes-cli`
