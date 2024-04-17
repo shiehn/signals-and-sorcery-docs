@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![vault](/sas_vault.png)
+![vault](/sas_runes_vault_2.png)
 
 # The Vault
 

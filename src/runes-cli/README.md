@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![runes_cli](/sas_runes_cli.png)
+![runes_cli](/sas_runes_cli_2.png)
 
 # Runes CLI
 

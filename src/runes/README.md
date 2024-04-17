@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![runes](/sas_elixir.png)
+![runes](/sas_runes_client_2.png)
 
 # Runes
 

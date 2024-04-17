@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-![guild](/sas_guild.png)
+![guild](/sas_runes_guild_2.png)
 
 # The Guild
 
