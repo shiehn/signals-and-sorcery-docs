@@ -7,10 +7,12 @@ sidebar: auto
 # Getting Started (end-user web app workflow)
 ## How do I use it?
 
-1. Go to [Crucible Web](https://dawnet.tools)
-2. Copy or generate a new Token
-3. Launch a Google Colab. With the generated Token
-4. Open & use the `Connected Rune` in the Crucible Web app
+1. Open the [Crucible Web](https://dawnet.tools/) plugin in a browser.
+2. Copy the "token" from the top right of the plugin.
+3. Install the Runes CLI. See [Runes-CLI]/runes-cli/ for details.  TLDR: `pip install runes-cli`
+4. Run the runes-cli in a terminal with the key word `runes`.  Select `tokens`, then `add`, then paste the token copied from the plugin.
+5. Run a pre-made Rune. From the runes-cli, select `runes (run or manage published runes)` then select an `available rune` from the list. I recommend starting with a rune that does not require a GPU. (look for CPU) Try the `Rune Template` for starter.
+6. After the Rune has has started, you can interact with if from the Crucible Web plugin.  Go back to the plugin and select the `Connected Runes` tab.  You should see the Rune you started.  Click on the Rune to interact with it!
 
 
 # Getting Started (end-user music workflow)
@@ -48,16 +50,3 @@ In this video I demonstrate how to use a [Crucible plugin](/crucible-plugins) to
 
 
 ![getting-started](/sas_patch_bay.png)
-
-
-# Getting Started (developing an AI Rune)
-
-## Create a Rune
-1. Launch the Rune template in either a Google Colab or as a Jyuptyer notebook.
-2. Write your function in the notebook. See the [Rune](/runes/) section for more details.
-3. Test your function by connecting it to a Crucible plugin.  See the [Crucible](/crucible-plugins/) section for more details
-
-## Publish a Rune to the Vault
-1. Install the [RUNES CLI](/runes-cli/)
-2. Build your `.ipynb` file into an Rune using the `runes-cli`
-3. Publish your Rune to the Vault using the `runes-cli`

@@ -9,8 +9,8 @@ sidebar: auto
 ## Source Code
 
 The platform is licenced under GPL 3.0:
-* [Runes - cli](https://github.com/shiehn/runes_cli)
-* [Elixir - client](https://github.com/shiehn/elixir_client)
+* [RUNES - cli](https://github.com/shiehn/runes_cli)
+* [RUNES - client](https://github.com/shiehn/runes_client)
 * [Signals & Sorcery - server](https://github.com/shiehn/signals-and-sorcery-server)
 
 ## Discussion

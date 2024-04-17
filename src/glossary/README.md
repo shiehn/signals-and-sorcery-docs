@@ -8,7 +8,7 @@ sidebar: auto
 
 ## Crucible Plugins
 
-[Crucible plugins](/crucible-plugins) are a series of native plugins that expose the Elixir AI's functionality in domain specific application. ex:
+[Crucible plugins](/crucible-plugins) are a series of native plugins that expose the Rune AI's functionality in domain specific application. ex:
 - Crucible-Sound for Ableton
 - Crucible-Image for Figma (coming soon)
 - Crucible-Web for Web Browsers (coming soon)
@@ -43,7 +43,7 @@ The [Runes CLI](/runes-cli) is a python command-line-interface used to manage [R
 
 ## Vault
 
-The [Vault](/vault) is an [Elixir AI's](/elixirs) registry.  It is a place to store and share Elixirs with other users.
+The [Vault](/vault) is an [Rune AI's](/runes) registry.  It is a place to store and share Elixirs with other users.
 
 ## Virtual Machines
 

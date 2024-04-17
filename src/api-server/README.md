@@ -13,7 +13,7 @@ The Signals & Sorcery API is consumed by the following clients:
 
 The API can also be used as a public API for developers who want to create their own clients & plugins.
 
-(API documentation ... coming soon)
+Visit the [API Docs](https://signalsandsorceryapi.com/api/swagger/) for details.
 
 ## Server
 
