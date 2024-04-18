@@ -56,7 +56,7 @@ export default {
             id: 'G-B2QMDKHWHF'
         }),
         sitemapPlugin({
-            hostname: 'dawnet.tools',
+            hostname: 'signalsandsorcery.app',
         }),
     ],
     head: [

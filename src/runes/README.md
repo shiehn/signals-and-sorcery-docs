@@ -13,7 +13,7 @@ Runes are special python scripts that can be distributed by the `Signals & Sorce
 
 There are multiple ways to consume Runes.  Lets start with the web plugin.
 
-1. Open the [Crucible Web](https://dawnet.tools/) plugin in a browser.
+1. Open the [Crucible Web](https://signalsandsorcery.app/) plugin in a browser.
 2. Copy the "token" from the top right of the plugin.
 3. Install the Runes CLI. See [Runes-CLI]/runes-cli/ for details.  TLDR: `pip install runes-cli` 
 4. Run the runes-cli in a terminal with the key word `runes`.  Select `tokens`, then `add`, then paste the token copied from the plugin.
@@ -80,7 +80,7 @@ pip install runes-client --upgrade
 
 This is a simple example of a RUNES script created using the runes-client.  The script defines an arbitrary function that takes two arguments, an integer and a RunesFilePath.  The function is registered with the SignalsAndSorceryAPI server.  The script then connects to the SignalsAndSorceryAPI server and waits for a plugin to interact with it.
 
-For thorough documentation and tutorials visit: [https://dawnet.tools/client/](https://dawnet.tools/client/)
+For thorough documentation and tutorials visit: [https://signalsandsorcery.com/client/](https://signalsandsorcery.com/client/)
 
 ```python
 import runes_client.core as runes 

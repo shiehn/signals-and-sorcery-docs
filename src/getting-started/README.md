@@ -7,7 +7,7 @@ sidebar: auto
 # Getting Started (end-user web app workflow)
 ## How do I use it?
 
-1. Open the [Crucible Web](https://dawnet.tools/) plugin in a browser.
+1. Open the [Crucible Web](https://signalsandsorcery.app/) plugin in a browser.
 2. Copy the "token" from the top right of the plugin.
 3. Install the Runes CLI. See [Runes-CLI]/runes-cli/ for details.  TLDR: `pip install runes-cli`
 4. Run the runes-cli in a terminal with the key word `runes`.  Select `tokens`, then `add`, then paste the token copied from the plugin.

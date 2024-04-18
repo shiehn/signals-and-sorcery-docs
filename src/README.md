@@ -6,7 +6,7 @@ head:
 home: true 
 actions:
   - text: Users
-    link: http://dawnet.tools
+    link: http://signalsandsorcery.app
     type: primary
   - text: Creators
     link: /runes/
