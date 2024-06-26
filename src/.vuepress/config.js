@@ -6,7 +6,7 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
     title: ' ',
-    description: 'Plugins to run generative AI functions',
+    description: 'Chat based RPG game engine!',
     theme: defaultTheme({
         logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
@@ -17,36 +17,36 @@ export default {
                 text: 'prologue',
                 link: '/prologue/',
             },
+            // {
+            //     text: 'glossary',
+            //     link: '/glossary/',
+            // },
+            // {
+            //     text: 'getting-started',
+            //     link: '/getting-started/',
+            // },
+            // {
+            //     text: 'runes-cli',
+            //     link: '/runes-cli/',
+            // },
+            // {
+            //     text: 'crucible-plugins',
+            //     link: '/crucible-plugins/',
+            // },
+            // {
+            //     text: 'runes',
+            //     link: '/runes/',
+            // },
             {
-                text: 'glossary',
-                link: '/glossary/',
-            },
-            {
-                text: 'getting-started',
-                link: '/getting-started/',
-            },
-            {
-                text: 'runes-cli',
-                link: '/runes-cli/',
-            },
-            {
-                text: 'crucible-plugins',
-                link: '/crucible-plugins/',
-            },
-            {
-                text: 'runes',
-                link: '/runes/',
-            },
-            {
-                text: 'api',
+                text: 'how to play',
                 link: '/api-server/',
             },
+            // {
+            //     text: 'vault',
+            //     link: '/vault/',
+            // },
             {
-                text: 'vault',
-                link: '/vault/',
-            },
-            {
-                text: 'guild',
+                text: 'about',
                 link: '/guild/',
             },
         ],

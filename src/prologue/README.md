@@ -6,16 +6,19 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a platform for creating, sharing, and consuming machine learning operations.  A developer can write a python function, publish it, host it, and have it consumed from native applications such as Ableton, Figma, and Chrome Extensions.
+Signals & Sorcery is essentially a multi-user dungeon (MUD) turned into a LLM RAG using [LangChain](https://www.langchain.com/).
 
 ## Who is this for?
 
-- Application power users who want to extend their applications with self-hosted SOTA AI operations. ex. META releases a new audio generation model and a user wants to use it in their DAW immediately.
-- Developers creating Colab/Jupyter notebooks who want to use them in the context of a native application.  ex. A developer creates a new audio stem splitting model and wants to use it in int the context of their DAW.
+- People who enjoy chat based games and want to experience a new type of generative interactive game.
+- Folks interested in seeing whats possible with AI and generative art.
 
 ## How does it work?
 
-Signals & Sorcery is composed of three core components. 
-- A network discovery server.  Essentially a system that brokers data transfer between the `Crucible Plugins` and the `Rune AI's`.
-- A Python3 pip package `runes-cli`. The package is used to package, invoke and publish a python functions as `Rune AI's`.
-- Native plugins called `Crucible Plugins`.  The plugins are essentially embedded web-forms.  When a Rune is connected to a `curcible-plugin` an interface this is generated from the `Rune AI's` function signature. The user can call the Runes function and pass data to-and-fro from the plugin to the Rune. In the case of  `Crucible-Audio` the user can drag/drop audio/midi files from the DAW into plugin, which is then transferred to the `Runes` compute instance.
+- Signals & Sorcery at its core is an LLM RAG
+- It uses [LangChain](https://www.langchain.com/) to wrap a custom RPG API.
+- The server cost is put on the user.  They must provide their own [OpenAI API key](https://openai.com/api/) to generate content.
+
+
+
+

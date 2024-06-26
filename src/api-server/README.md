@@ -4,23 +4,27 @@ sidebar: auto
 
 ![sorceress](/sas_sorceress.png)
 
-## API
+## Get an OpenAI API Key
 
-The Signals & Sorcery API is consumed by the following clients:
-- [Crucible Plugins](/crucible-plugins/)
-- [Runes CLI](/runes-cli/)
-- [Runes Client](/runes/)
+- First get an [OpenAI API key](https://openai.com/api/).  You will need to provide this key to the Signals & Sorcery server to generate content.
 
-The API can also be used as a public API for developers who want to create their own clients & plugins.
+**WARNING:**  Giving out your OpenAI API key is generally a bad idea.  I have no intentions of abusing your key but I also want to be transparent about the risks.  OpenAI recommends against sharing your key with anyone.
 
-Visit the [API Docs](https://signalsandsorceryapi.com/api/swagger/) for details.
+**NOTE:**  This is ultimately a prototype.  If its turns out to generate a lot of content I will likely switch to a pay per use model or offer an open source version that you can host yourself.
+ 
 
-## Server
+## Provide A world description
 
-- Application power users who want to extend their applications with self-hosted SOTA AI operations. ex. META releases a new audio generation model and a user wants to use it in their DAW immediately.
-- Developers creating Colab/Jupyter notebooks who want to use them in the context of a native application.  ex. A developer creates a new audio stem splitting model and wants to use it in int the context of their DAW.
-- API Docs (coming soon ...)
+The narration and images are based on the description provided.  Here are some ideas:
+- A world of Medieval Humanoid Animals
+- Steampunk Robot society
+- Pirate airship adventures
+- Advanced Frog and Toad civilization
 
-## Self-Host a Server
+## Provide an art style description
 
-The Signals & Sorcery server is completely open source and can be self-hosted.  See the [GitHub](https://github.com/shiehn/dawnet-server) for more details.
+The images will be generated based on the art style description.  Here are some ideas:
+- Watercolor
+- Oil painting
+- Line art
+- Sepia tone

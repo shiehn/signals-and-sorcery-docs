@@ -2,23 +2,23 @@
 head:
   - - meta
     - name: description
-      content: Signals & Sorcery is a platform for packaging, sharing and consuming machine learning operations. Extend applications with self-hosted AI operations. 
+      content: Signals & Sorcery is multi-user dungeon (MUD) turned into a LLM RAG using LangChain. 
 home: true 
 actions:
-  - text: Users
+  - text: Play Game
     link: http://signalsandsorcery.app
     type: primary
-  - text: Creators
-    link: /runes/
+  - text: About
+    link: /guild/
     type: secondary
 heroImage: ./sas_logo_two.png 
 features:
-    - title: Users
-      details: Install Crucible plugins for audio, video, image & web apps. Find AI Runes and run them anywhere there is a GPU!
-    - title: Creators
-      details: Write Colab/Jupyter notebooks in Python. Package them as AI Runes, and expose them to Crucible plugins!
-    - title: Open Source 
-      details: Signals & Sorcery is an open source platform released under the GPL-3.0 license.
+    - title: Chat RPG
+      details: Signals & Sorcery is a chat-based RPG that uses AI to generate art and narration.
+    - title: Powered by
+      details: Signals & Sorcery is powered by OpenAI (for now).  Use your own OpenAI API key to generate content. 
+    - title: Built With 
+      details: Signals & Sorcery is essentially a multi-user dungeon (MUD) turned into a LLM RAG using LangChain.
     
 footer: Made by Steve Hiehn with ❤️
 ---

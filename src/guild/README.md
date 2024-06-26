@@ -4,14 +4,7 @@ sidebar: auto
 
 ![guild](/sas_runes_guild_2.png)
 
-# The Guild
-
-## Source Code
-
-The platform is licenced under GPL 3.0:
-* [RUNES - cli](https://github.com/shiehn/runes_cli)
-* [RUNES - client](https://github.com/shiehn/runes_client)
-* [Signals & Sorcery - server](https://github.com/shiehn/signals-and-sorcery-server)
+# About
 
 ## Discussion
 
