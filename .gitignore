@@ -9,3 +9,5 @@ src/.vuepress/.temp/*
 src/.DS_Store
 src/.vuepress/.DS_Store
 *.DS_Store
+
+.idea*
