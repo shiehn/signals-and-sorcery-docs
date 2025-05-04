@@ -6,18 +6,18 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is essentially a multi-user dungeon (MUD) turned into a LLM RAG using [LangChain](https://www.langchain.com/).
+Signals & Sorcery is a Max4Live device.  The idea is to have each track generate its own MIDI.
 
 ## Who is this for?
 
-- People who enjoy chat based games and want to experience a new type of generative interactive game.
-- Folks interested in seeing whats possible with AI and generative art.
+- Producers looking to generate electronic music ideas fast
+- Tech hacker music type folks who want to use/extend open source software 
 
 ## How does it work?
 
-- Signals & Sorcery at its core is an LLM RAG
-- It uses [LangChain](https://www.langchain.com/) to wrap a custom RPG API.
-- The server cost is put on the user.  They must provide their own [OpenAI API key](https://openai.com/api/) to generate content.
+- Signals & Sorcery is a javascript M4L Device
+- It talks to a Python Server which is talking to a LLM.
+- The server asks the LLM to generate MIDI give the context of the neighboring tracks
 
 
 

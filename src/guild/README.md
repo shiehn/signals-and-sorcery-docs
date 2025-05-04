@@ -15,13 +15,12 @@ Please direct all questions, bugs, and feature requests to the
 
 Find the supporting infrastructure code here:
 
-- [https://github.com/shiehn/signals-and-sorcery-server](https://github.com/shiehn/signals-and-sorcery-server)
+- [comming soon ...]()
+ 
 
-- [https://github.com/shiehn/signalsandsorcery-game-ui](https://github.com/shiehn/signalsandsorcery-game-ui)
+## Download the latest M4l device here:
 
-## Play the hosted version here:
-
-- [https://signalsandsorcery.app/](https://signalsandsorcery.app/)
+- [https://signalsandsorcery.app/](https://storage.googleapis.com/docs-assets/signalsandsorcery_m4l_v0.1.amxd)
 
 ## Contact
 

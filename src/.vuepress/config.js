@@ -6,7 +6,7 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
     title: ' ',
-    description: 'An LLM powered RPG game agent!',
+    description: 'An Ableton Max4Live LLM plugin!',
     theme: defaultTheme({
         logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
