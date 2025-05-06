@@ -20,7 +20,7 @@ Find the supporting infrastructure code here:
 
 ## Download the latest M4l device here:
 
-- [https://signalsandsorcery.app/](https://storage.googleapis.com/docs-assets/signalsandsorcery_m4l_v0.1.amxd)
+- [Signals & Sorcery Max4Live Device](https://storage.googleapis.com/docs-assets/signalsandsorcery_m4l_v0.2.amxd)
 
 ## Contact
 
