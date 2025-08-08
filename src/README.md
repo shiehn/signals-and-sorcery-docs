@@ -2,23 +2,23 @@
 head:
   - - meta
     - name: description
-      content: Signals & Sorcery is an multi-user dungeon (MUD) turned into a LLM agent using LangChain. 
+      content: Signals & Sorcery - AI-powered audio production assistant for REAPER DAW. Control your DAW with natural language commands. 
 home: true 
 actions:
-  - text: Install
-    link: /guild/
+  - text: Download
+    link: /getting-started/
     type: primary
-  - text: Authorize
-    link: http://signalsandsorceryapi.com/
+  - text: Documentation
+    link: /prologue/
     type: secondary
 heroImage: ./sas_logo_two.png 
 features:
-    - title: Max4Live Plugin
-      details: Signals & Sorcery is a MIDI clip generator. Assign a role to a track and have it generate it's own MIDI.
-    - title: Powered by
-      details: Signals & Sorcery is powered by LLM hosted on GROQ by default. Self-hosting is an Option. 
-    - title: Open Source 
-      details: Signals & Sorcery is open source and licensed under GPL3.  The code for the UI and the supporting infrastructure is on GitHub.
+    - title: Natural Language Control
+      details: Control REAPER with conversational commands. "Add reverb to vocals" or "Create a drum track with 808 pattern" - just type what you want!
+    - title: AI-Powered Intelligence
+      details: Works with OpenAI (ChatGPT), Groq, and Claude. Smart router selects the right tools from 93 available operations.
+    - title: Native Desktop App
+      details: Electron-based application with TypeScript MCP server. Auto-installs REAPER bridge on first launch for zero-friction setup.
     
 footer: Made by Steve Hiehn with ❤️
 ---

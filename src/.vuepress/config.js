@@ -5,48 +5,32 @@ import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
 import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
-    title: ' ',
-    description: 'An Ableton Max4Live LLM plugin!',
+    title: 'Signals & Sorcery',
+    description: 'AI-powered audio production assistant for REAPER DAW',
     theme: defaultTheme({
-        logo: "/sas_sm_logo.png",
+        // logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
         colorModeSwitch: false,
         colorMode: 'dark',
         navbar: [
             {
-                text: 'prologue',
+                text: 'Overview',
                 link: '/prologue/',
             },
-            // {
-            //     text: 'glossary',
-            //     link: '/glossary/',
-            // },
-            // {
-            //     text: 'getting-started',
-            //     link: '/getting-started/',
-            // },
-            // {
-            //     text: 'runes-cli',
-            //     link: '/runes-cli/',
-            // },
-            // {
-            //     text: 'crucible-plugins',
-            //     link: '/crucible-plugins/',
-            // },
-            // {
-            //     text: 'runes',
-            //     link: '/runes/',
-            // },
             {
-                text: 'how to play',
+                text: 'Getting Started',
+                link: '/getting-started/',
+            },
+            {
+                text: 'Features',
                 link: '/api-server/',
             },
-            // {
-            //     text: 'vault',
-            //     link: '/vault/',
-            // },
             {
-                text: 'about',
+                text: 'Developer Guide',
+                link: '/runes-cli/',
+            },
+            {
+                text: 'About',
                 link: '/guild/',
             },
         ],

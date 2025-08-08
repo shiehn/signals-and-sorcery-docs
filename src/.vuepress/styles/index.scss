@@ -22,3 +22,17 @@
     font-size: 1.2rem !important;
 }
 
+// Apply Rye font to the navbar title
+.navbar .site-name {
+    font-family: "Rye", serif !important;
+    font-weight: 400;
+    font-style: normal;
+}
+
+// Apply Rye font to the homepage hero title only (not the description)
+.home .hero h1 {
+    font-family: "Rye", serif !important;
+    font-weight: 400;
+    font-style: normal;
+}
+
