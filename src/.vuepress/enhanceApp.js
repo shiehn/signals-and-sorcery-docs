@@ -10,16 +10,48 @@ export default ({
   router, // the router instance for the app
   siteData // site metadata
 }) => {
-  // ...apply enhancements for the site.
-    //console.log("EnhanceApp function executed");
-    // rest of your code...
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   document.querySelector('body').classList.add('dark');
-  //   alert("dark mode activated")
-  // });
+  // Load download links dynamically from downloads.json
+  if (typeof window !== 'undefined') {
+    router.onReady(() => {
+      // Run on initial load and after each route change
+      const loadDownloadLinks = () => {
+        const downloadLinksDiv = document.getElementById('download-links');
+        if (!downloadLinksDiv) return;
 
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   //document.body.classList.add('theme-dark');
-  //   //document.querySelector('body').classList.add('dark');
-  // });
+        fetch('https://signalsandsorcery.com/downloads.json')
+          .then(response => response.json())
+          .then(data => {
+            const mac = data.platforms?.mac || {};
+            let html = '<ul style="list-style: none; padding: 0;">';
+
+            if (mac.arm64) {
+              html += `<li style="margin: 10px 0;"><strong><a href="${mac.arm64.url}">Apple Silicon Mac</a></strong> - Download for Apple Silicon Macs</li>`;
+            }
+
+            if (mac.x64) {
+              html += `<li style="margin: 10px 0;"><strong><a href="${mac.x64.url}">Intel Mac</a></strong> - Download for Intel Macs</li>`;
+            } else {
+              html += '<li style="margin: 10px 0;"><strong>Intel Mac</strong> - Coming soon</li>';
+            }
+
+            html += '</ul>';
+            downloadLinksDiv.innerHTML = html;
+          })
+          .catch(error => {
+            console.error('Failed to load download links:', error);
+            downloadLinksDiv.innerHTML = '<p>Unable to load download links. Please visit <a href="https://signalsandsorcery.com">signalsandsorcery.com</a></p>';
+          });
+      };
+
+      // Load on initial page
+      loadDownloadLinks();
+
+      // Reload after each route change
+      router.afterEach(() => {
+        Vue.nextTick(() => {
+          loadDownloadLinks();
+        });
+      });
+    });
+  }
 }
