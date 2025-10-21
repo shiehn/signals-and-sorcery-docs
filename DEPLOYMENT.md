@@ -41,20 +41,74 @@ Choose the version for your system:
 - **SEO-friendly:** Links visible to search engines and crawlers
 - **Simple:** Direct markdown links, no complex fetching logic
 - **Fast:** No additional HTTP requests on page load
+- **Auto-updated:** The release script uses regex to automatically update these links
 
-### Avoid Dynamic Loading
+### What About downloads.json?
 
-❌ **DO NOT** use this pattern (it was attempted and failed):
+The release script **also** generates and updates `downloads.json`. This file serves different purposes:
+
+- **Version API:** External tools can query current version info
+- **Release History:** Maintains last 10 versions in `versions` array
+- **Metadata:** Stores file sizes, dates, and download URLs
+- **Future Use:** Could be used for update checkers, analytics, etc.
+
+**Location:** `dawnet-docs-gh-pages/downloads.json`
+
+The website does NOT use JavaScript to load from downloads.json for display - the hardcoded markdown links are used instead for reliability.
+
+### Avoid Dynamic Loading for Display
+
+❌ **DO NOT** use this pattern for the main download link:
 ```html
 <div id="download-links"><p>Loading download links...</p></div>
 ```
-With JavaScript fetching `downloads.json` - this approach is unreliable in the VuePress build system.
+With JavaScript fetching `downloads.json` - this approach is unreliable in the VuePress build system and not needed since the release script auto-updates the markdown.
 
 ## Updating Download Links for New Releases
 
-When you release a new version (e.g., v0.13.0):
+**IMPORTANT:** The release process is **fully automated** via the release script!
 
-### Step 1: Upload DMG to Google Cloud Storage
+### Automated Release Process (Recommended)
+
+When you want to release a new version, run:
+
+```bash
+cd /Users/stevehiehn/sas-m4l-project/sas-assistant
+
+# For minor version bump (0.12.0 → 0.13.0)
+npm run release
+
+# Or specify version type
+npm run release:major  # 0.12.0 → 1.0.0
+npm run release:minor  # 0.12.0 → 0.13.0
+npm run release:patch  # 0.12.0 → 0.12.1
+```
+
+**What the release script does automatically:**
+
+1. ✅ Runs tests
+2. ✅ Bumps version in package.json
+3. ✅ Builds the DMG
+4. ✅ Uploads DMG to Google Cloud Storage (`gs://docs-assets/`)
+5. ✅ Updates `downloads.json` with new version info
+6. ✅ **Updates hardcoded download links** in `src/getting-started/README.md` via regex
+7. ✅ Rebuilds VuePress documentation
+8. ✅ Deploys to GitHub Pages (both main and gh-pages branches)
+9. ✅ Creates git tag
+10. ✅ Optionally creates GitHub release
+
+**Release script location:** `sas-assistant/scripts/release.js`
+
+The script automatically finds and updates download links using this regex:
+```javascript
+/https:\/\/storage\.googleapis\.com\/docs-assets\/signals-and-sorcery-\d+_\d+_\d+-arm64\.dmg/g
+```
+
+### Manual Release Process (Not Recommended)
+
+⚠️ Only use if the automated release script fails.
+
+#### Step 1: Upload DMG to Google Cloud Storage
 
 ```bash
 # Upload the new DMG file
@@ -64,7 +118,7 @@ gsutil cp signals-and-sorcery-0_13_0-arm64.dmg gs://docs-assets/
 gsutil acl ch -u AllUsers:R gs://docs-assets/signals-and-sorcery-0_13_0-arm64.dmg
 ```
 
-### Step 2: Update the Download Link in Markdown
+#### Step 2: Update the Download Link in Markdown
 
 Edit `src/getting-started/README.md`:
 
@@ -76,7 +130,7 @@ Update:
 1. The URL to point to new version (e.g., `0_13_0`)
 2. The version number in parentheses (e.g., `v0.13.0`)
 
-### Step 3: Build and Deploy
+#### Step 3: Build and Deploy
 
 ```bash
 cd /Users/stevehiehn/sas-m4l-project/signals-and-sorcery-docs
@@ -105,7 +159,7 @@ git commit -m "Update download link to v0.13.0"
 git push origin main
 ```
 
-### Step 4: Verify Deployment
+#### Step 4: Verify Deployment
 
 Wait 2-3 minutes for GitHub Pages to propagate, then check:
 - https://signalsandsorcery.com/getting-started/
