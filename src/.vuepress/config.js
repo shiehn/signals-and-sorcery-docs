@@ -26,10 +26,6 @@ export default {
                 link: '/api-server/',
             },
             {
-                text: 'Developer Guide',
-                link: '/runes-cli/',
-            },
-            {
                 text: 'About',
                 link: '/guild/',
             },

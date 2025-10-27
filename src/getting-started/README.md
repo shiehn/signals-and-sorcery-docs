@@ -46,7 +46,7 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_12_0-arm64.dmg)** - Download for Apple Silicon Macs (v0.12.0)
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_13_0-arm64.dmg)** - Download for Apple Silicon Macs (v0.12.0)
 - **Intel Mac** - Coming soon
 
 **Note:** The app is signed and notarized by Apple for security.
@@ -63,6 +63,8 @@ Choose the version for your system:
 1. In Signals & Sorcery, click the Settings icon
 2. Enter your OpenAI API key
 3. Verify the connection shows as active
+
+![runes_cli](/sas_runes_cli_2.png)
 
 ### Basic Usage
 

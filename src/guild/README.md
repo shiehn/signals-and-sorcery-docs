@@ -75,7 +75,7 @@ See our [Contributing Guide](https://github.com/shiehn/reaper-chat/blob/main/CON
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: The software is free and open source. You'll need an API key from an AI provider (Groq offers a free tier).
+A: Signals & Sorcery is, but you'll need an API key from an AI provider which is not free.
 
 **Q: Does it work with other DAWs?**
 A: Currently only REAPER is supported, but the architecture could be adapted for other DAWs.
@@ -89,22 +89,16 @@ A: All processing happens through your chosen AI provider's API. We don't store 
 ## Credits
 
 ### Core Team
-- **Steve Hiehn** - Creator and Lead Developer
+- **Steve Hiehn** - Creator / Developer
 
 ### Technologies
 - Built with [Electron](https://www.electronjs.org/) and [React](https://react.dev/)
 - Powered by [Model Context Protocol](https://github.com/anthropics/mcp)
-- UI inspired by Claude and ChatGPT interfaces
 - REAPER integration via ReaScript
 
 ### Special Thanks
 - The REAPER community for feedback and testing
 - Anthropic for the MCP protocol
-- All our open source contributors
-
-## License
-
-MIT License - see [LICENSE](https://github.com/shiehn/reaper-chat/blob/main/LICENSE) for details.
 
 ## Contact
 
