@@ -8,7 +8,7 @@ sidebar: auto
 
 ### System Requirements
 
-- **macOS** with Apple Silicon (M1/M2/M3/M4) chip
+- **macOS** with Apple Silicon (M1/M2/M3/M4) or Intel chip
 - **REAPER** 6.0 or later
 - **Surge XT** synthesizer plugin
 - **Internet connection** for AI features
@@ -23,14 +23,18 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 ##### Install REAPER
 
 1. Download REAPER from [https://www.reaper.fm/download.php](https://www.reaper.fm/download.php)
-2. Download the **macOS (ARM64)** version for Apple Silicon
+2. Download the version matching your Mac:
+   - **macOS (ARM64)** for Apple Silicon Macs (M1/M2/M3/M4)
+   - **macOS (x64)** for Intel Macs
 3. Open the downloaded DMG and drag REAPER to your Applications folder
 4. Launch REAPER at least once to complete initial setup
 
 ##### Install Surge XT
 
 1. Download Surge XT from [https://surge-synthesizer.github.io/](https://surge-synthesizer.github.io/)
-2. Download the **macOS (Apple Silicon)** installer
+2. Download the version matching your Mac:
+   - **macOS (Apple Silicon)** for M1/M2/M3/M4 Macs
+   - **macOS (Intel)** for Intel Macs
 3. Run the installer - it will install the VST3 plugin to the correct location
 4. Verify installation: Open REAPER → Insert a new track → Click FX button → Search for "Surge XT" in the plugin list
 
@@ -46,8 +50,8 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_13_1-arm64.dmg)** - Download for Apple Silicon Macs (v0.12.0)
-- **Intel Mac** - Coming soon
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_13_1-arm64.dmg)** - Download for Apple Silicon Macs
+- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_13_1-x64.dmg)** - Download for Intel Macs
 
 **Note:** The app is signed and notarized by Apple for security.
 
@@ -137,7 +141,7 @@ AI: Generated chord progression and configured Surge XT pad preset
 #### Surge XT Not Loading
 - **Verify Plugin Installation** - Open REAPER → Insert FX → Search for "Surge XT"
 - **Re-scan Plugins** - REAPER → Preferences → Plug-ins → VST → "Re-scan"
-- **Check Architecture** - Ensure you installed the Apple Silicon version, not Intel
+- **Check Architecture** - Ensure you installed the version matching your Mac (Apple Silicon or Intel)
 
 #### MIDI Not Generating
 - **Check Track Has Instrument** - Ensure the track has Surge XT or another synth loaded
