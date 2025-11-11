@@ -14,11 +14,11 @@ actions:
 heroImage: ./sas_logo_two.png 
 features:
     - title: Natural Language Control
-      details: Control REAPER with conversational commands. "Add reverb to vocals" or "Create a drum track with 808 pattern" - just type what you want!
-    - title: AI-Powered Intelligence
-      details: Works with OpenAI (ChatGPT), Groq, and Claude. Smart router selects the right tools from 93 available operations.
-    - title: Native Desktop App
-      details: Electron-based application with TypeScript MCP server. Auto-installs REAPER bridge on first launch for zero-friction setup.
+      details: Describe audio clips with natural language. EX. "Create a dark sub bassline"
+    - title: LLM Powered
+      details: Currently backed by with OpenAI (GPT-5)
+    - title: Mac OS App
+      details: Electron application with an embedded MCP server controls REAPER DAW with Surge XT
     
 footer: Made by Steve Hiehn with ❤️
 ---

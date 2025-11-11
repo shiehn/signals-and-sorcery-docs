@@ -50,8 +50,8 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_20_0-arm64.dmg)** - Download for Apple Silicon Macs
-- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_20_0-x64.dmg)** - Download for Intel Macs
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_21_1-arm64.dmg)** - Download for Apple Silicon Macs
+- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_21_1-x64.dmg)** - Download for Intel Macs
 
 **Note:** The app is signed and notarized by Apple for security.
 
@@ -83,52 +83,14 @@ Choose the version for your system:
 The core workflow is describing the sound you want for each track, and the AI will generate MIDI and configure the appropriate synth patches:
 
 ```
-You: Create 4 tracks - drums, bass, lead synth, and pad
+"create a synth sub bass"
 
-AI: Created 4 tracks with Surge XT loaded on each
+"add a 4 on the floor kick"
 
-You: For the drums, create a driving techno beat at 128 BPM with punchy kicks
+"add a snare"
 
-AI: Generated MIDI drum pattern and configured Surge XT with a punchy kick preset
-
-You: Add a deep rolling bassline that follows a minor progression
-
-AI: Generated bassline MIDI in A minor and configured Surge XT bass preset
-
-You: Create an arpeggiated lead melody that's bright and energetic
-
-AI: Generated arpeggio MIDI pattern and configured Surge XT lead preset
-
-You: Add ambient pad chords that wash in the background
-
-AI: Generated chord progression and configured Surge XT pad preset
+"add a synth padd on bars 2 and 4"
 ```
-
-#### Common Workflows
-
-**Track Management:**
-- "Create 3 new tracks for drums, bass, and melody"
-- "Rename track 2 to Bass"
-- "Delete the last track"
-- "Mute all tracks except track 1"
-
-**MIDI Generation:**
-- "Generate a 4-bar drum pattern in 4/4 time"
-- "Create a bassline that follows a C minor scale"
-- "Add a melody on track 3 with eighth notes"
-- "Generate chord progression in the key of G major"
-
-**FX Processing:**
-- "Add reverb to track 2"
-- "Shuffle FX on the bass track for a new sound"
-- "Add EQ and compression to the drum bus"
-- "Clear all FX from track 3"
-
-**Transport Control:**
-- "Start playback"
-- "Set tempo to 140 BPM"
-- "Loop from bar 1 to bar 8"
-- "Stop recording"
 
 ### Troubleshooting
 
