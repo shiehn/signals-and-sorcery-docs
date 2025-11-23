@@ -50,8 +50,8 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-1_0_4-arm64.dmg)** - Download for Apple Silicon Macs
-- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-1_0_4-x64.dmg)** - Download for Intel Macs
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-1_0_5-arm64.dmg)** - Download for Apple Silicon Macs
+- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-1_0_5-x64.dmg)** - Download for Intel Macs
 
 **Note:** The app is signed and notarized by Apple for security.
 
