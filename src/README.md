@@ -16,7 +16,7 @@ features:
     - title: Natural Language Control
       details: Describe audio clips with natural language. EX. "Create a dark sub bassline"
     - title: LLM Powered
-      details: Currently backed by with OpenAI (GPT-5)
+      details: Currently backed by with GPT-5 or Gemini
     - title: Mac OS App
       details: Electron application with an embedded MCP server controls REAPER DAW with Surge XT
     

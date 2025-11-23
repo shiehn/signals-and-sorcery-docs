@@ -7,17 +7,16 @@ sidebar: auto
 ## Core Features
 
 ### 🎵 Natural Language Control
-Generate audio clips with natural language commands:
+Generate MIDI clips (audio coming soon) with natural language commands:
 
 - "generate a piano melody"
 - "add a percussion fill on bar 4"
 - "dark reverb cello bassline"
 
 ### 🤖 Multiple AI Providers
-Choose the AI that works best for you:
+The app is powered by multiple models:
 
-- **OpenAI (ChatGPT)** - Most capable, best for complex operations
-- **Groq** - coming soon ...
-- **Claude** - coming soon ...
+- **OpenAI (ChatGPT)** - GPT 4 & 5 
+- **Google Gemini** - Gemini 2.5 & 3
 
 

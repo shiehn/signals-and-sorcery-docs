@@ -8,23 +8,23 @@ sidebar: auto
 
 ### System Requirements
 
-- **macOS** with Apple Silicon (M1/M2/M3/M4) or Intel chip
+- **macOS** with Apple M-Series or Intel chip
 - **REAPER** 6.0 or later
-- **Surge XT** synthesizer plugin
-- **Internet connection** for AI features
-- **OpenAI API Key** (required)
+- **Surge XT** synthesizer plugin (Tested vs 1.3.4)
+- **Internet connection** generation happens server-side
+- **Google Account** social login login with google 
 
 ### Installation
 
 #### 1. Install Dependencies
 
-Before installing Signals & Sorcery, you'll need to install the required dependencies:
+Before using Signals & Sorcery, you'll need to install the required dependencies:
 
 ##### Install REAPER
 
 1. Download REAPER from [https://www.reaper.fm/download.php](https://www.reaper.fm/download.php)
 2. Download the version matching your Mac:
-   - **macOS (ARM64)** for Apple Silicon Macs (M1/M2/M3/M4)
+   - **macOS (ARM64)** for Apple Silicon Macs (M-Series)
    - **macOS (x64)** for Intel Macs
 3. Open the downloaded DMG and drag REAPER to your Applications folder
 4. Launch REAPER at least once to complete initial setup
@@ -33,7 +33,7 @@ Before installing Signals & Sorcery, you'll need to install the required depende
 
 1. Download Surge XT from [https://surge-synthesizer.github.io/](https://surge-synthesizer.github.io/)
 2. Download the version matching your Mac:
-   - **macOS (Apple Silicon)** for M1/M2/M3/M4 Macs
+   - **macOS (Apple Silicon)** for M-Series Macs
    - **macOS (Intel)** for Intel Macs
 3. Run the installer - it will install the VST3 plugin to the correct location
 4. Verify installation: Open REAPER → Insert a new track → Click FX button → Search for "Surge XT" in the plugin list
@@ -61,12 +61,6 @@ Choose the version for your system:
 2. Drag Signals & Sorcery to your Applications folder
 3. Launch the app from Applications
 4. On first launch, the REAPER bridge will auto-install to your REAPER Scripts folder
-
-#### 4. Configure Settings
-
-1. In Signals & Sorcery, click the Settings icon
-2. Enter your OpenAI API key
-3. Verify the connection shows as active
 
 ![runes_cli](/sas_runes_cli_2.png)
 
@@ -109,11 +103,12 @@ The core workflow is describing the sound you want for each track, and the AI wi
 - **Check Track Has Instrument** - Ensure the track has Surge XT or another synth loaded
 - **Verify Track Is Not Muted** - Unmute the track and check volume levels
 - **Check Playback** - Press spacebar in REAPER to start playback
+- **Rate Limits** - Daily token limits are set per user for the free tier
 
 #### OpenAI API Issues
 - **Verify API Key** - Check that your key is entered correctly in Settings
 - **Check Credits** - Log into platform.openai.com to verify you have available credits
-- **Rate Limits** - If you see errors, you may be hitting rate limits (wait and retry)
+
 
 ### Tips for Best Results
 

@@ -8,21 +8,11 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is an AI-powered audio production assistant that brings the power of natural language processing to REAPER DAW. Built with modern web technologies and the Model Context Protocol (MCP), it enables musicians and producers to control their DAW using conversational commands.
+Signals & Sorcery is an AI-powered audio production assistant that brings the power of natural language processing to REAPER DAW. Its build with modern web technologies like Langraph & the Model Context Protocol (MCP). Its primary feature is MIDI generation and automatic plugin selection.
 
 ## The Vision
 
 We believe that music production should be about creativity, not memorizing shortcuts and menu locations. Signals & Sorcery removes the technical barriers between your ideas and their realization, letting you focus on what matters most - making music.
-
-## Open Source
-
-Signals & Sorcery is proudly open source and MIT licensed. We believe in the power of community-driven development and welcome contributions from developers around the world.
-
-### Source Code
-
-- **Main Repository**: [github.com/shiehn/reaper-chat](https://github.com/shiehn/reaper-chat)
-- **Original Python MCP**: [github.com/shiehn/total-reaper-mcp](https://github.com/shiehn/total-reaper-mcp)
-- **Documentation**: [signalsandsorcery.app](https://signalsandsorcery.app)
 
 ## Community
 
@@ -39,14 +29,11 @@ Join our active Discord community for:
 
 ### Contributing
 
-We welcome contributions of all kinds:
-- **Code**: New features, bug fixes, optimizations
-- **Documentation**: Tutorials, guides, translations
-- **Testing**: Bug reports, test coverage
-- **Design**: UI/UX improvements, artwork
+Forever grateful for any feedback: 
+- **Feature Ideas**: Where should I take this project?
+- **Bugs**: Bugs, System compatibility Issues 
+- **Design**: Open to all UI/UX improvements
 - **Community**: Helping other users, sharing knowledge
-
-See our [Contributing Guide](https://github.com/shiehn/reaper-chat/blob/main/CONTRIBUTING.md) to get started.
 
 ## Download
 
@@ -69,22 +56,21 @@ See our [Contributing Guide](https://github.com/shiehn/reaper-chat/blob/main/CON
 
 1. **Documentation**: Start with our [Getting Started Guide](/getting-started/)
 2. **Discord**: Ask questions in our [Discord server](https://discord.gg/reaper-chat)
-3. **GitHub Issues**: Report bugs on [GitHub](https://github.com/shiehn/reaper-chat/issues)
-4. **Email**: Contact us at support@reaper-chat.com
+4. **Email**: Contact me at stevehiehn at gmail.com
 
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: Signals & Sorcery is, but you'll need an API key from an AI provider which is not free.
+A: Yes, you just need a Google account and have installed Reaper & Surge (both can be used for free)
 
 **Q: Does it work with other DAWs?**
-A: Currently only REAPER is supported, but the architecture could be adapted for other DAWs.
+A: I'm thinking about it .. currently only REAPER is supported
 
 **Q: Can I use it offline?**
-A: The app requires an internet connection for AI processing.
+A: No, sorry the app requires an internet connection for AI processing.
 
 **Q: Is my data secure?**
-A: All processing happens through your chosen AI provider's API. We don't store or transmit your music or personal data.
+A: I'm not doing anything weird.  I may add some basic analytics around crash reporting
 
 ## Credits
 
@@ -97,7 +83,7 @@ A: All processing happens through your chosen AI provider's API. We don't store 
 - REAPER integration via ReaScript
 
 ### Special Thanks
-- The REAPER community for feedback and testing
+- The REAPER team for building the most open-ish DAW 
 - Anthropic for the MCP protocol
 
 ## Contact
@@ -108,4 +94,4 @@ A: All processing happens through your chosen AI provider's API. We don't store 
 
 ---
 
-Made with ❤️ for the music production community
+Made with ❤️ for the electronic music dorks

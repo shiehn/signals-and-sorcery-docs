@@ -20,8 +20,8 @@ Signals & Sorcery is an AI-powered DAW agent for REAPER that specializes in MIDI
 
 ### Core Technology
 
-- **Electron Desktop App**: Native macOS application with chat-based interface (Apple Silicon only)
-- **AI-Powered MIDI Generation**: Uses OpenAI to interpret musical descriptions and generate MIDI data
+- **Electron Desktop App**: Native macOS application with chat-based interface
+- **AI-Powered MIDI Generation**: Uses AI providers (OpenAI or Gemini) to interpret musical descriptions and generate MIDI data
 - **REAPER Integration**: Lua bridge script (`__startup.lua`) communicates via MCP protocol
 - **Surge XT Integration**: Automatically loads and configures synth patches based on sound descriptions
 - **Deterministic FX Rack**: Fixed 6-slot system (Instrument, EQ, Distortion, Delay, Reverb, Compression)
@@ -37,10 +37,9 @@ Signals & Sorcery is an AI-powered DAW agent for REAPER that specializes in MIDI
 
 ## Current Limitations
 
-- **macOS Apple Silicon Only**: Requires M1/M2/M3/M4 chip (Intel Mac and Windows/Linux not supported yet)
-- **OpenAI API Required**: No offline mode, requires active OpenAI account with credits
+- **macOS Only**: Tested on M-series & Intel chips (Windows/Linux not supported)
 - **Surge XT Dependency**: Currently only works with Surge XT synthesizer
-- **MIDI-Focused**: Primarily designed for MIDI/synth-based production, not audio recording workflows
+- **MIDI-Focused**: Primarily designed for MIDI/synth-based production, not (yet) targeting audio recording workflows
 
 
 
