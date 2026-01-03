@@ -6,7 +6,7 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
     title: 'Signals & Sorcery',
-    description: 'Generative audio/midi tool controlling the REAPER DAW',
+    description: 'AI-powered music production assistant with MIDI generation',
     theme: defaultTheme({
         // logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
