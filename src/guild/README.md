@@ -8,11 +8,11 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is an AI-powered audio production assistant that brings the power of natural language processing to REAPER DAW. Its build with modern web technologies like Langraph & the Model Context Protocol (MCP). Its primary feature is MIDI generation and automatic plugin selection.
+Signals & Sorcery is a **modern generative music performance platform** that combines AI-powered clip generation with a DJ-inspired dual-deck workflow. Built with modern web technologies (LangGraph & MCP), it features a native audio engine and hardware-level support for headphone/main output routing - letting you generate music privately and perform it publicly.
 
 ## The Vision
 
-We believe that music production should be about creativity, not memorizing shortcuts and menu locations. Signals & Sorcery removes the technical barriers between your ideas and their realization, letting you focus on what matters most - making music.
+We believe that generative music performance should be intuitive and immediate. Signals & Sorcery removes the barriers between your ideas and their realization, giving you a platform to generate, preview, and perform AI-created music in real-time.
 
 ## Community
 
@@ -23,15 +23,15 @@ Join our active Discord community for:
 - Feature requests and suggestions
 - Development discussions
 - Sharing your music and workflows
-- Connecting with other users
+- Connecting with other generative music performers
 
-**[Join the Discord](https://discord.gg/reaper-chat)**
+**[Join the Discord](https://discord.gg/signals-and-sorcery)**
 
 ### Contributing
 
-Forever grateful for any feedback: 
+Forever grateful for any feedback:
 - **Feature Ideas**: Where should I take this project?
-- **Bugs**: Bugs, System compatibility Issues 
+- **Bugs**: Bugs, system compatibility issues
 - **Design**: Open to all UI/UX improvements
 - **Community**: Helping other users, sharing knowledge
 
@@ -39,38 +39,40 @@ Forever grateful for any feedback:
 
 ### Latest Release
 
-- **[Download for macOS (Intel)](https://github.com/shiehn/reaper-chat/releases/latest)**
-- **[Download for macOS (Apple Silicon)](https://github.com/shiehn/reaper-chat/releases/latest)**
-- Windows and Linux versions coming soon!
+- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_3_0-arm64.dmg)**
+- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_3_0-x64.dmg)**
 
 ### System Requirements
 
-- macOS 10.15+ (Windows/Linux coming soon)
-- REAPER 6.0 or later
+- macOS 10.15+ (Apple Silicon & Intel)
 - 4GB RAM minimum (8GB recommended)
 - Internet connection for AI features
+- Audio interface with 4+ outputs (recommended for Audience Mode)
 
 ## Support
 
 ### Getting Help
 
 1. **Documentation**: Start with our [Getting Started Guide](/getting-started/)
-2. **Discord**: Ask questions in our [Discord server](https://discord.gg/reaper-chat)
-4. **Email**: Contact me at stevehiehn at gmail.com
+2. **Discord**: Ask questions in our [Discord server](https://discord.gg/signals-and-sorcery)
+3. **Email**: Contact me at stevehiehn at gmail.com
 
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: Yes, you just need a Google account and have installed Reaper & Surge (both can be used for free)
+A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed)
 
-**Q: Does it work with other DAWs?**
-A: I'm thinking about it .. currently only REAPER is supported
+**Q: What audio interfaces work best?**
+A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
 
 **Q: Can I use it offline?**
-A: No, sorry the app requires an internet connection for AI processing.
+A: No, the app requires an internet connection for AI generation.
 
 **Q: Is my data secure?**
-A: I'm not doing anything weird.  I may add some basic analytics around crash reporting
+A: I'm not doing anything weird. May add basic analytics for crash reporting.
+
+**Q: What synthesizers are supported?**
+A: Currently Surge XT only. More synth support planned.
 
 ## Credits
 
@@ -80,18 +82,20 @@ A: I'm not doing anything weird.  I may add some basic analytics around crash re
 ### Technologies
 - Built with [Electron](https://www.electronjs.org/) and [React](https://react.dev/)
 - Powered by [Model Context Protocol](https://github.com/anthropics/mcp)
-- REAPER integration via ReaScript
+- Native audio engine built on [Tracktion Engine](https://github.com/Tracktion/tracktion_engine)
+- Synthesizer: [Surge XT](https://surge-synthesizer.github.io/)
 
 ### Special Thanks
-- The REAPER team for building the most open-ish DAW 
 - Anthropic for the MCP protocol
+- The Tracktion team for the amazing audio engine
+- The Surge XT team for the best free synth
 
 ## Contact
 
 - **Email**: stevehiehn@gmail.com
-- **Discord**: [Join our server](https://discord.gg/reaper-chat)
+- **Discord**: [Join our server](https://discord.gg/signals-and-sorcery)
 - **GitHub**: [@shiehn](https://github.com/shiehn)
 
 ---
 
-Made with ❤️ for the electronic music dorks
+Made with ❤️ for generative music performers

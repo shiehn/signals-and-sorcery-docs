@@ -10,8 +10,9 @@ sidebar: auto
 
 - **macOS** with Apple M-Series or Intel chip
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
-- **Internet connection** for generation features
+- **Internet connection** for AI generation features
 - **Google Account** for login
+- **Audio interface with 4+ outputs** (recommended for Audience Mode with headphone/main separation)
 
 ### Installation
 
@@ -33,32 +34,54 @@ Choose the version for your system:
 
 ![runes_cli](/sas_runes_cli_2.png)
 
-### Basic Usage
+### The Performance Workflow
 
-#### Getting Started
+Signals & Sorcery is designed around a DJ-inspired workflow where you generate and preview content privately before sharing it with your audience.
 
-1. **Launch Signals & Sorcery** - Open the app from your Applications folder
-2. **Sign In** - Log in with your Google account
-3. **Start Creating** - Use the chat interface to describe sounds and generate music
+#### Core Concepts
 
-#### Creating Music with MIDI
+- **Loop A (Composition Deck)** - Generate and preview clips in your headphones
+- **Loop B (Performance Deck)** - Play approved clips for your audience
+- **Transition Deck** - Preview transitions before performing them
 
-The core workflow is describing the sound you want for each track, and the AI will generate MIDI and configure the appropriate synth patches:
+#### Basic Workflow
 
-```
-"create a synth sub bass"
+1. **Generate** - Use natural language to create clips:
+   ```
+   "create a dark sub bass"
+   "add a 4 on the floor kick"
+   "add glitchy hi-hats"
+   ```
 
-"add a 4 on the floor kick"
+2. **Preview** - Generated clips play in your headphones (cue output)
 
-"add a snare"
+3. **Approve** - Push clips you like to the performance deck
 
-"add a synth padd on bars 2 and 4"
-```
+4. **Perform** - Audience hears only the performance deck (main output)
+
+### Audio Routing Modes
+
+#### Solo Mode (Single Output)
+For practicing or single-speaker setups. Listen to one source at a time.
+
+#### Audience Mode (Recommended for Performance)
+Requires a 4+ channel audio interface:
+- **Cue Output** (channels 1-2) → Headphones for private preview
+- **Main Output** (channels 3-4) → Speakers/PA for audience
+
+This is the core workflow: generate in headphones, push to audience.
+
+#### Stream Mode
+For Twitch/YouTube streaming:
+- **Cue Output** → Your headphones
+- **Main Output** → Stream audio (via BlackHole virtual audio)
+
+See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructions.
 
 ### Troubleshooting
 
 #### Audio Not Playing
-- **Check Audio Settings** - Ensure your audio output device is correctly configured in the app
+- **Check Audio Settings** - Ensure your audio output device is correctly configured
 - **Verify Surge XT Installation** - The setup wizard should have installed Surge XT automatically
 - **Restart the App** - Close and reopen Signals & Sorcery
 
@@ -67,7 +90,7 @@ The core workflow is describing the sound you want for each track, and the AI wi
 - **Check Architecture** - Ensure you installed the version matching your Mac (Apple Silicon or Intel)
 - **Manual Installation** - See the manual installation section below
 
-#### MIDI Not Generating
+#### Clips Not Generating
 - **Check Track Has Instrument** - Ensure the track has Surge XT loaded
 - **Verify Track Is Not Muted** - Unmute the track and check volume levels
 - **Check Playback** - Press play to start playback
@@ -75,22 +98,23 @@ The core workflow is describing the sound you want for each track, and the AI wi
 
 ### Tips for Best Results
 
-- **Be Specific** - Describe sounds in detail: "punchy techno kick" works better than just "drums"
+- **Be Specific** - Describe sounds in detail: "punchy techno kick with long decay" works better than just "kick"
 - **One Task at a Time** - Break complex requests into steps
-- **Iterate** - Generate MIDI, listen, then ask for adjustments
-- **Use Musical Terms** - The system understands music theory: keys, scales, chord progressions, etc.
+- **Iterate** - Generate, listen, then ask for adjustments
+- **Use Musical Terms** - The system understands keys, scales, chord progressions, rhythmic patterns, etc.
 
 ### Next Steps
 
-- Experiment with different sound descriptions to hear how they're interpreted
-- Try combining MIDI generation with FX processing for more complex productions
-- Explore the [Features](/api-server/) section for advanced capabilities
+- Experiment with different sound descriptions
+- Set up Audience Mode for private preview workflow
+- Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
+- Check the [Features](/api-server/) section for advanced capabilities
 
 ---
 
 ### Manual Dependency Installation (Optional)
 
-**Note:** The setup wizard handles dependency installation automatically. The steps below are only needed if you prefer to install dependencies manually or need to troubleshoot installation issues.
+**Note:** The setup wizard handles dependency installation automatically. The steps below are only needed if you prefer to install dependencies manually.
 
 #### Install Surge XT
 

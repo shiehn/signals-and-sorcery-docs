@@ -11,16 +11,15 @@ sidebar: auto
 ### Prerequisites
 
 - **Node.js 18+** - Required for TypeScript development
-- **macOS 10.15+** - Currently macOS only (Windows/Linux coming soon)
-- **REAPER 6.0+** - The DAW we're controlling
+- **macOS 10.15+** - macOS only (Apple Silicon & Intel)
 - **Git** - For version control
 
 ### Getting Started
 
 ```bash
 # Clone the repository
-git clone https://github.com/shiehn/reaper-chat.git
-cd reaper-chat
+git clone https://github.com/shiehn/signals-and-sorcery.git
+cd signals-and-sorcery
 
 # Install dependencies
 npm install
@@ -40,26 +39,29 @@ signals-and-sorcery/
 ├── src/
 │   ├── main/              # Electron main process
 │   │   ├── index.ts       # App entry point
-│   │   ├── mcp-typescript.ts  # MCP server manager
-│   │   └── bridge-installer.ts # Auto-installer
+│   │   ├── services/      # Core services
+│   │   └── setup-handlers.ts  # IPC handlers
 │   ├── renderer/          # React UI
 │   │   ├── App.tsx        # Main component
 │   │   ├── pages/         # UI pages
 │   │   └── components/    # React components
+│   ├── audio-engine/      # Tracktion Engine TypeScript API
+│   │   └── tracktion-engine.ts  # JSON-RPC client
 │   ├── mcp-server/        # TypeScript MCP
 │   │   ├── index.ts       # Server entry
-│   │   ├── dsl/           # 93 DSL tools
-│   │   └── resources/     # Lua bridges
-│   └── layers/            # Experimental architecture
-│       ├── intent/        # Intent analysis
-│       ├── validation/    # Parameter validation
-│       ├── planning/      # Multi-step planning
-│       ├── execution/     # Tool execution
-│       ├── retry/         # Retry mechanisms
-│       └── response/      # Response formatting
+│   │   └── dsl/tools/     # DSL tool definitions
+│   └── music-engine/      # Composition engine
+│       ├── services/      # Project binding, transitions
+│       └── harmonic-rules-engine.ts
+├── sas-audio-engine/      # Native C++ audio engine
+│   ├── src/
+│   │   ├── main.cpp       # Entry point
+│   │   ├── Deck.cpp       # Deck management
+│   │   ├── DeckManager.cpp # Multi-deck coordination
+│   │   └── SceneManager.cpp # Scene management
+│   └── CMakeLists.txt
 ├── scripts/              # Build & test scripts
-├── docs/                 # Documentation
-└── conversation-tracking/ # Analysis data
+└── docs/                 # Documentation
 ```
 
 ### Key Technologies
@@ -67,57 +69,54 @@ signals-and-sorcery/
 - **Electron** - Desktop application framework
 - **React 19** - UI framework
 - **TypeScript** - Type-safe JavaScript
+- **Tracktion Engine** - Native C++ audio engine
 - **MCP** - Model Context Protocol for LLM tools
 - **Tailwind CSS** - Utility-first CSS
 - **Zod** - Runtime type validation
 
+## Audio Engine Architecture
+
+The audio engine is a native C++ process built on Tracktion Engine, communicating via JSON-RPC over TCP (port 9998).
+
+### Key Concepts
+
+- **Decks**: FolderTracks that act as mix buses (Loop-A, Loop-B, Transition)
+- **Scenes**: FolderTracks that group audio tracks together
+- **Tracks**: AudioTracks containing clips and plugins
+
+See `sas-audio-engine/README.md` for detailed architecture documentation.
+
 ## Adding New DSL Tools
-
-### ⚠️ IMPORTANT: Read First!
-
-Before adding tools, **you MUST read [TOOL_ARCHITECTURE.md](https://github.com/shiehn/reaper-chat/blob/main/TOOL_ARCHITECTURE.md)**. The smart router requires careful tool placement to function correctly.
 
 ### Tool Structure
 
 ```typescript
-// src/mcp-server/dsl/tracks.ts
+// src/mcp-server/dsl/tools/tracks.ts
 export const createTrackTool = {
   name: "dsl_create_track",
-  description: "Create a new track in REAPER",
+  description: "Create a new track",
   parameters: z.object({
     name: z.string().optional().describe("Track name"),
     type: z.enum(['audio', 'midi']).default('audio'),
     index: z.number().optional().describe("Insert position")
   }),
   execute: async (params) => {
-    // Implementation
-    return await reaperAPI.createTrack(params);
+    const engine = await getSharedTracktionEngine();
+    return await engine.createTrack(params);
   }
 };
 ```
 
 ### Tool Categories
 
-Tools must be placed in the correct category file:
+Tools are organized by function:
 
 - `tracks.ts` - Track operations (create, delete, rename)
 - `effects.ts` - FX and processing
 - `transport.ts` - Playback control
-- `automation.ts` - Envelope and automation
-- `navigation.ts` - Cursor and selection
-- `mixing.ts` - Volume, pan, routing
-- `midi.ts` - MIDI operations
+- `scene-operations.ts` - Scene management
+- `deck-operations.ts` - Deck control
 - `generation.ts` - Content generation
-
-### Adding a Tool Checklist
-
-1. ✅ Determine the correct category
-2. ✅ Add tool to category file
-3. ✅ Define tool relationships in router
-4. ✅ Update category keywords
-5. ✅ Add corresponding Lua function if needed
-6. ✅ Write unit tests
-7. ✅ Update documentation
 
 ## Testing
 
@@ -128,7 +127,7 @@ Tools must be placed in the correct category file:
 npm test
 
 # Test specific module
-npm test -- dsl/tracks
+npm test -- src/audio-engine
 
 # Test with coverage
 npm test -- --coverage
@@ -137,11 +136,11 @@ npm test -- --coverage
 ### Integration Tests
 
 ```bash
-# Test with real REAPER instance
-npm run test:integration
+# Test with real audio engine
+npm run test:engine
 
-# Test specific command flow
-node scripts/tests/test-full-stack.js 10
+# Run C++ engine tests
+npm run test:engine:cpp
 ```
 
 ### E2E Tests
@@ -150,11 +149,8 @@ node scripts/tests/test-full-stack.js 10
 # Run Playwright tests
 npm run test:e2e
 
-# Test layered architecture
-npm run test:e2e:layered
-
-# Test backward compatibility
-npm run test:e2e:compat
+# Test with UI
+npm run test:e2e:headed
 ```
 
 ## Debugging
@@ -164,8 +160,6 @@ npm run test:e2e:compat
 ```bash
 # In .env file
 VITE_LOG_LEVEL=debug
-DEBUG_TOOL_SELECTION=true
-ENABLE_CONVERSATION_TRACKING=true
 
 # Or via environment
 DEBUG=* npm run start
@@ -174,14 +168,16 @@ DEBUG=* npm run start
 ### Chrome DevTools
 
 1. Open the app
-2. Press `Cmd+Option+I` (Mac) or `Ctrl+Shift+I` (Windows)
+2. Press `Cmd+Option+I` (Mac)
 3. Use Console, Network, and Sources tabs
 
-### REAPER Bridge Debugging
+### Audio Engine Debugging
 
-1. Open REAPER's ReaScript console
-2. Look for MCP bridge output
-3. Check `Scripts/mcp_bridge_data/` for logs
+Check the main process logs:
+```bash
+ENABLE_TEST_SERVER=true npm run electron:dev > output.log 2>&1
+grep "DeckManager\|SceneManager" output.log
+```
 
 ## Building & Distribution
 
@@ -194,20 +190,36 @@ npm run build
 # Build for current platform
 npm run dist
 
-# Build for specific platforms
-npm run dist:mac
-npm run dist:win
-npm run dist:linux
+# Build DMG for macOS
+npm run dist:mac:dmg
 ```
 
 ### Release Process
 
-1. Update version in `package.json`
-2. Run tests: `npm test`
-3. Build: `npm run dist`
-4. Test the built app
-5. Create GitHub release
-6. Upload artifacts
+The release script handles everything:
+
+```bash
+# Full release (tests, build, upload, deploy docs)
+npm run release
+
+# Release with version type
+npm run release:minor  # 0.12.0 → 0.13.0
+npm run release:patch  # 0.12.0 → 0.12.1
+npm run release:major  # 0.12.0 → 1.0.0
+
+# Build only (no upload)
+npm run release:build-only
+```
+
+The release script:
+1. Runs all tests
+2. Bumps version in package.json
+3. Builds DMGs (arm64 + x64)
+4. Uploads to GCP storage
+5. Updates downloads.json
+6. Deploys documentation
+7. Creates git tag
+8. Creates GitHub release
 
 ## Contributing
 
@@ -215,17 +227,16 @@ npm run dist:linux
 
 - Use TypeScript for type safety
 - Follow ESLint rules
-- Use Prettier for formatting
 - Write tests for new features
 
 ### Commit Messages
 
 Follow conventional commits:
 ```
-feat: add new DSL tool for track routing
-fix: resolve MCP connection timeout
+feat: add new deck operation
+fix: resolve audio routing issue
 docs: update developer guide
-test: add unit tests for effects tools
+test: add unit tests for scene manager
 ```
 
 ### Pull Request Process
@@ -236,61 +247,20 @@ test: add unit tests for effects tools
 4. Update documentation
 5. Submit PR with description
 
-## Advanced Topics
-
-### Layered Architecture
-
-Enable experimental features:
-
-```typescript
-// src/main/config.ts
-export const config = {
-  useLayeredArchitecture: true,
-  layers: {
-    intent: true,
-    validation: true,
-    planning: true,
-    retry: true,
-    response: true
-  }
-};
-```
-
-### Custom Tool Providers
-
-```typescript
-// src/mcp-server/providers/custom.ts
-export class CustomToolProvider {
-  async getTools() {
-    return [
-      // Your custom tools
-    ];
-  }
-}
-```
-
-### Performance Optimization
-
-- Use batch operations for multiple tracks
-- Cache frequently used data
-- Optimize Lua bridge calls
-- Monitor with conversation tracking
-
 ## Resources
 
 ### Documentation
-- [Main README](https://github.com/shiehn/reaper-chat)
-- [Tool Architecture](https://github.com/shiehn/reaper-chat/blob/main/TOOL_ARCHITECTURE.md)
-- [State Validation](https://github.com/shiehn/reaper-chat/blob/main/docs/STATE_VALIDATION.md)
-- [DSL Tool Mapping](https://github.com/shiehn/reaper-chat/blob/main/docs/DSL_TOOL_REASCRIPT_MAPPING.md)
+- [Main README](https://github.com/shiehn/signals-and-sorcery)
+- [Audio Engine Architecture](https://github.com/shiehn/signals-and-sorcery/blob/main/sas-audio-engine/README.md)
+- [Tool Architecture](https://github.com/shiehn/signals-and-sorcery/blob/main/TOOL_ARCHITECTURE.md)
 
 ### Support
-- [GitHub Issues](https://github.com/shiehn/reaper-chat/issues)
-- [Discord Community](https://discord.gg/reaper-chat)
-- Email: support@reaper-chat.com
+- [GitHub Issues](https://github.com/shiehn/signals-and-sorcery/issues)
+- [Discord Community](https://discord.gg/signals-and-sorcery)
+- Email: stevehiehn@gmail.com
 
 ### Related Projects
 - [Model Context Protocol](https://github.com/anthropics/mcp)
-- [REAPER ReaScript](https://www.reaper.fm/sdk/reascript/reascript.php)
+- [Tracktion Engine](https://github.com/Tracktion/tracktion_engine)
 - [Electron](https://www.electronjs.org/)
 - [React](https://react.dev/)
