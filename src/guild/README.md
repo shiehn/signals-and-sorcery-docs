@@ -39,8 +39,8 @@ Forever grateful for any feedback:
 
 ### Latest Release
 
-- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_16_0-arm64.dmg)**
-- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_16_0-x64.dmg)**
+- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_17_0-arm64.dmg)**
+- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_17_0-x64.dmg)**
 
 ### System Requirements
 
