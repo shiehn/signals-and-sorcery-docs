@@ -2,7 +2,7 @@
 head:
   - - meta
     - name: description
-      content: Signals & Sorcery - Generative music performance platform. Rapidly create and arrange clips in a dual-deck workflow. Generate in headphones, perform to audience.
+      content: Signals & Sorcery - Generative music performance platform. Create and arrange clips in a dual-deck workflow. Generate in headphones, perform to audience.
   - - meta
     - name: keywords
       content: generative music, AI music, live performance, DJ software, music generation, MIDI generation, Surge XT, electronic music, live coding, music AI
