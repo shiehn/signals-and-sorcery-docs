@@ -12,7 +12,7 @@ sidebar: auto
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
 - **Internet connection** for AI generation features
 - **Google Account** for login
-- **Audio interface with 4+ outputs** (recommended for Audience Mode with headphone/main separation)
+- **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
 
 ### Installation
 

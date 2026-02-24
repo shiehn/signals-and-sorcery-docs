@@ -2,17 +2,17 @@
 head:
   - - meta
     - name: description
-      content: Signals & Sorcery - Modern generative music performance platform. AI-powered clip generation with DJ-style dual-deck workflow. Generate in headphones, perform to audience.
+      content: Signals & Sorcery - Generative music performance platform. Rapidly create and arrange clips in a dual-deck workflow. Generate in headphones, perform to audience.
   - - meta
     - name: keywords
       content: generative music, AI music, live performance, DJ software, music generation, MIDI generation, Surge XT, electronic music, live coding, music AI
 home: true
 actions:
-  - text: Download
-    link: /getting-started/
+  - text: Mac (Silicon)
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_20_0-arm64.dmg
     type: primary
-  - text: Documentation
-    link: /prologue/
+  - text: Mac (Intel)
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_20_0-x64.dmg
     type: secondary
 heroImage: ./sas_logo_two.png
 features:
