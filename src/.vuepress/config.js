@@ -6,7 +6,7 @@ import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 export default {
     lang: 'en-US',
     title: 'Signals & Sorcery',
-    description: 'Modern generative music performance platform. AI-powered clip generation with DJ-style dual-deck workflow.',
+    description: 'Generative music performance platform. Rapidly create and arrange clips in a dual-deck workflow.',
     theme: defaultTheme({
         // logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
