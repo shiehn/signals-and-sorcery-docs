@@ -25,7 +25,7 @@ Join our active Discord community for:
 - Sharing your music and workflows
 - Connecting with other generative music performers
 
-**[Join the Discord](https://discord.gg/signals-and-sorcery)**
+**[Join the Discord](https://discord.gg/UcHCjfpRkV)**
 
 ### Contributing
 
@@ -39,8 +39,8 @@ Forever grateful for any feedback:
 
 ### Latest Release
 
-- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_20_0-arm64.dmg)**
-- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_20_0-x64.dmg)**
+- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_22_0-arm64.dmg)**
+- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_22_0-x64.dmg)**
 
 ### System Requirements
 
@@ -54,7 +54,7 @@ Forever grateful for any feedback:
 ### Getting Help
 
 1. **Documentation**: Start with our [Getting Started Guide](/getting-started/)
-2. **Discord**: Ask questions in our [Discord server](https://discord.gg/signals-and-sorcery)
+2. **Discord**: Ask questions in our [Discord server](https://discord.gg/UcHCjfpRkV)
 3. **Email**: Contact me at stevehiehn at gmail.com
 
 ### Frequently Asked Questions
@@ -93,7 +93,7 @@ A: Currently Surge XT only. More synth support planned.
 ## Contact
 
 - **Email**: stevehiehn@gmail.com
-- **Discord**: [Join our server](https://discord.gg/signals-and-sorcery)
+- **Discord**: [Join our server](https://discord.gg/UcHCjfpRkV)
 - **GitHub**: [@shiehn](https://github.com/shiehn)
 
 ---

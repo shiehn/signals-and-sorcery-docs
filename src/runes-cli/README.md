@@ -256,7 +256,7 @@ test: add unit tests for scene manager
 
 ### Support
 - [GitHub Issues](https://github.com/shiehn/signals-and-sorcery/issues)
-- [Discord Community](https://discord.gg/signals-and-sorcery)
+- [Discord Community](https://discord.gg/UcHCjfpRkV)
 - Email: stevehiehn@gmail.com
 
 ### Related Projects
