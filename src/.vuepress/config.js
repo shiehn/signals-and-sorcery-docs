@@ -26,6 +26,10 @@ export default {
                 link: '/api-server/',
             },
             {
+                text: 'Plugin SDK',
+                link: '/plugin-sdk/',
+            },
+            {
                 text: 'About',
                 link: '/guild/',
             },
