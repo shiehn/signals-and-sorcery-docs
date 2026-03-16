@@ -1,0 +1,36 @@
+{
+  "name": "@sas/plugin-sdk",
+  "version": "1.0.0",
+  "description": "Plugin SDK for Signals & Sorcery — TypeScript types and build helpers for external generator plugins",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "rollup.config.template.js",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0"
+  },
+  "keywords": [
+    "signals-and-sorcery",
+    "plugin",
+    "sdk",
+    "music",
+    "generator"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shiehn/signals-and-sorcery-docs"
+  }
+}
