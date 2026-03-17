@@ -140,6 +140,204 @@ setTrackName(trackId: string, name: string): Promise<void>
 
 ---
 
+### adoptSceneTracks()
+
+Adopt unowned tracks in the active scene that match this plugin's generator type. Useful when re-activating a plugin or restoring state — tracks that were previously created by a plugin of the same type but currently have no owner will be claimed.
+
+```typescript
+adoptSceneTracks(): Promise<PluginTrackHandle[]>
+```
+
+**Returns:** Array of `PluginTrackHandle` for all newly adopted tracks. Returns an empty array if no matching unowned tracks are found.
+
+**Errors:** `NO_ACTIVE_SCENE`, `ENGINE_ERROR`
+
+```typescript
+// Re-adopt tracks on scene change
+async onSceneChanged(sceneId: string | null): Promise<void> {
+  if (!sceneId) return;
+  const adopted = await this.host.adoptSceneTracks();
+  console.log(`Re-adopted ${adopted.length} tracks`);
+}
+```
+
+---
+
+### setTrackSolo(trackId, solo)
+
+```typescript
+setTrackSolo(trackId: string, solo: boolean): Promise<void>
+```
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+```typescript
+// Solo a track to preview it in isolation
+await host.setTrackSolo(track.id, true);
+```
+
+---
+
+### shufflePreset(trackId)
+
+Randomly change the Surge XT preset on an owned track. Reads the track's existing MIDI notes to analyze the pitch range, then selects a random preset from a matching category (e.g., bass notes get bass presets). The current preset is excluded so you always get a different sound.
+
+```typescript
+shufflePreset(trackId: string): Promise<ShufflePresetResult>
+```
+
+**Returns:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `presetName` | `string` | Name of the newly applied preset |
+| `presetCategory` | `string` | Category the preset was drawn from (e.g., `'basses-low'`) |
+
+**Errors:** `NOT_OWNED`, `PLUGIN_NOT_FOUND` (no Surge XT on track), `ENGINE_ERROR`
+
+```typescript
+const result = await host.shufflePreset(track.id);
+host.showToast('info', 'New Preset', `${result.presetName} (${result.presetCategory})`);
+```
+
+---
+
+### duplicateTrack(trackId)
+
+Create a copy of an owned track. Copies the track's MIDI data, role, and loads Surge XT on the new track. The new track is automatically owned by the calling plugin.
+
+```typescript
+duplicateTrack(trackId: string): Promise<PluginTrackHandle>
+```
+
+**Returns:** `PluginTrackHandle` for the new track (name will be `"<original>-copy"`).
+
+**Errors:** `NOT_OWNED`, `NO_ACTIVE_SCENE`, `TRACK_LIMIT_EXCEEDED`, `ENGINE_ERROR`
+
+```typescript
+const copy = await host.duplicateTrack(track.id);
+// copy.id = new engine track ID
+// copy.name = 'Bass Line-copy'
+
+// Give the copy a different preset
+await host.shufflePreset(copy.id);
+```
+
+---
+
+## FX Operations
+
+Per-track FX processing with 6 categories in signal chain order: `eq` → `compressor` → `chorus` → `phaser` → `delay` → `reverb`. All FX methods are ownership-scoped.
+
+### getTrackFxState(trackId)
+
+Get the detailed FX state for a track — enabled/disabled, preset index, and dry/wet level for each category.
+
+```typescript
+getTrackFxState(trackId: string): Promise<PluginTrackFxDetailState>
+```
+
+**`PluginTrackFxDetailState`** is `Record<string, PluginFxCategoryDetailState>` — one entry per FX category.
+
+**PluginFxCategoryDetailState:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `enabled` | `boolean` | Whether this FX category is active |
+| `presetIndex` | `number` | Current preset index (0–4) |
+| `dryWet` | `number` | Dry/wet mix level (0.0 – 1.0) |
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+```typescript
+const fxState = await host.getTrackFxState(track.id);
+console.log(fxState.reverb.enabled);     // false
+console.log(fxState.reverb.presetIndex); // 0
+console.log(fxState.reverb.dryWet);      // 0.33
+```
+
+---
+
+### toggleTrackFx(trackId, category, enabled)
+
+Toggle an FX category on or off for a track.
+
+```typescript
+toggleTrackFx(trackId: string, category: string, enabled: boolean): Promise<void>
+```
+
+**Parameters:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `trackId` | `string` | Engine track ID (must be owned) |
+| `category` | `string` | FX category: `'eq'`, `'compressor'`, `'chorus'`, `'phaser'`, `'delay'`, `'reverb'` |
+| `enabled` | `boolean` | Whether to enable or disable the FX |
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+```typescript
+// Enable reverb on a track
+await host.toggleTrackFx(track.id, 'reverb', true);
+```
+
+---
+
+### setTrackFxPreset(trackId, category, presetIndex)
+
+Set the FX preset for a category. Each category has 5 presets (index 0–4). Returns the new dry/wet value if the preset changes it.
+
+```typescript
+setTrackFxPreset(trackId: string, category: string, presetIndex: number): Promise<{ dryWet?: number }>
+```
+
+**Parameters:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `trackId` | `string` | Engine track ID (must be owned) |
+| `category` | `string` | FX category |
+| `presetIndex` | `number` | Preset index (0–4) |
+
+**Returns:** `{ dryWet?: number }` — the new dry/wet level if the preset sets one.
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+```typescript
+// Set reverb to preset 2 (e.g., "Hall")
+const result = await host.setTrackFxPreset(track.id, 'reverb', 2);
+if (result.dryWet !== undefined) {
+  console.log('New dry/wet:', result.dryWet);
+}
+```
+
+---
+
+### setTrackFxDryWet(trackId, category, value)
+
+Set the dry/wet mix level for an FX category.
+
+```typescript
+setTrackFxDryWet(trackId: string, category: string, value: number): Promise<void>
+```
+
+**Parameters:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `trackId` | `string` | Engine track ID (must be owned) |
+| `category` | `string` | FX category |
+| `value` | `number` | Dry/wet level (0.0 fully dry – 1.0 fully wet) |
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+```typescript
+// Set delay mix to 50%
+await host.setTrackFxDryWet(track.id, 'delay', 0.5);
+```
+
+---
+
 ## MIDI Operations
 
 ### writeMidiClip(trackId, clip)
@@ -431,6 +629,38 @@ getSceneList(): Promise<PluginSceneInfo[]>
 ---
 
 ## Transport & Events
+
+### onTrackStateChange(listener)
+
+Subscribe to real-time track state changes (mute, solo, volume, pan). The listener fires whenever the engine reports a state change for any track owned by this plugin. Returns an unsubscribe function.
+
+```typescript
+onTrackStateChange(listener: TrackStateChangeListener): UnsubscribeFn
+```
+
+**`TrackStateChangeListener`** is `(trackId: string, state: PluginTrackRuntimeState) => void`.
+
+**PluginTrackRuntimeState:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Engine track ID |
+| `muted` | `boolean` | Whether the track is muted |
+| `solo` | `boolean` | Whether the track is soloed |
+| `volume` | `number` | Volume level (0.0 – 1.0) |
+| `pan` | `number` | Pan position (-1.0 left – 1.0 right) |
+
+```typescript
+const unsub = host.onTrackStateChange((trackId, state) => {
+  console.log(`Track ${trackId}: muted=${state.muted}, volume=${state.volume}`);
+  // Update your UI state accordingly
+});
+
+// Later: clean up
+unsub();
+```
+
+---
 
 ### onTransportEvent(listener)
 
@@ -883,6 +1113,32 @@ createSampleTrack(sampleId: string, options?: { name?: string }): Promise<Plugin
 
 ```typescript
 deleteSampleTrack(trackId: string): Promise<void>
+```
+
+---
+
+### getPluginSampleTracks()
+
+Get all sample tracks in the active scene, re-establishing ownership. Returns track handles paired with their sample metadata.
+
+```typescript
+getPluginSampleTracks(): Promise<PluginSampleTrackInfo[]>
+```
+
+**PluginSampleTrackInfo:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `track` | `PluginTrackHandle` | Track handle (`id`, `name`, `dbId`, `role`) |
+| `sample` | `PluginSampleInfo` | Associated sample metadata |
+| `volume` | `number` | Track volume (0.0 – 1.0) |
+| `pan` | `number` | Track pan (-1.0 left – 1.0 right) |
+
+```typescript
+const sampleTracks = await host.getPluginSampleTracks();
+for (const st of sampleTracks) {
+  console.log(`${st.track.name} → ${st.sample.filename} (vol: ${st.volume})`);
+}
 ```
 
 ---

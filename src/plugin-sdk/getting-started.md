@@ -293,6 +293,41 @@ export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: P
 | `isAuthenticated` | `boolean` | Whether the user is logged in (for LLM access) |
 | `isConnected` | `boolean` | Whether engine and gateway are connected |
 | `deckId` | `'left' \| 'right'` | Which workstation deck column this renders in |
+| `onHeaderContent` | `(content: ReactNode \| null) => void` | Set/clear custom buttons in the accordion header |
+| `onLoading` | `(loading: boolean) => void` | Show/hide a loading spinner in the accordion header |
+| `sceneContext` | `PluginSceneContext \| null` | Scene-level context: contract state, chords, BPM, bars (see below) |
+| `onCompose` | `(() => Promise<void>) \| null` | Callback to trigger bulk composition. Null if not applicable |
+| `isBulkComposing` | `boolean` | Whether the LLM planning phase of bulk composition is in progress |
+| `bulkPlaceholders` | `BulkAddPlaceholderTrack[]` | Per-track placeholder state during bulk composition (empty when idle) |
+
+### PluginSceneContext
+
+Provides scene-level musical context to the UI without requiring an async call.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `hasContract` | `boolean` | Whether a contract has been generated (genre/prompt exists AND chords exist) |
+| `contractPrompt` | `string \| null` | Original user prompt text (e.g., "dark psytrance") |
+| `genre` | `string \| null` | Extracted genre |
+| `key` | `{ tonic: string; mode: string } \| null` | Musical key, or null if no chord progression |
+| `chords` | `string[]` | Chord symbols (e.g., `["Cm", "Fm", "G"]`). Empty if no chords |
+| `bpm` | `number` | BPM from project tempo |
+| `bars` | `number` | Scene length in bars |
+| `hasTracks` | `boolean` | Whether any synth tracks exist in this scene |
+| `isBulkGenerating` | `boolean` | Whether bulk generation is currently in progress |
+
+### BulkAddPlaceholderTrack
+
+Represents a planned track during the progressive bulk-add UX.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique placeholder identifier |
+| `planIndex` | `number` | Position in the generation plan |
+| `role` | `string` | Musical role (e.g., `'bass'`, `'lead'`) |
+| `description` | `string` | Human-readable description of the planned track |
+| `status` | `'planned' \| 'creating' \| 'completed' \| 'failed'` | Current generation status |
+| `error` | `string` | Error message (only present when `status` is `'failed'`) |
 
 ## Installing a Plugin
 
