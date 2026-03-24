@@ -299,6 +299,7 @@ export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: P
 | `onCompose` | `(() => Promise<void>) \| null` | Callback to trigger bulk composition. Null if not applicable |
 | `isBulkComposing` | `boolean` | Whether the LLM planning phase of bulk composition is in progress |
 | `bulkPlaceholders` | `BulkAddPlaceholderTrack[]` | Per-track placeholder state during bulk composition (empty when idle) |
+| `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
 
 ### PluginSceneContext
 

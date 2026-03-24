@@ -50,6 +50,7 @@ Props passed to your plugin's React component by the host.
 | `onCompose` | `(() => Promise<void>) \| null` | Callback to trigger bulk composition |
 | `isBulkComposing` | `boolean` | Whether the LLM planning phase of bulk composition is in progress |
 | `bulkPlaceholders` | `BulkAddPlaceholderTrack[]` | Per-track placeholder state during bulk composition |
+| `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
 
 ---
 
