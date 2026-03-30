@@ -6,9 +6,9 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a **modern generative music performance platform** that combines AI-powered clip generation with a DJ-inspired dual-deck workflow. Describe the sounds you want in natural language, preview them privately in your headphones, and push approved material to your audience - all in real-time.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new kind of music tool built around contract-based composing. Define a musical contract (key, chords, tempo, bars), then let AI generate MIDI via **Gemini** and audio via **Lyria** within those constraints. Preview privately in headphones, refine, and push approved material to your audience in real-time.
 
-The platform features hardware-level audio routing inspired by professional DJ setups: separate headphone (cue) and main outputs let you audition AI-generated clips privately before your audience hears them.
+The platform features hardware-level audio routing: separate headphone (cue) and main outputs let you audition AI-generated clips privately before your audience hears them.
 
 ## Who is this for?
 
@@ -23,30 +23,32 @@ The platform features hardware-level audio routing inspired by professional DJ s
 ### Core Technology
 
 - **Native Audio Engine**: Built on Tracktion Engine (C++) with JSON-RPC communication
-- **AI-Powered Generation**: Uses AI providers (OpenAI, Groq, or Gemini) to interpret musical descriptions and generate MIDI
+- **AI-Powered Generation**: Uses **Gemini** for MIDI generation and **Lyria** for audio generation
+- **Contract-Based Composing**: Define key, chords, BPM, and bars — AI composes within those constraints
 - **Dual-Deck Architecture**: Loop A (composition/preview) and Loop B (performance/audience) with independent routing
-- **DJ-Style Monitoring**: Hardware-level support for headphone cue and main outputs
-- **Surge XT Integration**: Automatically loads and configures synth patches based on sound descriptions
+- **Plugin SDK**: All generators (synths, samples, audio textures) are built on the extensible Plugin SDK
+- **Custom Instrument Support**: Load any VST3/AU instrument plugin on synth tracks
 
 ### The Performance Workflow
 
-1. **Generate** - Describe a sound in natural language ("dark sub bass", "glitchy hi-hats")
-2. **Preview** - AI generates clips that play in your headphones (cue output)
-3. **Refine** - Iterate on the generation until you're satisfied
-4. **Perform** - Push approved clips to the audience (main output)
+1. **Define** - Set up a musical contract (key, chords, tempo, structure)
+2. **Generate** - AI composes MIDI and audio that fits your contract
+3. **Preview** - Generated clips play in your headphones (cue output)
+4. **Refine** - Iterate on the generation until you're satisfied
+5. **Perform** - Push approved clips to the audience (main output)
 
 ### Key Features
 
-- **Text-to-Clip Generation**: Describe sounds and get playable MIDI clips with configured synths
+- **Contract-Based Generation**: Musical contracts ensure coherent compositions across tracks
+- **Gemini MIDI + Lyria Audio**: Purpose-built AI models for music generation
 - **Private Preview**: Audition generated content in headphones before the audience hears it
 - **Seamless Transitions**: Move material between decks for smooth live performances
-- **Multiple AI Providers**: Choose between OpenAI, Groq, or Google Gemini
-- **Zero-Friction Setup**: Automatic installation of synths and presets on first launch
+- **Plugin SDK**: Built-in synth, sample, and audio texture generators — with upcoming integrations for Splice, ElevenLabs, live coding, and agentic prompting
+- **Custom Instruments**: Load any VST3/AU synth plugin alongside or instead of the default Surge XT
 
 ## Current Limitations
 
 - **macOS Only**: Tested on M-series & Intel chips (Windows/Linux not supported)
-- **Surge XT Dependency**: Currently only works with Surge XT synthesizer
-- **MIDI-Focused**: Designed for MIDI/synth-based production and performance
+- **Surge XT Default**: Ships with Surge XT as the default synth, but any VST3/AU instrument can be loaded
 
 

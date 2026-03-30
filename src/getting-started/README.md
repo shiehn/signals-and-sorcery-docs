@@ -36,35 +36,35 @@ Choose the version for your system:
 
 ### The Performance Workflow
 
-Signals & Sorcery is designed around a DJ-inspired workflow where you generate and preview content privately before sharing it with your audience.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contract-based composing. Define a musical contract, generate content, preview privately, and perform to your audience.
 
 #### Core Concepts
 
+- **Musical Contract** - Key, chords, BPM, and bars that define the compositional framework
 - **Loop A (Composition Deck)** - Generate and preview clips in your headphones
 - **Loop B (Performance Deck)** - Play approved clips for your audience
 - **Transition Deck** - Preview transitions before performing them
 
 #### Basic Workflow
 
-1. **Generate** - Use natural language to create clips:
-   ```
-   "create a dark sub bass"
-   "add a 4 on the floor kick"
-   "add glitchy hi-hats"
-   ```
+1. **Define a Contract** - Set key, chords, tempo, and structure for your scene
 
-2. **Preview** - Generated clips play in your headphones (cue output)
+2. **Generate** - AI creates clips that fit your contract:
+   - **Gemini** generates MIDI for synth tracks
+   - **Lyria** generates audio for texture tracks
 
-3. **Approve** - Push clips you like to the performance deck
+3. **Preview** - Generated clips play in your headphones (cue output)
 
-4. **Perform** - Audience hears only the performance deck (main output)
+4. **Approve** - Push clips you like to the performance deck
+
+5. **Perform** - Audience hears only the performance deck (main output)
 
 ### Audio Routing Modes
 
 #### Solo Mode (Single Output)
 For practicing or single-speaker setups. Listen to one source at a time.
 
-#### Audience Mode (Recommended for Performance)
+#### Performance Mode (Recommended for Performance)
 Requires a 4+ channel audio interface:
 - **Cue Output** (channels 1-2) → Headphones for private preview
 - **Main Output** (channels 3-4) → Speakers/PA for audience
@@ -91,7 +91,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 - **Manual Installation** - See the manual installation section below
 
 #### Clips Not Generating
-- **Check Track Has Instrument** - Ensure the track has Surge XT loaded
+- **Check Track Has Instrument** - Ensure the track has an instrument loaded (Surge XT or a custom VST3/AU plugin)
 - **Verify Track Is Not Muted** - Unmute the track and check volume levels
 - **Check Playback** - Press play to start playback
 - **Rate Limits** - Daily token limits are set per user for the free tier
@@ -99,16 +99,18 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 ### Tips for Best Results
 
 - **Be Specific** - Describe sounds in detail: "punchy techno kick with long decay" works better than just "kick"
+- **Use Contracts** - Set key, chords, and tempo before generating for coherent results
 - **One Task at a Time** - Break complex requests into steps
 - **Iterate** - Generate, listen, then ask for adjustments
 - **Use Musical Terms** - The system understands keys, scales, chord progressions, rhythmic patterns, etc.
 
 ### Next Steps
 
-- Experiment with different sound descriptions
-- Set up Audience Mode for private preview workflow
+- Experiment with different sound descriptions and musical contracts
+- Set up Performance Mode for private preview workflow
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
 - Check the [Features](/api-server/) section for advanced capabilities
+- Read the [Plugin SDK](/plugin-sdk/) documentation to build custom generators
 
 ---
 

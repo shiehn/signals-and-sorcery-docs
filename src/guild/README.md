@@ -8,11 +8,11 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a **modern generative music performance platform** that combines AI-powered clip generation with a DJ-inspired dual-deck workflow. Built with modern web technologies (LangGraph & MCP), it features a native audio engine and hardware-level support for headphone/main output routing - letting you generate music privately and perform it publicly.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new category of music tool built around contract-based composing. Define musical contracts (key, chords, tempo, bars), then generate MIDI with **Gemini** and audio with **Lyria**. All generators run on an extensible **Plugin SDK**, with hardware-level headphone/main output routing for live performance.
 
 ## The Vision
 
-We believe that generative music performance should be intuitive and immediate. Signals & Sorcery removes the barriers between your ideas and their realization, giving you a platform to generate, preview, and perform AI-created music in real-time.
+We believe that generative music performance should be intuitive and immediate. Signals & Sorcery removes the barriers between your ideas and their realization, giving you a platform to compose, preview, and perform AI-generated music in real-time.
 
 ## Community
 
@@ -47,7 +47,7 @@ Forever grateful for any feedback:
 - macOS 10.15+ (Apple Silicon & Intel)
 - 4GB RAM minimum (8GB recommended)
 - Internet connection for AI features
-- Audio interface with 4+ outputs (recommended for Audience Mode)
+- Audio interface with 4+ outputs (recommended for Performance Mode)
 
 ## Support
 
@@ -60,7 +60,7 @@ Forever grateful for any feedback:
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed)
+A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed).
 
 **Q: What audio interfaces work best?**
 A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
@@ -72,7 +72,10 @@ A: No, the app requires an internet connection for AI generation.
 A: I'm not doing anything weird. May add basic analytics for crash reporting.
 
 **Q: What synthesizers are supported?**
-A: Currently Surge XT only. More synth support planned.
+A: Surge XT ships as the default. Any VST3/AU instrument plugin can be loaded per track.
+
+**Q: What AI powers the generation?**
+A: **Gemini** for MIDI generation and **Lyria** for audio generation.
 
 ## Credits
 
@@ -81,14 +84,17 @@ A: Currently Surge XT only. More synth support planned.
 
 ### Technologies
 - Built with [Electron](https://www.electronjs.org/) and [React](https://react.dev/)
-- Powered by [Model Context Protocol](https://github.com/anthropics/mcp)
+- MIDI generation powered by [Gemini](https://deepmind.google/technologies/gemini/)
+- Audio generation powered by [Lyria](https://deepmind.google/technologies/lyria/)
 - Native audio engine built on [Tracktion Engine](https://github.com/Tracktion/tracktion_engine)
-- Synthesizer: [Surge XT](https://surge-synthesizer.github.io/)
+- Default synthesizer: [Surge XT](https://surge-synthesizer.github.io/)
+- Extensible via [Plugin SDK](/plugin-sdk/)
 
 ### Special Thanks
-- Anthropic for the MCP protocol
+- Google for Gemini and Lyria
 - The Tracktion team for the amazing audio engine
 - The Surge XT team for the best free synth
+- Anthropic for the MCP protocol
 
 ## Contact
 

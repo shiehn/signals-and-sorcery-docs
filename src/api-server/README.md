@@ -6,46 +6,46 @@ sidebar: auto
 
 ## Core Features
 
-### 🎵 AI-Powered Clip Generation
-Generate MIDI clips with natural language commands:
+### 🎵 Contract-Based Composing
+Define a musical contract and let AI generate within those constraints:
 
-- "create a dark sub bass"
-- "add a 4 on the floor kick"
-- "generate glitchy hi-hats"
-- "add a synth pad with reverb"
+- Set **key, chords, BPM, and bars** to establish the musical framework
+- AI generates MIDI via **Gemini** that respects the contract
+- AI generates audio via **Lyria** for texture and atmosphere
+- All tracks in a scene share the same contract for coherent compositions
 
-The AI interprets your description, generates MIDI, and configures Surge XT with appropriate patches.
-
-### 🎛️ DJ-Inspired Dual-Deck Workflow
+### 🎛️ Dual-Deck Performance Workflow
 Built around the core concept of private preview and public performance:
 
 - **Loop A (Composition)** - Generate and preview clips in headphones
 - **Loop B (Performance)** - Play approved clips for your audience
 - **Transition Deck** - Preview transitions before performing them
 
-### 🤖 Multiple AI Providers
-Choose your preferred AI model:
+### 🧩 Extensible Plugin SDK
+All built-in generators run on the Plugin SDK:
 
-- **OpenAI** - GPT-4 and GPT-5
-- **Google Gemini** - Gemini 2.5 and 3
-- **Groq** - Fast inference for real-time generation
+- **Synth Generator** - AI MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
+- **Sample Player** - Sample-based tracks with FX chains
+- **Audio Texture** - AI audio generation with Lyria
+
+Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
 
 ### 🎧 Audio Routing Modes
 
-Hardware-level support for headphone/main output separation, inspired by professional DJ setups:
+Hardware-level support for headphone/main output separation:
 
 - **Solo Mode** - Single output for practice and solo production
-- **Audience Mode** - Separate Cue (headphones) and Master (PA/speakers) outputs
+- **Performance Mode** - Separate Cue (headphones) and Master (PA/speakers) outputs
 - **Stream Mode** - Route Master to OBS/Twitch while monitoring privately in headphones
 
 [View Audio Routing Documentation →](./audio-routing.md)
 
-### 🎹 Surge XT Integration
+### 🎹 Instrument Support
 
-Automatic synthesizer configuration:
-- AI selects appropriate patches based on your sound description
-- Zero-friction setup with automatic installation
-- Bundled presets optimized for common sounds
+- **Surge XT** ships as the default synth with bundled presets
+- **Any VST3/AU instrument** can be loaded per track via the instrument selector
+- AI selects appropriate Surge XT patches based on sound descriptions
+- Custom instruments preserve their state across scenes and project save/load
 
 ### 🔄 Scene-Based Composition
 
