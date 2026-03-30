@@ -42,7 +42,7 @@ The platform features hardware-level audio routing: separate headphone (cue) and
 - **Contract-Based Generation**: Musical contracts ensure coherent compositions across tracks
 - **Gemini MIDI + Lyria Audio**: Purpose-built AI models for music generation
 - **Private Preview**: Audition generated content in headphones before the audience hears it
-- **Seamless Transitions**: Move material between decks for smooth live performances
+- **Deck Transfer**: Move material from composition to performance deck
 - **Plugin SDK**: Built-in synth, sample, and audio texture generators — with upcoming integrations for Splice, ElevenLabs, live coding, and agentic prompting
 - **Custom Instruments**: Load any VST3/AU synth plugin alongside or instead of the default Surge XT
 

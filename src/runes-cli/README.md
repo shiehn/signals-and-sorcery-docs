@@ -80,7 +80,7 @@ The audio engine is a native C++ process built on Tracktion Engine, communicatin
 
 ### Key Concepts
 
-- **Decks**: FolderTracks that act as mix buses (Loop-A, Loop-B, Transition)
+- **Decks**: FolderTracks that act as mix buses (Loop-A composition, Loop-B performance)
 - **Scenes**: FolderTracks that group audio tracks together
 - **Tracks**: AudioTracks containing clips and plugins
 

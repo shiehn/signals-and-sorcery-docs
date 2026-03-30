@@ -47,7 +47,7 @@ Forever grateful for any feedback:
 - macOS 10.15+ (Apple Silicon & Intel)
 - 4GB RAM minimum (8GB recommended)
 - Internet connection for AI features
-- Audio interface with 4+ outputs (recommended for Performance Mode)
+- Audio interface with 4+ outputs (recommended for performance with headphone/main separation)
 
 ## Support
 

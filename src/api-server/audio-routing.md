@@ -33,7 +33,7 @@ A "channel pair" is a stereo output pair on your audio interface:
 
 ### Use Case
 
-A solo user on a laptop with a single stereo output can listen to the composition process (Cue), transition preview, or Master output—but only one at a time.
+A solo user on a laptop with a single stereo output can listen to the composition deck (Cue) or Master output—but only one at a time.
 
 ### Minimum Hardware
 
@@ -43,7 +43,7 @@ A solo user on a laptop with a single stereo output can listen to the compositio
 ### Routing
 
 - SAS uses exactly **one stereo output pair** (e.g., outputs 1-2)
-- Select a **Solo Listen Source**: `Cue`, `Transition Preview`, or `Master`
+- Select a **Solo Listen Source**: `Cue` or `Master`
 - SAS routes the selected source to the stereo pair
 - All other sources are muted
 
@@ -57,7 +57,7 @@ A solo user on a laptop with a single stereo output can listen to the compositio
 
 ---
 
-## Mode 2: Audience Mode
+## Mode 2: Performance Mode
 
 **Cue to headphones, Master to PA**
 
@@ -67,13 +67,13 @@ Performer generates and auditions privately in headphones while the audience hea
 
 ### Hardware Requirements
 
-Audience Mode requires a CoreAudio device with **two independent stereo outputs**:
+Performance Mode requires a CoreAudio device with **two independent stereo outputs**:
 - One for **Cue (headphones)**
 - One for **Master (PA)**
 
 **Recommended:**
 - Multi-output USB audio interface with at least **4 outputs** (two stereo pairs)
-- DJ controller with built-in audio interface (appears as a CoreAudio device)
+- USB audio interface with built-in headphone output (appears as a CoreAudio device)
 
 ### Routing
 
@@ -87,7 +87,7 @@ Audience Mode requires a CoreAudio device with **two independent stereo outputs*
 When selecting an output device, SAS detects the number of output channels. If fewer than 4 outputs are available:
 
 ::: warning
-Audience Mode requires two independent stereo outputs (Cue + Master). Select a device with at least 4 outputs.
+Performance Mode requires two independent stereo outputs (Cue + Master). Select a device with at least 4 outputs.
 :::
 
 ### Settings
@@ -103,7 +103,7 @@ Audience Mode requires two independent stereo outputs (Cue + Master). Select a d
 
 - Cue never leaks to Master output
 - Master never interrupts Cue auditioning
-- Switching scenes/transitions does not cause outputs to swap
+- Switching scenes does not cause outputs to swap
 
 ---
 
@@ -121,7 +121,7 @@ Performer hears preview (Cue) in headphones while stream viewers hear only the M
 - **[BlackHole (2ch)](https://existential.audio/blackhole/)** - Virtual audio capture device
 
 ::: tip
-BlackHole is only needed for Stream Mode. Solo and Audience modes work without it.
+BlackHole is only needed for Stream Mode. Solo and Performance modes work without it.
 :::
 
 ### Recommended Hardware
@@ -184,8 +184,8 @@ Then route:
 
 ## Mode Comparison
 
-| Feature | Solo | Audience | Stream |
-|---------|------|----------|--------|
+| Feature | Solo | Performance | Stream |
+|---------|------|-------------|--------|
 | Minimum outputs | 2 | 4 | 2+ |
 | Simultaneous Cue + Master | No | Yes | Yes |
 | Virtual driver required | No | No | Yes (BlackHole) |
@@ -205,7 +205,7 @@ If the selected device is unplugged, SAS will:
 ### Insufficient Outputs
 
 If the selected device doesn't have enough outputs for the chosen mode:
-- Audience/Stream mode will be disabled
+- Performance/Stream mode will be disabled
 - User must select a device with more outputs or switch to Solo Mode
 
 ---
@@ -216,9 +216,9 @@ Audio settings are stored with the following structure:
 
 | Key | Values | Description |
 |-----|--------|-------------|
-| `mode` | `solo`, `audience`, `stream` | Current routing mode |
+| `mode` | `solo`, `performance`, `stream` | Current routing mode |
 | `outputDeviceId` | string | Selected CoreAudio device |
 | `soloOutputPair` | number | Channel pair for Solo mode |
 | `cueOutputPair` | number | Channel pair for Cue bus |
 | `masterOutputPair` | number | Channel pair for Master bus |
-| `soloListenSource` | `cue`, `preview`, `master` | Solo mode source selection |
+| `soloListenSource` | `cue`, `master` | Solo mode source selection |

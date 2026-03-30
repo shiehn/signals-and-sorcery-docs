@@ -43,7 +43,6 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
 - **Musical Contract** - Key, chords, BPM, and bars that define the compositional framework
 - **Loop A (Composition Deck)** - Generate and preview clips in your headphones
 - **Loop B (Performance Deck)** - Play approved clips for your audience
-- **Transition Deck** - Preview transitions before performing them
 
 #### Basic Workflow
 
@@ -64,12 +63,12 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
 #### Solo Mode (Single Output)
 For practicing or single-speaker setups. Listen to one source at a time.
 
-#### Performance Mode (Recommended for Performance)
+#### Performance Mode (Recommended)
 Requires a 4+ channel audio interface:
 - **Cue Output** (channels 1-2) → Headphones for private preview
 - **Main Output** (channels 3-4) → Speakers/PA for audience
 
-This is the core workflow: generate in headphones, push to audience.
+This is the core workflow: compose in headphones, push to audience.
 
 #### Stream Mode
 For Twitch/YouTube streaming:
@@ -107,7 +106,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 ### Next Steps
 
 - Experiment with different sound descriptions and musical contracts
-- Set up Performance Mode for private preview workflow
+- Set up Performance Mode for dual-deck workflow
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
 - Check the [Features](/api-server/) section for advanced capabilities
 - Read the [Plugin SDK](/plugin-sdk/) documentation to build custom generators

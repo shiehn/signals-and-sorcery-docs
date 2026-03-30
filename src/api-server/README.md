@@ -19,7 +19,6 @@ Built around the core concept of private preview and public performance:
 
 - **Loop A (Composition)** - Generate and preview clips in headphones
 - **Loop B (Performance)** - Play approved clips for your audience
-- **Transition Deck** - Preview transitions before performing them
 
 ### 🧩 Extensible Plugin SDK
 All built-in generators run on the Plugin SDK:
@@ -34,7 +33,7 @@ Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and *
 
 Hardware-level support for headphone/main output separation:
 
-- **Solo Mode** - Single output for practice and solo production
+- **Solo Mode** - Single output for practice and production
 - **Performance Mode** - Separate Cue (headphones) and Master (PA/speakers) outputs
 - **Stream Mode** - Route Master to OBS/Twitch while monitoring privately in headphones
 
