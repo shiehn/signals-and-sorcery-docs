@@ -1,5 +1,5 @@
 /**
- * @sas/plugin-sdk
+ * @signalsandsorcery/plugin-sdk
  *
  * TypeScript types and shared utilities for building Signals & Sorcery plugins.
  *
@@ -9,7 +9,7 @@
  *
  * @example
  * ```ts
- * import type { GeneratorPlugin, PluginHost, PluginUIProps } from '@sas/plugin-sdk';
+ * import type { GeneratorPlugin, PluginHost, PluginUIProps } from '@signalsandsorcery/plugin-sdk';
  *
  * class MyPlugin implements GeneratorPlugin {
  *   readonly id = '@my/plugin';
@@ -139,7 +139,7 @@ export type {
  * Use this in your rollup.config.js:
  *
  * ```js
- * import { rollupExternals, rollupGlobals } from '@sas/plugin-sdk';
+ * import { rollupExternals, rollupGlobals } from '@signalsandsorcery/plugin-sdk';
  *
  * export default {
  *   external: rollupExternals,
