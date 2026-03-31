@@ -125,7 +125,7 @@ import type {
   PluginMidiNote,
   PluginSettingsSchema,
   MusicalContext,
-} from '@sas/plugin-sdk';
+} from '@signalsandsorcery/plugin-sdk';
 import { EuclideanPanel } from './components/Panel';
 
 /** Per-layer config stored in scene data */
@@ -210,7 +210,7 @@ Create `components/Panel.tsx`:
 
 ```tsx
 import React from 'react';
-import type { PluginUIProps, PluginMidiNote } from '@sas/plugin-sdk';
+import type { PluginUIProps, PluginMidiNote } from '@signalsandsorcery/plugin-sdk';
 import { euclidean } from '../lib/euclidean';
 import type { PatternConfig, LayerConfig } from '../index';
 import { DEFAULT_CONFIG } from '../index';

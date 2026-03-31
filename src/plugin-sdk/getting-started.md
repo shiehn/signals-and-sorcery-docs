@@ -12,6 +12,55 @@ This guide walks you through creating, installing, and debugging a Signals & Sor
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
+## Installing the SDK
+
+The Plugin SDK is published as an npm package with types, UI components, and hooks:
+
+```bash
+npm install @signalsandsorcery/plugin-sdk
+```
+
+This gives you:
+- **TypeScript types** — `GeneratorPlugin`, `PluginHost`, `PluginUIProps`, and all supporting types
+- **UI Components** — `TrackRow`, `VolumeSlider`, `PanSlider`, `FxToggleBar`, `SorceryProgressBar`, `InstrumentDrawer`
+- **Hooks** — `useSceneState` (scene-keyed state management)
+- **Constants** — `VALID_INSTRUMENT_ROLES`, `FX_CATEGORIES`, `PLUGIN_SDK_VERSION`
+
+```typescript
+// Import types for your plugin class
+import type { GeneratorPlugin, PluginHost, PluginUIProps } from '@signalsandsorcery/plugin-sdk';
+
+// Import UI components for your React panel
+import { TrackRow, useSceneState, VolumeSlider, FxToggleBar } from '@signalsandsorcery/plugin-sdk';
+```
+
+### SDK UI Components
+
+These pre-built components match the host app's visual style (Tailwind CSS classes provided by the host):
+
+| Component | Description |
+|-----------|-------------|
+| `TrackRow` | Full-featured track row with prompt input, generate/shuffle/copy buttons, mute/solo, volume/pan, FX drawer, instrument drawer, and progress overlay |
+| `VolumeSlider` | Compact horizontal volume slider (0-1) with dB tooltip |
+| `PanSlider` | Compact horizontal pan slider (-1 to +1) with double-click to center |
+| `FxToggleBar` | Per-track FX control panel with 6 categories, preset buttons, and dry/wet sliders |
+| `SorceryProgressBar` | Animated progress bar with time-based pacing for long operations |
+| `InstrumentDrawer` | Searchable grid of available VST3/AU instrument plugins |
+
+### useSceneState Hook
+
+Maintains separate state per scene — when the user switches scenes, state is preserved and restored:
+
+```typescript
+import { useSceneState } from '@signalsandsorcery/plugin-sdk';
+
+// Inside your React component:
+const [prompts, setPrompts, setPromptsForScene] = useSceneState(activeSceneId, {});
+// prompts = state for current scene
+// setPrompts(value) = update current scene
+// setPromptsForScene(sceneId, value) = update a specific scene (for async callbacks)
+```
+
 ## Plugin Directory Structure
 
 A minimal plugin looks like this:
@@ -131,7 +180,7 @@ import type {
   PluginUIProps,
   PluginSettingsSchema,
   MusicalContext,
-} from '@sas/plugin-sdk';
+} from '@signalsandsorcery/plugin-sdk';
 import { MyPanel } from './components/Panel';
 
 export class MyPlugin implements GeneratorPlugin {
@@ -228,7 +277,7 @@ If `activate()` throws, the plugin is marked as **failed** and its accordion sec
 Your React component receives `PluginUIProps`:
 
 ```tsx
-import type { PluginUIProps } from '@sas/plugin-sdk';
+import type { PluginUIProps } from '@signalsandsorcery/plugin-sdk';
 
 interface PanelState {
   isGenerating: boolean;
@@ -296,10 +345,9 @@ export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: P
 | `onHeaderContent` | `(content: ReactNode \| null) => void` | Set/clear custom buttons in the accordion header |
 | `onLoading` | `(loading: boolean) => void` | Show/hide a loading spinner in the accordion header |
 | `sceneContext` | `PluginSceneContext \| null` | Scene-level context: contract state, chords, BPM, bars (see below) |
-| `onCompose` | `(() => Promise<void>) \| null` | Callback to trigger bulk composition. Null if not applicable |
-| `isBulkComposing` | `boolean` | Whether the LLM planning phase of bulk composition is in progress |
-| `bulkPlaceholders` | `BulkAddPlaceholderTrack[]` | Per-track placeholder state during bulk composition (empty when idle) |
 | `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
+| `onOpenContract` | `(() => void) \| null` | Callback to open the contract/chords section |
+| `onExpandSelf` | `(() => void) \| null` | Callback to expand this plugin's own accordion section |
 
 ### PluginSceneContext
 

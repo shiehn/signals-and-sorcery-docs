@@ -1247,7 +1247,7 @@ class PluginError extends Error {
 | `SECRET_NOT_FOUND` | Secret key doesn't exist |
 
 ```typescript
-import { PluginError } from '@sas/plugin-sdk';
+import { PluginError } from '@signalsandsorcery/plugin-sdk';
 
 try {
   await host.createTrack({ name: 'New Track' });

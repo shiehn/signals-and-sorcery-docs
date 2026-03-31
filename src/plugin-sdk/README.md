@@ -47,10 +47,9 @@ Props passed to your plugin's React component by the host.
 | `onHeaderContent` | `(content: ReactNode \| null) => void` | Inject custom content (e.g., buttons) into the accordion header |
 | `onLoading` | `(loading: boolean) => void` | Show/hide a loading spinner in the accordion header |
 | `sceneContext` | `PluginSceneContext \| null` | Scene-level context: contract state, chords, BPM, bars |
-| `onCompose` | `(() => Promise<void>) \| null` | Callback to trigger bulk composition |
-| `isBulkComposing` | `boolean` | Whether the LLM planning phase of bulk composition is in progress |
-| `bulkPlaceholders` | `BulkAddPlaceholderTrack[]` | Per-track placeholder state during bulk composition |
 | `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
+| `onOpenContract` | `(() => void) \| null` | Callback to open the contract/chords section |
+| `onExpandSelf` | `(() => void) \| null` | Callback to expand this plugin's own accordion section |
 
 ---
 
@@ -101,6 +100,14 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `getTrackPlugins` | `(trackId: string) => Promise<PluginSynthInfo[]>` | List all plugins loaded on a track. Returns `{ index, name, type, enabled }[]`. **Ownership.** |
 | `removePlugin` | `(trackId: string, pluginIndex: number) => Promise<void>` | Remove a plugin from a track. **Ownership.** |
 | `isPluginAvailable` | `(pluginName: string) => Promise<boolean>` | Check if a VST3/AU plugin is installed on the system. |
+
+### Instrument Plugin Selection
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `getAvailableInstruments` | `() => Promise<InstrumentDescriptor[]>` | Get available instrument plugins (VST3/AU synths) scanned by the engine. |
+| `getTrackInstrument` | `(trackId: string) => Promise<InstrumentDescriptor \| null>` | Get the instrument currently loaded on a track. Null = default (Surge XT). **Ownership.** |
+| `setTrackInstrument` | `(trackId: string, pluginId: string) => Promise<void>` | Change the instrument plugin on a track. Preserves MIDI data. **Ownership.** |
 
 ### FX Operations
 
@@ -242,6 +249,15 @@ Secrets are encrypted via the OS keychain and scoped per plugin. Plugin A cannot
 | `createSampleTrack` | `(sampleId: string, options?) => Promise<PluginTrackHandle>` | Create a sample track in the active scene. |
 | `deleteSampleTrack` | `(trackId: string) => Promise<void>` | Delete a sample track. |
 | `getPluginSampleTracks` | `() => Promise<PluginSampleTrackInfo[]>` | Get all sample tracks in the scene. Re-establishes ownership. Returns `{ track, sample, volume, pan }[]`. |
+| `timeStretchSample` | `(sampleId: string, targetBpm: number) => Promise<PluginSampleInfo>` | Time-stretch a sample to a target BPM. Returns the new sample info. |
+
+### Scene Composition
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `composeScene` | `(options: ComposeSceneOptions) => Promise<ComposeSceneResult>` | Trigger bulk composition for the active scene. LLM plans arrangement, creates tracks, generates MIDI. Options: `contractPrompt`, optional `genre`. |
+| `onComposeProgress` | `(listener: ComposeProgressListener) => UnsubscribeFn` | Subscribe to composition progress events (`planning`, `generating`, `complete`, `error`). |
+| `onEngineReady` | `(listener: () => void) => UnsubscribeFn` | Subscribe to engine ready events. Fires when the engine finishes loading tracks after a scene change. |
 
 ### Notifications & Progress
 
@@ -293,9 +309,9 @@ These ship with Signals & Sorcery and serve as reference implementations:
 
 | Plugin | Type | Description |
 |--------|------|-------------|
-| `@sas/synth-generator` | midi | AI-powered MIDI generation with Surge XT presets |
-| `@sas/sample-player` | sample | Sample library browser with time-stretching |
-| `@sas/audio-texture` | audio | AI audio texture generation via Lyria 2 |
+| `@signalsandsorcery/synth-generator` | midi | AI-powered MIDI generation with Surge XT presets |
+| `@signalsandsorcery/sample-player` | sample | Sample library browser with time-stretching |
+| `@signalsandsorcery/audio-texture` | audio | AI audio texture generation via Lyria 2 |
 
 ## Security Model
 
