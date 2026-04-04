@@ -8,6 +8,21 @@ Signals & Sorcery has an extensible plugin system that lets you build custom **i
 
 Each plugin gets its own accordion section in the workstation UI and a scoped `PluginHost` API for interacting with tracks, MIDI, audio, and more. Plugins never access the audio engine directly — all interaction goes through the `PluginHost`, which enforces ownership scoping, capability gating, and track limits.
 
+## Start Here
+
+The fastest way to build a plugin is to clone the template:
+
+```bash
+cd ~/.signals-and-sorcery/plugins/
+git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
+cd @my-org/my-plugin
+npm install && npm run build
+```
+
+Restart Signals & Sorcery — your plugin appears in the workstation. Edit the source, rebuild, and iterate.
+
+**[Plugin Template on GitHub](https://github.com/shiehn/sas-plugin-template)** — Fully commented hello-world plugin with examples of track creation, MIDI writing, and all common patterns.
+
 ## Guides
 
 | Page | Description |
@@ -15,6 +30,17 @@ Each plugin gets its own accordion section in the workstation UI and a scoped `P
 | [Getting Started](./getting-started.md) | Directory structure, manifest options, installation, and debugging |
 | [API Reference](./api-reference.md) | Complete PluginHost API with full type signatures, parameters, and code examples |
 | [Tutorial](./tutorial.md) | Build a Euclidean Rhythm Generator plugin from scratch |
+
+## Resources
+
+| Resource | Link |
+|----------|------|
+| Plugin Template | [github.com/shiehn/sas-plugin-template](https://github.com/shiehn/sas-plugin-template) |
+| Plugin SDK (npm) | [@signalsandsorcery/plugin-sdk](https://www.npmjs.com/package/@signalsandsorcery/plugin-sdk) |
+| SDK Source | [github.com/shiehn/sas-plugin-sdk](https://github.com/shiehn/sas-plugin-sdk) |
+| Synth Plugin (reference) | [github.com/shiehn/sas-synth-plugin](https://github.com/shiehn/sas-synth-plugin) |
+| Sample Plugin (reference) | [github.com/shiehn/sas-sample-plugin](https://github.com/shiehn/sas-sample-plugin) |
+| Audio Plugin (reference) | [github.com/shiehn/sas-audio-plugin](https://github.com/shiehn/sas-audio-plugin) |
 
 ---
 

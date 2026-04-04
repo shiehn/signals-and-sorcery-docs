@@ -6,6 +6,18 @@ sidebar: auto
 
 This guide walks you through creating, installing, and debugging a Signals & Sorcery plugin.
 
+::: tip Quick Start
+Clone the **[Plugin Template](https://github.com/shiehn/sas-plugin-template)** to skip the boilerplate. It includes a working hello-world plugin with heavily commented examples of track creation, MIDI writing, and all common patterns:
+
+```bash
+cd ~/.signals-and-sorcery/plugins/
+git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
+cd @my-org/my-plugin
+npm install && npm run build
+# Restart Signals & Sorcery — plugin appears in the workstation
+```
+:::
+
 ## Prerequisites
 
 - **Signals & Sorcery** v2.24.0 or later (Plugin SDK v1.0.0)
