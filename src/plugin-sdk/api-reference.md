@@ -478,6 +478,53 @@ generateAudioTexture(request: PluginAudioTextureRequest): Promise<PluginAudioTex
 
 ---
 
+## Stem Splitting
+
+### splitStems(trackId)
+
+Split an audio track into separate stems (vocals, drums, bass, other). Creates new muted tracks for each stem.
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `trackId` | `string` | Engine track ID of the audio track to split |
+
+**Returns:** `PluginStemSplitResult`
+
+```typescript
+interface PluginStemSplitResult {
+  stems: PluginStemTrackInfo[];
+}
+
+interface PluginStemTrackInfo {
+  stemType: 'vocals' | 'drums' | 'bass' | 'other';
+  track: PluginTrackHandle;
+}
+```
+
+```typescript
+const result = await host.splitStems(audioTrack.id);
+for (const stem of result.stems) {
+  console.log(`Created ${stem.stemType} track: ${stem.track.id}`);
+  // Stems are auto-muted — unmute the ones you want
+  await host.setTrackMute(stem.track.id, false);
+}
+```
+
+### isStemSplitterAvailable()
+
+Check if the stem splitter binary is available on the system.
+
+**Returns:** `Promise<boolean>`
+
+```typescript
+const available = await host.isStemSplitterAvailable();
+if (!available) {
+  host.showToast('warning', 'Stem splitter not installed');
+}
+```
+
+---
+
 ## Plugin/Synth Operations
 
 ### loadSynthPlugin(trackId, pluginName)
