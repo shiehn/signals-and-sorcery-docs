@@ -31,5 +31,5 @@ jobs:
           external_repository: shiehn/dawnet-docs-gh-pages
           publish_branch: main
           publish_dir: src/.vuepress/dist
-          force_orphan: false
+          keep_files: true
           commit_message: 'deploy: ${{ github.event.head_commit.message }}'
