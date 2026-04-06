@@ -105,6 +105,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 
 ### Next Steps
 
+- Watch the [Video Tutorials](/tutorials/) to see each feature in action
 - Experiment with different sound descriptions and musical contracts
 - Set up Performance Mode for dual-deck workflow
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup

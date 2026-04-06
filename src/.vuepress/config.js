@@ -22,6 +22,10 @@ export default {
                 link: '/getting-started/',
             },
             {
+                text: 'Tutorials',
+                link: '/tutorials/',
+            },
+            {
                 text: 'Features',
                 link: '/api-server/',
             },

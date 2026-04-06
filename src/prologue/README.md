@@ -46,6 +46,10 @@ The platform features hardware-level audio routing: separate headphone (cue) and
 - **Plugin SDK**: Built-in synth, sample, and audio texture generators — with upcoming integrations for Splice, ElevenLabs, live coding, and agentic prompting
 - **Custom Instruments**: Load any VST3/AU synth plugin alongside or instead of the default Surge XT
 
+## Video Tutorials
+
+See Signals & Sorcery in action — check out the [Video Tutorials](/tutorials/) for demos of MIDI generation, samples, plugins, and AI audio.
+
 ## Current Limitations
 
 - **macOS Only**: Tested on M-series & Intel chips (Windows/Linux not supported)

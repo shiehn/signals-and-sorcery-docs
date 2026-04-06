@@ -54,8 +54,9 @@ Forever grateful for any feedback:
 ### Getting Help
 
 1. **Documentation**: Start with our [Getting Started Guide](/getting-started/)
-2. **Discord**: Ask questions in our [Discord server](https://discord.gg/UcHCjfpRkV)
-3. **Email**: Contact me at stevehiehn at gmail.com
+2. **Video Tutorials**: Watch the [Tutorial Videos](/tutorials/) to see features in action
+3. **Discord**: Ask questions in our [Discord server](https://discord.gg/UcHCjfpRkV)
+4. **Email**: Contact me at stevehiehn at gmail.com
 
 ### Frequently Asked Questions
 
