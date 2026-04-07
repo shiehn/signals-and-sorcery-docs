@@ -1,4 +1,5 @@
 import {defineUserConfig} from 'vuepress'
+import { fileURLToPath, URL } from 'node:url'
 
 import { defaultTheme } from 'vuepress'
 import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
@@ -7,6 +8,9 @@ export default {
     lang: 'en-US',
     title: 'Signals & Sorcery',
     description: 'Generative Audio Workstation (GAW) for contract-based composing with Gemini MIDI and Lyria audio generation.',
+    // Client-side enhancement: signup-funnel telemetry on the download buttons.
+    // See client.js for the implementation.
+    clientConfigFile: fileURLToPath(new URL('./client.js', import.meta.url)),
     theme: defaultTheme({
         // logo: "/sas_sm_logo.png",
         // alt: "Signals & Sorcery",
