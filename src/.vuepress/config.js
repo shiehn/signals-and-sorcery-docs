@@ -37,6 +37,19 @@ export default {
                 text: 'About',
                 link: '/guild/',
             },
+            {
+                text: 'Legal',
+                children: [
+                    {
+                        text: 'Privacy Policy',
+                        link: '/privacy-policy/',
+                    },
+                    {
+                        text: 'Terms of Service',
+                        link: '/terms-of-service/',
+                    },
+                ],
+            },
         ],
     }),
     plugins: [
