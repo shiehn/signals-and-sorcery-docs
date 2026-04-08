@@ -1,29 +1,17 @@
-# dawnet-docs
-DAWNet Plugin Documentation
+# Signals & Sorcery Documentation
 
-# DEV
-npm run dev
+VuePress source for [signalsandsorcery.com](https://signalsandsorcery.com).
 
-# BUILD
-npm run build
-
-# SERVE
-
-`npm install -g http-server`
-
-cd src/.vuepress/dist && sudo nohup http-server dist/ -p 80 -a 0.0.0.0 &
-
-
-# DEPLOY
+## Local development
 
 ```bash
-npm run build
-npm run deploy
+npm install
+npm run dev      # local preview at http://localhost:8080
+npm run build    # local build verification (output goes to ../dawnet-docs-gh-pages)
 ```
 
-### Troubleshooting ./dawnet-docs-gh-pages
-```
-git reset --hard
-git fetch origin
-git reset --hard origin/main
-```
+## Deployment
+
+**CI auto-deploys on push to `main`.** Do not run `npm run deploy` manually — that script is legacy and bypasses CI. Just commit to `main` and the site will update.
+
+For details on how releases (download link bumps, version updates) are handled, see [`DEPLOYMENT.md`](DEPLOYMENT.md).

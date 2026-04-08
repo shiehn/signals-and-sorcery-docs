@@ -337,7 +337,7 @@ These ship with Signals & Sorcery and serve as reference implementations:
 |--------|------|-------------|
 | `@signalsandsorcery/synth-generator` | midi | AI-powered MIDI generation with Surge XT presets |
 | `@signalsandsorcery/sample-player` | sample | Sample library browser with time-stretching |
-| `@signalsandsorcery/audio-texture` | audio | AI audio texture generation via Lyria 2 |
+| `@signalsandsorcery/audio-texture` | audio | AI audio texture generation via Lyria 3 |
 
 ## Security Model
 

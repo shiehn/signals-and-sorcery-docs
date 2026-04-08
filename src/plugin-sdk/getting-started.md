@@ -20,7 +20,7 @@ npm install && npm run build
 
 ## Prerequisites
 
-- **Signals & Sorcery** v2.24.0 or later (Plugin SDK v1.0.0)
+- **Signals & Sorcery** v2.24.0 or later (Plugin SDK contract v1.1.0, package v1.2.0)
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
