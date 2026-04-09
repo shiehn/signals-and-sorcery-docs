@@ -9,10 +9,10 @@ head:
 home: true
 actions:
   - text: Mac (Silicon)
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_33_0-arm64.dmg
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_36_0-arm64.dmg
     type: primary
   - text: Mac (Intel)
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_33_0-x64.dmg
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_36_0-x64.dmg
     type: secondary
 heroImage: ./sas_logo_two.png
 features:
