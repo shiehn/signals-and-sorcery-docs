@@ -62,7 +62,7 @@ With JavaScript fetching `downloads.json` — this approach is unreliable in the
 The release process is **fully automated** via the release script in `sas-assistant`. Run:
 
 ```bash
-cd /Users/stevehiehn/sas-m4l-project/sas-assistant
+cd /Users/stevehiehn/sas-platform/sas-assistant
 
 # For minor version bump (0.12.0 → 0.13.0)
 npm run release
@@ -100,7 +100,7 @@ After the release script finishes, the docs site will update automatically once 
 When you just want to edit docs (no app release involved):
 
 ```bash
-cd /Users/stevehiehn/sas-m4l-project/signals-and-sorcery-docs
+cd /Users/stevehiehn/sas-platform/signals-and-sorcery-docs
 
 # 1. Edit markdown files in src/
 # 2. Optionally preview locally
