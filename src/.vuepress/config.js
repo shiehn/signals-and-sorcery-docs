@@ -34,6 +34,10 @@ export default {
                 link: '/api-server/',
             },
             {
+                text: 'Automation',
+                link: '/automation/',
+            },
+            {
                 text: 'Plugin SDK',
                 link: '/plugin-sdk/',
             },
