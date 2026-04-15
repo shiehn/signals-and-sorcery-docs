@@ -25,23 +25,7 @@ sas play_scene --deck main
 ```
 
 That's a *real* program. It's composable, debuggable (run any line
-yourself), and uses a language every modern LLM is fluent in. You don't
-have to teach your agent a custom grammar — the CLI is the grammar.
-
-## Why not a custom DSL?
-
-Short answer: we tried, then rejected it. Two reasons:
-
-1. **LLMs are already fluent in bash/Python/JS.** Forcing them to emit a
-   YAML-with-templates dialect burns context and produces brittle output.
-2. **The CLI + `jq` + bash variables give you everything a DSL would** —
-   composition, branching, loops, error handling — for free.
-
-The longer version of this reasoning lives in the [design doc][design] and
-follows the thinking in
-[Armin Ronacher's "Tools: Code Is All You Need"][ronacher] and
-[Eric Holmes' "MCP is dead, long live the CLI"][holmes]. Our take: both of
-them are right, and the CLI *is* the tool that lets agents write code.
+yourself), and uses a language every modern LLM is fluent in.
 
 ## Three ways to integrate
 
@@ -115,7 +99,3 @@ Then either:
 - **[Examples](./examples.md)** — worked bash scripts for common flows.
 - **[For agents](./for-agents.md)** — integration notes for Claude Code,
   OpenClaw, Cursor, and custom clients.
-
-[design]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md
-[ronacher]: https://lucumr.pocoo.org/2025/7/3/tools/
-[holmes]: https://ejholmes.github.io/2026/02/28/mcp-is-dead-long-live-the-cli.html
