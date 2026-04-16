@@ -27,6 +27,30 @@ Want to install later, reinstall after moving the app, or remove it?
 Uninstall buttons that read the current status and kick off the same
 one-prompt flow.
 
+### If you decline the admin prompt
+
+We don't leave you empty-handed. If you click **Cancel** on the admin
+dialog, the app offers to install for just your account — no admin
+required. The wrapper lands at `~/.local/bin/sas` instead of
+`/usr/local/bin/sas`. Two follow-ups you'll need to do yourself:
+
+1. **Add `~/.local/bin` to your PATH.** It's not on PATH by default
+   on macOS. Add this to your shell profile (`~/.zshrc`,
+   `~/.bashrc`, or equivalent):
+
+   ```bash
+   export PATH="$HOME/.local/bin:$PATH"
+   ```
+
+   …then open a new terminal and `sas --version` should work.
+
+2. **Or invoke by full path:** `~/.local/bin/sas get_status`.
+   Works immediately, no profile editing required.
+
+You can switch to the admin-backed system-wide install at any time
+from **Settings → Developer Tools → sas CLI** — click **Uninstall**
+(removes the user-local copy without a prompt), then **Install**.
+
 ### If `sas` is not found after install
 
 The install writes to two places: `/usr/local/bin/sas` (the wrapper)
