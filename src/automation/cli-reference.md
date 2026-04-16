@@ -11,19 +11,46 @@ the app is available as a CLI subcommand *with zero CLI rebuild*.
 
 ## Install
 
-The CLI ships with the app. For local development:
+**macOS** — the installer runs automatically on first launch:
 
-```bash
-# From the app's install directory
-npm run build:cli    # compiles to dist/cli/sas.js
-ln -s "$(pwd)/dist/cli/sas.js" /usr/local/bin/sas
-```
+1. Launch Signals & Sorcery.
+2. On the final wizard screen ("You're all set!") leave
+   **"Add `sas` command to your terminal"** checked.
+3. Approve the admin prompt. The app writes a small wrapper to
+   `/usr/local/bin/sas` that runs the CLI through the app's own
+   bundled runtime — you don't need Node.js installed.
+4. Open a **new** terminal window (your existing shells don't
+   inherit PATH changes).
 
-Production users will eventually get it via:
+Want to install later, reinstall after moving the app, or remove it?
+**Settings → Developer Tools → sas CLI** has Install / Reinstall /
+Uninstall buttons that read the current status and kick off the same
+one-prompt flow.
 
-```bash
-npm install -g signals-and-sorcery
-```
+### If `sas` is not found after install
+
+The install writes to two places: `/usr/local/bin/sas` (the wrapper)
+and `/etc/paths.d/signals-and-sorcery` (for shells that don't have
+`/usr/local/bin` on PATH by default, like fish). A few scenarios can
+still leave `sas` out of reach:
+
+| Symptom | Fix |
+|---|---|
+| `zsh: command not found: sas` in a terminal you had open during install | Open a *new* terminal — the old shell still has the pre-install PATH |
+| *New* terminal also says `command not found` | Open **Settings → Developer Tools → sas CLI** and click **Reinstall**. The status line will read `stale` or `not-installed` and the fix is one click. |
+| Preferences shows `Status: stale — the app moved since install` | Click **Reinstall** — the wrapper hard-codes the app path at install time; moving the app bundle invalidates the wrapper. |
+| Preferences shows `Status: managed by Homebrew` (or Nix, or another app) | Remove the foreign `/usr/local/bin/sas` first (`brew uninstall …`), then click Install. The app refuses to clobber binaries it didn't write. |
+| You use a non-default shell with a custom PATH that drops `/usr/local/bin` | Run `export PATH=/usr/local/bin:$PATH` to verify the wrapper works, then add that line to your shell rc. |
+
+**Can't make the CLI work?** You don't need it. The CLI is a thin
+wrapper around the local HTTP API — `curl` against
+`http://localhost:7655/api/v1/execute` gives you every action the
+CLI has. See the [automation overview](./README.md#quick-start) for
+worked examples.
+
+**Windows / Linux**: the auto-installer is macOS-only today (the
+admin-elevation mechanism differs per platform). Use the HTTP or
+MCP paths instead — they work uniformly.
 
 ## Verify
 
