@@ -35,7 +35,6 @@ Hardware-level support for headphone/main output separation:
 
 - **Solo Mode** - Single output for practice and production
 - **Performance Mode** - Separate Cue (headphones) and Master (PA/speakers) outputs
-- **Stream Mode** - Route Master to OBS/Twitch while monitoring privately in headphones
 
 [View Audio Routing Documentation →](./audio-routing.md)
 

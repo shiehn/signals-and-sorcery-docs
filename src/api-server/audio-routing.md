@@ -107,89 +107,13 @@ Performance Mode requires two independent stereo outputs (Cue + Master). Select 
 
 ---
 
-## Mode 3: Stream Mode
-
-**Cue to headphones, Master to stream capture**
-
-### Use Case
-
-Performer hears preview (Cue) in headphones while stream viewers hear only the Master output on Twitch or other platforms.
-
-### Required Tools (Free)
-
-- **[OBS Studio](https://obsproject.com/)** - Streaming software
-- **[BlackHole (2ch)](https://existential.audio/blackhole/)** - Virtual audio capture device
-
-::: tip
-BlackHole is only needed for Stream Mode. Solo and Performance modes work without it.
-:::
-
-### Recommended Hardware
-
-- USB audio interface (for headphones / cue)
-- Optional microphone
-
-### Routing
-
-| Bus | Destination | Path |
-|-----|-------------|------|
-| Cue | Headphones | Interface outputs 1-2 |
-| Master | Stream | BlackHole 2ch → OBS → Twitch |
-
-### Implementation Options
-
-#### Option A: Separate Devices (Simpler Setup)
-
-Select different devices for Cue and Master:
-
-| Bus | Device |
-|-----|--------|
-| Cue | Physical interface |
-| Master | BlackHole 2ch |
-
-#### Option B: Aggregate Device (Recommended)
-
-Create a macOS Aggregate Device combining your physical interface and BlackHole:
-
-1. Open **Audio MIDI Setup** (Applications → Utilities)
-2. Click **+** → **Create Aggregate Device**
-3. Check both your audio interface and BlackHole 2ch
-4. Select the aggregate device in SAS
-
-Then route:
-- Cue → Interface channel pair
-- Master → BlackHole channel pair
-
-### OBS Setup
-
-1. In OBS: Add **Audio Input Capture** → Select **BlackHole 2ch**
-2. Disable monitoring in OBS to avoid echo
-3. Add microphone separately if desired
-
-### Settings
-
-| Setting | Description |
-|---------|-------------|
-| Output Device | Aggregate device or interface |
-| Cue Output Pair | Headphones (interface outputs) |
-| Master Output Pair | BlackHole channels |
-
-### Important
-
-- Viewers hear only Master
-- Cue never reaches stream
-- Performer can audition safely without leaking unfinished material
-
----
-
 ## Mode Comparison
 
-| Feature | Solo | Performance | Stream |
-|---------|------|-------------|--------|
-| Minimum outputs | 2 | 4 | 2+ |
-| Simultaneous Cue + Master | No | Yes | Yes |
-| Virtual driver required | No | No | Yes (BlackHole) |
-| Best for | Practice, solo production | Live PA performance | Twitch, YouTube |
+| Feature | Solo | Performance |
+|---------|------|-------------|
+| Minimum outputs | 2 | 4 |
+| Simultaneous Cue + Master | No | Yes |
+| Best for | Practice, solo production | Live PA performance |
 
 ---
 
@@ -205,7 +129,7 @@ If the selected device is unplugged, SAS will:
 ### Insufficient Outputs
 
 If the selected device doesn't have enough outputs for the chosen mode:
-- Performance/Stream mode will be disabled
+- Performance mode will be disabled
 - User must select a device with more outputs or switch to Solo Mode
 
 ---
@@ -216,7 +140,7 @@ Audio settings are stored with the following structure:
 
 | Key | Values | Description |
 |-----|--------|-------------|
-| `mode` | `solo`, `performance`, `stream` | Current routing mode |
+| `mode` | `solo`, `performance` | Current routing mode |
 | `outputDeviceId` | string | Selected CoreAudio device |
 | `soloOutputPair` | number | Channel pair for Solo mode |
 | `cueOutputPair` | number | Channel pair for Cue bus |

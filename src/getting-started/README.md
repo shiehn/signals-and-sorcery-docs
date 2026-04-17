@@ -69,11 +69,6 @@ Requires a 4+ channel audio interface:
 
 This is the core workflow: compose in headphones, push to audience.
 
-#### Stream Mode
-For Twitch/YouTube streaming:
-- **Cue Output** → Your headphones
-- **Main Output** → Stream audio (via BlackHole virtual audio)
-
 See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructions.
 
 ### Troubleshooting
