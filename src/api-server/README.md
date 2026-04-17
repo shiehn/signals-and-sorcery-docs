@@ -17,8 +17,8 @@ Define a musical contract and let AI generate within those constraints:
 ### 🎛️ Dual-Deck Performance Workflow
 Built around the core concept of private preview and public performance:
 
-- **Loop A (Composition)** - Generate and preview clips in headphones
-- **Loop B (Performance)** - Play approved clips for your audience
+- **Composition Deck** - Generate and preview clips in headphones
+- **Performance Deck** - Play approved clips for your audience
 
 ### 🧩 Extensible Plugin SDK
 All built-in generators run on the Plugin SDK:

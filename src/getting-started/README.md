@@ -40,8 +40,8 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
 #### Core Concepts
 
 - **Musical Contract** - Key, chords, BPM, and bars that define the compositional framework
-- **Loop A (Composition Deck)** - Generate and preview clips in your headphones
-- **Loop B (Performance Deck)** - Play approved clips for your audience
+- **Composition Deck** - Generate and preview clips in your headphones
+- **Performance Deck** - Play approved clips for your audience
 
 #### Basic Workflow
 

@@ -25,7 +25,7 @@ The platform features hardware-level audio routing: separate headphone (cue) and
 - **Native Audio Engine**: Built on Tracktion Engine (C++) with JSON-RPC communication
 - **AI-Powered Generation**: Uses **Gemini** for MIDI generation and **Lyria** for audio generation
 - **Contract-Based Composing**: Define key, chords, BPM, and bars — AI composes within those constraints
-- **Dual-Deck Architecture**: Loop A (composition/preview) and Loop B (performance/audience) with independent routing
+- **Dual-Deck Architecture**: Composition Deck (preview) and Performance Deck (audience) with independent routing
 - **Plugin SDK**: All generators (synths, samples, audio textures) are built on the extensible Plugin SDK
 - **Custom Instrument Support**: Load any VST3/AU instrument plugin on synth tracks
 
