@@ -78,6 +78,9 @@ A: Surge XT ships as the default. Any VST3/AU instrument plugin can be loaded pe
 **Q: What AI powers the generation?**
 A: **Gemini** for MIDI generation and **Lyria** for audio generation.
 
+**Q: Is there Windows or Linux support?**
+A: Not at this time — macOS is the only supported platform today. Nothing in the architecture fundamentally blocks Windows or Linux builds, so support on those platforms may come in the future.
+
 ## Credits
 
 ### Core Team
