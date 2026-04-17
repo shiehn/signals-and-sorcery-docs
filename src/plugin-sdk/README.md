@@ -10,10 +10,25 @@ Each plugin gets its own accordion section in the workstation UI and a scoped `P
 
 ## Start Here
 
-The fastest way to build a plugin is to clone the template:
+### I just want to use a plugin
+
+The app has a built-in installer. Paste a GitHub URL and click Install —
+no terminal needed.
+
+1. In Signals & Sorcery: **Settings → Plugins → Add Plugin**
+2. Paste `https://github.com/shiehn/sas-texture-plugin` (or any plugin repo)
+3. Click Install, then **Restart Now** when prompted
+
+Full walkthrough: **[Install a Plugin](./install-a-plugin.md)**.
+
+### I want to build a plugin
+
+The fastest way to build a plugin is to clone the template into your
+plugins folder and run the build:
 
 ```bash
-cd ~/.signals-and-sorcery/plugins/
+# macOS — see Install a Plugin for Windows/Linux paths
+cd ~/Library/Application\ Support/signals-and-sorcery/plugins/
 git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
 cd @my-org/my-plugin
 npm install && npm run build
@@ -27,6 +42,7 @@ Restart Signals & Sorcery — your plugin appears in the workstation. Edit the s
 
 | Page | Description |
 |------|-------------|
+| [Install a Plugin](./install-a-plugin.md) | How users install, enable, disable, and remove plugins (no coding required) |
 | [Getting Started](./getting-started.md) | Directory structure, manifest options, installation, and debugging |
 | [API Reference](./api-reference.md) | Complete PluginHost API with full type signatures, parameters, and code examples |
 | [Tutorial](./tutorial.md) | Build a Euclidean Rhythm Generator plugin from scratch |

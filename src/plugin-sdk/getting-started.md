@@ -10,12 +10,22 @@ This guide walks you through creating, installing, and debugging a Signals & Sor
 Clone the **[Plugin Template](https://github.com/shiehn/sas-plugin-template)** to skip the boilerplate. It includes a working hello-world plugin with heavily commented examples of track creation, MIDI writing, and all common patterns:
 
 ```bash
-cd ~/.signals-and-sorcery/plugins/
+# macOS — see Install a Plugin for Windows/Linux paths
+cd ~/Library/Application\ Support/signals-and-sorcery/plugins/
 git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
 cd @my-org/my-plugin
 npm install && npm run build
 # Restart Signals & Sorcery — plugin appears in the workstation
 ```
+
+Easier shortcut: in-app, go to **Settings → Plugins → Open Folder** to
+reveal the plugins directory in Finder/Explorer without having to remember
+the path.
+:::
+
+::: tip Just installing, not authoring?
+If you only want to use an existing plugin, skip this page and read
+[Install a Plugin](./install-a-plugin.md) instead.
 :::
 
 ## Prerequisites
@@ -392,17 +402,36 @@ Represents a planned track during the progressive bulk-add UX.
 
 ## Installing a Plugin
 
-Place your compiled plugin directory in the plugins folder:
+Place your compiled plugin directory in the plugins folder — the path
+depends on your OS:
+
+| OS      | Plugins folder |
+|---------|----------------|
+| macOS   | `~/Library/Application Support/signals-and-sorcery/plugins/` |
+| Windows | `%APPDATA%\signals-and-sorcery\plugins\` |
+| Linux   | `~/.config/signals-and-sorcery/plugins/` |
+
+The in-app **Settings → Plugins → Open Folder** button reveals this
+directory without you having to remember the path.
+
+Your plugin lands like this (macOS example):
 
 ```
-~/.signals-and-sorcery/plugins/
-└── my-plugin/
+~/Library/Application Support/signals-and-sorcery/plugins/
+└── @my-org/my-plugin/
     ├── plugin.json
-    ├── index.js
+    ├── dist/
+    │   └── index.js
     └── ...
 ```
 
-Restart Signals & Sorcery. The plugin appears in the workstation accordion and can be enabled/disabled in the Plugin Manager settings panel.
+Scoped plugin IDs (`@org/name`) create a nested directory; unscoped IDs
+sit at the top level.
+
+Restart Signals & Sorcery. The plugin appears under **Settings → Plugins**
+and — once enabled — in the workstation accordion. See
+[Install a Plugin](./install-a-plugin.md) for the full user-facing flow
+including the enable/disable toggle + restart-required modal.
 
 ## Settings Form
 

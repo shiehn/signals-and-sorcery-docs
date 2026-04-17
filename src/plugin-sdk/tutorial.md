@@ -19,12 +19,17 @@ Our plugin will:
 
 ## Step 1: Project Setup
 
-Create the plugin directory:
+Create the plugin directory. The parent path depends on your OS —
+see [Install a Plugin](./install-a-plugin.md) for Windows / Linux paths.
 
 ```bash
-mkdir -p ~/.signals-and-sorcery/plugins/euclidean-rhythm
-cd ~/.signals-and-sorcery/plugins/euclidean-rhythm
+# macOS example
+mkdir -p ~/Library/Application\ Support/signals-and-sorcery/plugins/euclidean-rhythm
+cd ~/Library/Application\ Support/signals-and-sorcery/plugins/euclidean-rhythm
 ```
+
+Easier shortcut: open **Settings → Plugins → Open Folder** in the app to
+reveal the correct plugins directory — then `cd` into it.
 
 ### plugin.json
 
