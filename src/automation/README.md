@@ -9,14 +9,14 @@ Signals & Sorcery ships with a public programmatic surface — the same one the
 in-app AI uses. Anything the app can do, an AI agent (Claude Code, OpenClaw,
 Cursor, …) or your own script can drive from the outside.
 
-## The big idea
+## How it works
 
-**Agents drive S&S by writing shell scripts.** Not a custom DSL, not a
-workflow engine config language — just bash, Python, or whatever your agent
-is fluent in, calling the `sas` CLI.
+Agents control S&S by calling the `sas` CLI from shell scripts — bash,
+Python, or any language the agent can write. Each action is a single
+`sas <command>` invocation, and every call prints JSON on stdout.
 
 ```bash
-# What an AI agent actually writes to make a chill lo-fi beat:
+# Create a scene with bass, drums, keys, and pad roles.
 SCENE=$(sas scene_create --name "Verse" | jq -r '.changes.sceneId')
 for ROLE in bass drums keys pad; do
   sas add_instrument --name "$ROLE" --role "$ROLE" --prompt "chill lo-fi"
@@ -24,8 +24,8 @@ done
 sas play_scene --deck main
 ```
 
-That's a *real* program. It's composable, debuggable (run any line
-yourself), and uses a language every modern LLM is fluent in.
+Each step is a separate CLI call, so the script can be run end-to-end or
+one line at a time.
 
 ## Three ways to integrate
 
