@@ -61,7 +61,7 @@ Forever grateful for any feedback:
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed).
+A: Yes. Free accounts don't require a credit card, though daily token usage is capped. You just need an email address (any provider — a Gmail account isn't required) and Surge XT (free synthesizer, auto-installed).
 
 **Q: What audio interfaces work best?**
 A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
