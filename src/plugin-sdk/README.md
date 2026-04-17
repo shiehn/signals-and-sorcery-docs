@@ -49,14 +49,32 @@ Restart Signals & Sorcery — your plugin appears in the workstation. Edit the s
 
 ## Resources
 
+### Development
+
 | Resource | Link |
 |----------|------|
 | Plugin Template | [github.com/shiehn/sas-plugin-template](https://github.com/shiehn/sas-plugin-template) |
 | Plugin SDK (npm) | [@signalsandsorcery/plugin-sdk](https://www.npmjs.com/package/@signalsandsorcery/plugin-sdk) |
 | SDK Source | [github.com/shiehn/sas-plugin-sdk](https://github.com/shiehn/sas-plugin-sdk) |
-| Synth Plugin (reference) | [github.com/shiehn/sas-synth-plugin](https://github.com/shiehn/sas-synth-plugin) |
-| Sample Plugin (reference) | [github.com/shiehn/sas-sample-plugin](https://github.com/shiehn/sas-sample-plugin) |
-| Audio Plugin (reference) | [github.com/shiehn/sas-audio-plugin](https://github.com/shiehn/sas-audio-plugin) |
+
+### Reference Plugins
+
+Built-in plugins that ship with Signals & Sorcery. Source is open for study or forking.
+
+| Plugin | Link |
+|--------|------|
+| Synth Plugin | [github.com/shiehn/sas-synth-plugin](https://github.com/shiehn/sas-synth-plugin) |
+| Sample Plugin | [github.com/shiehn/sas-sample-plugin](https://github.com/shiehn/sas-sample-plugin) |
+| Audio Plugin | [github.com/shiehn/sas-audio-plugin](https://github.com/shiehn/sas-audio-plugin) |
+
+### Additional Plugins
+
+Installable via **Settings → Plugins → Add Plugin** (paste the GitHub URL).
+
+| Plugin | Link |
+|--------|------|
+| Texture Plugin | [github.com/shiehn/sas-texture-plugin](https://github.com/shiehn/sas-texture-plugin) |
+| Chat Plugin | [github.com/shiehn/sas-chat-plugin](https://github.com/shiehn/sas-chat-plugin) |
 
 ---
 
