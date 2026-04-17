@@ -11,7 +11,6 @@ sidebar: auto
 - **macOS** with Apple M-Series or Intel chip
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
 - **Internet connection** for AI generation features
-- **Google Account** for login
 - **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
 
 ### Installation
