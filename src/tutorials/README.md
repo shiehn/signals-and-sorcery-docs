@@ -36,7 +36,7 @@ Explore the Plugin SDK in action — see how built-in generators and custom plug
 
 Watch **Lyria** generate audio textures and clips directly from text descriptions, all within the contract framework.
 
-<iframe width="100%" height="400px" src="https://www.youtube.com/embed/r7ltCqc_MQA" title="Signals &amp; Sorcery - AI Audio Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="100%" height="400px" src="https://www.youtube.com/embed/1ch1poP8_Jg" title="Signals &amp; Sorcery - AI Audio Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ---
 
