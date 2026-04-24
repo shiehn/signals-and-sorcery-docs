@@ -39,8 +39,8 @@ Forever grateful for any feedback:
 
 ### Latest Release
 
-- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_40_0-arm64.dmg)**
-- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_40_0-x64.dmg)**
+- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-arm64.dmg)**
+- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-x64.dmg)**
 
 ### System Requirements
 
@@ -61,7 +61,7 @@ Forever grateful for any feedback:
 ### Frequently Asked Questions
 
 **Q: Is it free to use?**
-A: Yes. Free accounts don't require a credit card, though daily token usage is capped. You just need an email address (any provider — a Gmail account isn't required) and Surge XT (free synthesizer, auto-installed).
+A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed).
 
 **Q: What audio interfaces work best?**
 A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
@@ -77,9 +77,6 @@ A: Surge XT ships as the default. Any VST3/AU instrument plugin can be loaded pe
 
 **Q: What AI powers the generation?**
 A: **Gemini** for MIDI generation and **Lyria** for audio generation.
-
-**Q: Is there Windows or Linux support?**
-A: Not at this time — macOS is the only supported platform today. Nothing in the architecture fundamentally blocks Windows or Linux builds, so support on those platforms may come in the future.
 
 ## Credits
 

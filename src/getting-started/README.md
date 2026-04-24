@@ -6,11 +6,14 @@ sidebar: auto
 
 ## Quick Start Guide
 
+**Free to try — no credit card required.** The Free plan includes a daily allowance of AI generations; no billing setup is needed to start composing.
+
 ### System Requirements
 
 - **macOS** with Apple M-Series or Intel chip
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
 - **Internet connection** for AI generation features
+- **A free account** (email or Google sign-in)
 - **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
 
 ### Installation
@@ -19,17 +22,23 @@ sidebar: auto
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_40_0-arm64.dmg)** - Download for Apple Silicon Macs
-- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_40_0-x64.dmg)** - Download for Intel Macs
-
-**Note:** The app is signed and notarized by Apple for security.
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-arm64.dmg)** - Download for Apple Silicon Macs
+- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-x64.dmg)** - Download for Intel Macs
 
 #### 2. Install and Launch
 
 1. Double-click the downloaded DMG file to open it
 2. Drag Signals & Sorcery to your Applications folder
-3. Launch the app from Applications
+3. **First launch:** right-click the app in Applications → **Open** → **Open** again in the confirmation dialog.
+
+::: tip Why the "Apple could not verify..." warning?
+The app is code-signed with a registered Apple Developer ID, but not yet notarized by Apple. That means macOS asks you to confirm the first launch. After the first right-click → Open, future launches work normally (double-click).
+
+Full notarization is on the roadmap — until then, this one-time confirmation is expected and safe.
+:::
+
 4. **The setup wizard will guide you through installing Surge XT and configuring everything automatically**
+5. **Sign in or create your free account** when prompted — takes about 30 seconds and no credit card is required
 
 ![runes_cli](/sas_runes_cli_2.png)
 
@@ -40,8 +49,8 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
 #### Core Concepts
 
 - **Musical Contract** - Key, chords, BPM, and bars that define the compositional framework
-- **Composition Deck** - Generate and preview clips in your headphones
-- **Performance Deck** - Play approved clips for your audience
+- **Loop A (Composition Deck)** - Generate and preview clips in your headphones
+- **Loop B (Performance Deck)** - Play approved clips for your audience
 
 #### Basic Workflow
 
@@ -68,6 +77,11 @@ Requires a 4+ channel audio interface:
 - **Main Output** (channels 3-4) → Speakers/PA for audience
 
 This is the core workflow: compose in headphones, push to audience.
+
+#### Stream Mode
+For Twitch/YouTube streaming:
+- **Cue Output** → Your headphones
+- **Main Output** → Stream audio (via BlackHole virtual audio)
 
 See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructions.
 
