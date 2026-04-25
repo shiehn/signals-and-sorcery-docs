@@ -22,8 +22,8 @@ sidebar: auto
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-arm64.dmg)** - Download for Apple Silicon Macs
-- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_42_0-x64.dmg)** - Download for Intel Macs
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_43_0-arm64.dmg)** - Download for Apple Silicon Macs
+- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_43_0-x64.dmg)** - Download for Intel Macs
 
 #### 2. Install and Launch
 
