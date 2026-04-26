@@ -7,7 +7,7 @@ VuePress source for [signalsandsorcery.com](https://signalsandsorcery.com).
 ```bash
 npm install
 npm run dev      # local preview at http://localhost:8080
-npm run build    # local build verification (output goes to ../dawnet-docs-gh-pages)
+npm run build    # local build verification (output: src/.vuepress/dist/, not deployed)
 ```
 
 ## Deployment

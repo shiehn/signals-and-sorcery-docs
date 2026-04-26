@@ -10,7 +10,7 @@
   "repository": "/dawnet-docs",
   "scripts": {
     "dev": "vuepress dev src",
-    "build": "vuepress build src && cp -r src/.vuepress/dist/*  ./../dawnet-docs-gh-pages"
+    "build": "vuepress build src"
   },
   "license": "MIT",
   "devDependencies": {
