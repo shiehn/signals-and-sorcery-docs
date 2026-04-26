@@ -29,8 +29,8 @@ footer: Made by Steve Hiehn with ❤️
 
 ## First launch on macOS
 
-Signals & Sorcery is code-signed but not yet notarized. The first time you open it, macOS will show **"Apple could not verify..."** — this is expected.
+The first time you open Signals & Sorcery, macOS may ask you to confirm the launch. This is a normal one-time step.
 
-**To open:** right-click the app in Applications → **Open** → **Open** again in the dialog. You only need to do this once; subsequent launches work normally.
+**To open:** right-click the app in Applications → **Open** → **Open** again in the dialog. After that, just double-click like any other app.
 
 See the [Getting Started guide](/getting-started/) for the full install walkthrough.
