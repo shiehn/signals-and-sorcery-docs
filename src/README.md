@@ -14,15 +14,15 @@ actions:
   - text: Mac (Intel)
     link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_43_0-x64.dmg
     type: secondary
-tagline: Free to try — no credit card required
+tagline: Generative Audio Workstation
 heroImage: ./sas_logo_two.png
 features:
     - title: Contract-Based Composing
       details: Define musical contracts (key, chords, BPM, bars) then generate MIDI with Gemini and audio with Lyria. AI composes within your constraints.
     - title: Extensible Plugin SDK
       details: Built-in synth, sample, and audio generators all run on the Plugin SDK. Upcoming integrations include Splice, ElevenLabs, live coding, and agentic prompting.
-    - title: Live Performance Ready
-      details: Dual-deck architecture with headphone/main output routing. Preview in cue, push to audience. Built for generative music performers.
+    - title: Free Tier Available
+      details: No credit card required to get started. Explore generative composition, MIDI and audio generation, and the plugin ecosystem on the free tier before deciding to upgrade.
 
 footer: Made by Steve Hiehn with ❤️
 ---
