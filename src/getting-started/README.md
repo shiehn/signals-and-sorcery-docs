@@ -31,10 +31,8 @@ Choose the version for your system:
 2. Drag Signals & Sorcery to your Applications folder
 3. **First launch:** right-click the app in Applications → **Open** → **Open** again in the confirmation dialog.
 
-::: tip Why the "Apple could not verify..." warning?
-The app is code-signed with a registered Apple Developer ID, but not yet notarized by Apple. That means macOS asks you to confirm the first launch. After the first right-click → Open, future launches work normally (double-click).
-
-Full notarization is on the roadmap — until then, this one-time confirmation is expected and safe.
+::: tip Why does macOS ask me to confirm?
+macOS shows a one-time confirmation prompt the first time you open Signals & Sorcery. After you right-click → **Open** once, future launches work normally with a double-click. This is expected and safe.
 :::
 
 4. **The setup wizard will guide you through installing Surge XT and configuring everything automatically**
