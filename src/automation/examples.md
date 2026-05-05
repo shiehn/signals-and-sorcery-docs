@@ -126,7 +126,8 @@ MATCH=$(sas search_samples \
   --bpm 136 \
   --key "A minor" \
   --limit 1 \
-  | jq -r '.changes.samples[0].id // empty')
+  --json \
+  | jq -r '.data.changes.samples[0].id // empty')
 
 if [ -n "$MATCH" ]; then
   # Drop it into the active scene
@@ -231,3 +232,119 @@ sas export_audio --output "~/Desktop/drop.wav" --scene-name "Drop"
 That's a multi-step composition → mix → perform → archive pipeline. Every
 line is one `sas` call. An agent would write this same script when asked
 to "make a trap drop and send it to the main speakers, then save it."
+
+## 11. Plan-as-artifact loop with undo
+
+When a change is non-trivial or the agent might want to revert, drive
+S&S through the [plan-as-artifact loop](./plan-loop.md). One round-trip
+produces a typed Plan; another applies it with an auto-checkpoint; a
+third reverts it byte-for-byte if you don't like the result.
+
+```bash
+#!/bin/bash
+set -e
+
+PLAN=/tmp/lofi.plan.json
+CKPT=pre-lofi-experiment
+
+# 1. Ground in current state.
+sas inspect project --json | jq '.data.changes | {scenes, tracks: (.tracks // []) | length}'
+
+# 2. Emit a typed Plan from the intent.
+sas plan "make a chill 4-bar lo-fi beat in A minor at 85 BPM" \
+  --plan-out "$PLAN"
+
+# 3. Sanity-check the plan against current state.
+#    Errors come back with `suggestedFix` — the exact tool to call to
+#    unblock. Exit 1 = invalid; exit 0 = valid.
+sas validate "$PLAN" || {
+  echo "Validation failed; attempting suggested fix"
+  FIX=$(sas validate "$PLAN" --json \
+    | jq -c '.data.changes.validation.errors[0].suggestedFix // empty')
+  if [ -n "$FIX" ]; then
+    TOOL=$(echo "$FIX" | jq -r .tool)
+    sas "$TOOL" --json "$(echo "$FIX" | jq .args)"
+    sas validate "$PLAN"
+  fi
+}
+
+# 4. Apply with a named checkpoint we can roll back to.
+sas apply "$PLAN" --checkpoint "$CKPT"
+
+# 5. Hear it.
+URL=$(sas preview --json | jq -r '.data.changes.audio.url')
+echo "Preview at: $URL"
+
+# 6. Don't like it? Revert.
+# sas history undo "$CKPT"
+```
+
+## 12. Validate before apply (CI-friendly)
+
+Useful in scripts and CI: emit a plan, validate it, branch on the
+result, only apply when valid.
+
+```bash
+#!/bin/bash
+PLAN=/tmp/plan.json
+sas plan "add a sub bass track" --type track_revise --plan-out "$PLAN"
+
+if sas validate "$PLAN"; then
+  echo "Plan is valid — applying"
+  sas apply "$PLAN"
+else
+  echo "Plan invalid — agent should re-prompt"
+  sas validate "$PLAN" --json | jq '.data.changes.validation.errors'
+  exit 1
+fi
+```
+
+`sas validate` returns exit `1` on invalid plans (vs exit `2` for bad
+input), so `set -e` scripts branch correctly.
+
+## 13. Per-track preview + revise iteration
+
+Bounce one track in isolation, listen, decide whether to revise it, and
+roll back through a named checkpoint if the revision misses.
+
+```bash
+#!/bin/bash
+set -e
+
+TRACK_ID=$(sas inspect scene --json | jq -r '.data.changes.tracks[] | select(.name=="Bass").id')
+
+# 1. Bounce just the bass track (uses the C++ trackIds filter).
+sas preview --track-id "$TRACK_ID" --json | jq '.data.changes.audio'
+
+# 2. Save a checkpoint, then plan + apply a revision.
+sas history checkpoint pre-bass-revise --notes "before darkening bass"
+
+sas plan "make the bass darker and more sparse" --type track_revise \
+  --plan-out /tmp/bass.plan.json
+sas apply /tmp/bass.plan.json --skip-checkpoint   # we already saved one
+
+# 3. Re-bounce the bass to compare.
+sas preview --track-id "$TRACK_ID" --refresh --json | jq '.data.changes.audio'
+
+# 4. If it's worse, undo.
+# sas history undo pre-bass-revise
+```
+
+`--skip-checkpoint` is appropriate when the caller has already saved
+its own recovery point. Most flows should let `apply` create one
+automatically.
+
+## 14. Pipe `plan` straight into `apply` without a temp file
+
+```bash
+sas plan "make a chill lofi beat" --json \
+  | jq '.data.changes.plan' \
+  | sas apply -
+
+# Or with validate in between:
+sas plan "make a chill lofi beat" --json | jq '.data.changes.plan' > /tmp/p.json
+sas validate /tmp/p.json && sas apply /tmp/p.json
+```
+
+`apply` and `validate` both treat `-` as stdin, so plans never need to
+hit disk if the agent doesn't want them to.

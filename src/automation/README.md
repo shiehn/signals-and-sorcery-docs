@@ -17,7 +17,7 @@ Python, or any language the agent can write. Each action is a single
 
 ```bash
 # Create a scene with bass, drums, keys, and pad roles.
-SCENE=$(sas scene_create --name "Verse" | jq -r '.changes.sceneId')
+SCENE=$(sas scene_create --name "Verse" --json | jq -r '.data.changes.sceneId')
 for ROLE in bass drums keys pad; do
   sas add_instrument --name "$ROLE" --role "$ROLE" --prompt "chill lo-fi"
 done
@@ -85,7 +85,12 @@ CLI and the MCP server wrap.
 
 ## What an agent has to work with
 
-- **~40 typed tools** — scene/track CRUD, FX, MIDI generation, transport,
+- **A six-verb plan-as-artifact loop** —
+  [`inspect → plan → validate → apply → preview → undo`](./plan-loop.md).
+  Every mutation begins life as a typed JSON Plan the agent can read,
+  edit, and validate before touching the engine. Mutations are reversible
+  via auto-saved checkpoints.
+- **~70 typed tools** — scene/track CRUD, FX, MIDI generation, transport,
   composition, rendering, samples, export. Every tool has a 4-section
   description (`WHEN TO USE` / `WHEN NOT TO USE` / `INPUTS` / `OUTPUTS`)
   the agent reads to pick the right one.
@@ -143,8 +148,11 @@ Then either:
 
 ## Where to next
 
+- **[Plan-as-artifact loop](./plan-loop.md)** — the six-verb pattern
+  (`inspect → plan → validate → apply → preview → undo`), Plan schema,
+  and checkpoint contract. **Start here if you're an agent.**
 - **[CLI reference](./cli-reference.md)** — `sas` install, flags, exit
-  codes, argument conventions.
+  codes, argument conventions, every verb.
 - **[Examples](./examples.md)** — worked bash scripts for common flows.
 - **[For agents](./for-agents.md)** — integration notes for Claude Code,
   OpenClaw, Cursor, and custom clients.

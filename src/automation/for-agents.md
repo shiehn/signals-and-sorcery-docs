@@ -8,6 +8,21 @@ title: For AI agents
 Integration notes for the common agent runtimes. Every path is local-only
 (runs on `localhost:7655`) — no cloud dependencies, no account linking.
 
+## TL;DR — what to call
+
+If your runtime supports a shell, **prefer the
+[plan-as-artifact loop](./plan-loop.md)**:
+
+```
+sas inspect → sas plan → sas validate → sas apply → sas preview → sas history undo
+```
+
+It's six typed verbs, every mutation is reversible via auto-saved
+checkpoints, and the validator's `suggestedFix` tells the agent exactly
+how to recover from a missing precondition. Direct tool calls (the
+~70-tool catalog further down) still work, but the loop is the
+recommended path for any change you might want to undo or iterate on.
+
 ## Shell-capable agents (recommended)
 
 ### Claude Code
@@ -20,10 +35,19 @@ run Claude Code from):
 
 ```md
 # S&S is running locally
-You can drive Signals & Sorcery via the `sas` CLI. Discover tools with
-`sas list-actions` and `sas help <action>`. Every action returns JSON;
-pipe through `jq` to extract fields. Exit codes follow Unix conventions
-(0 success, 1 tool failure, 2 bad args).
+You can drive Signals & Sorcery via the `sas` CLI.
+
+Preferred path for any non-trivial change: the plan-as-artifact loop.
+  sas inspect project          # see current state
+  sas plan "<intent>" --plan-out plan.json
+  sas validate plan.json       # check, read errors[].suggestedFix
+  sas apply plan.json          # auto-checkpoint pre-apply
+  sas preview                  # hear it
+  sas history undo <name>      # revert if needed
+
+Direct tools work too — discover with `sas list-actions` / `sas help
+<action>`. Every action returns JSON; pipe through `jq`. Exit codes:
+0 success, 1 tool/validation failure, 2 bad args.
 ```
 
 That's it — the agent reads tools on demand and writes shell scripts
@@ -166,6 +190,7 @@ curl 'http://localhost:7655/api/v1/actions?all=true'
 
 | Category | Tools |
 |---|---|
+| **Plan loop** (recommended) | `sas_inspect_project`, `sas_inspect_scene`, `sas_inspect_track`, `sas_inspect_history`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_history_list`, `sas_history_checkpoint`, `sas_history_undo`, `sas_history_delete`, `sas_history_prune` |
 | **Project** | `project_get_status`, `list_projects` |
 | **Scenes** | `scene_create`, `scene_activate`, `scene_delete`, `scene_get_all`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_find_by_name` |
 | **Tracks** | `dsl_track_create`, `dsl_track_delete`, `dsl_track_mute`, `dsl_track_solo`, `dsl_list_tracks` |
@@ -181,19 +206,27 @@ curl 'http://localhost:7655/api/v1/actions?all=true'
 ## Pattern: observe → reason → act
 
 Modern agents work best when they check state before mutating. The
-standard pattern:
+canonical pattern is the [plan-as-artifact loop](./plan-loop.md):
 
-1. `project_get_status` — am I bound to a project? What scenes exist?
-2. `get_musical_context` — what's the key / BPM / chords?
-3. `dsl_list_tracks` or `scene_get_tracks` — what's already there?
-4. Make the change (compose / mutate / play)
-5. Observe the resulting state via the returned `changes` field (it
-   always includes a semantic snapshot) and any emitted events
+1. **Observe** — `sas inspect project` returns scenes, tracks, key/BPM,
+   and recent checkpoints in one call.
+2. **Plan** — `sas plan "<intent>" --plan-out plan.json` produces a
+   typed Plan grounded in current state.
+3. **Validate** — `sas validate plan.json` checks preconditions; errors
+   include `suggestedFix` so the agent can self-correct without a
+   round-trip to the user.
+4. **Apply** — `sas apply plan.json` auto-creates a checkpoint, runs
+   the steps, and rolls compensate hooks LIFO on failure.
+5. **Preview** — `sas preview` returns a content-addressed audio URL.
+6. **Iterate or undo** — `sas history undo <checkpoint>` restores the
+   project byte-for-byte if the result missed.
 
-Our tool responses are designed for this. Every success returns enough
-state that the agent doesn't need to re-query — the `changes` field
-contains names, not just UUIDs, so an agent can chain operations
-conversationally.
+Direct tool calls (`scene_create`, `dsl_track_create`, …) still work
+and are the right choice for trivial one-shots, but the plan loop is
+the recommended path for anything stateful, multi-step, or worth
+undoing. Every tool response includes a `changes` field with semantic
+names (not just UUIDs), so chaining conversationally still works on the
+direct path.
 
 ## When a tool fails
 
@@ -229,6 +262,8 @@ round-trips to `get_status`.
 
 ## Further reading
 
+- [Plan-as-artifact loop](./plan-loop.md) — the six-verb agent surface
+  end-to-end: Plan schema, validator semantics, checkpoints, recovery.
 - [CLI reference](./cli-reference.md)
 - [Worked examples](./examples.md)
 - [Plugin SDK](/plugin-sdk/) — for building your own generator plugins

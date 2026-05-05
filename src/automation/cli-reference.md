@@ -98,6 +98,21 @@ sas jobs list [--status <s>]         Background jobs
 sas jobs get <id>                    One job's state
 sas jobs wait <id> [--timeout <ms>]  Long-poll until a job completes
 sas jobs cancel <id>                 Cancel a running job
+
+# Plan-as-artifact surface (recommended for agents)
+sas inspect project [--include …]    Read-only project snapshot
+sas inspect scene [sceneId]          One scene + its tracks
+sas inspect track <trackId>          One track's mute/solo/vol/pan
+sas inspect history [--limit n]      Recent checkpoints
+sas plan <intent…> [--plan-out f]    Free-text → typed JSON Plan
+sas validate <plan-file|->           Validate a plan against current state
+sas apply <plan-file|-> [--checkpoint name|--dry-run|--skip-checkpoint]
+sas preview [sceneId] [--track-id …] [--refresh] [--bpm …] [--bars …]
+sas history list [--limit n]         List checkpoints (newest first)
+sas history checkpoint <name> [--notes …]   Manual checkpoint
+sas history undo <name>              Restore to checkpoint
+sas history delete <name>            Drop one checkpoint
+sas history prune                    Drop expired checkpoints
 ```
 
 ## Global flags
@@ -240,5 +255,230 @@ sas compose_scene \
   }'
 ```
 
+## Plan-as-artifact surface
+
+Granular tools (`scene_create`, `dsl_track_create`, …) remain available
+and stable, but the **recommended path for agents** is the six-verb
+plan-as-artifact loop:
+
+```
+inspect → plan → validate → apply → preview → undo
+```
+
+Each verb is its own subcommand; together they let an agent reason about
+the project, propose a typed change, check it against current state,
+mutate the world reversibly, hear the result, and roll back without
+losing data.
+
+### `sas inspect …` — read-only views
+
+```bash
+sas inspect project                     # everything: scenes, tracks, context, history
+sas inspect project --include scenes,tracks
+sas inspect scene                       # active scene
+sas inspect scene <sceneId>             # specific scene
+sas inspect track <trackId>             # one track's surface state
+sas inspect history --limit 10          # recent checkpoints
+```
+
+`inspect` never mutates. The output is structured JSON in `--json` mode;
+human mode prints compact summaries. Names are resolved from UUIDs so
+agents can chain conversationally without a second lookup.
+
+### `sas plan <intent…>` — emit a typed JSON Plan
+
+```bash
+# Free-text intent → typed plan, printed to stdout
+sas plan "make me a chill lo-fi beat"
+
+# Save the plan for later
+sas plan "make me a chill lo-fi beat" --plan-out beat.plan.json
+
+# Force a specific PlanType (when goal-router would guess wrong)
+sas plan "add a sub bass" --type track_revise
+
+# Legacy Phase 4 prereq-chain preview (no typed plan, just the chain)
+sas plan "play the scene" --chain-only
+```
+
+The plan is the **contract**: a JSON document the agent can read, edit,
+explain to the user, and hand to `validate` / `apply`. Plan shape lives
+at `src/shared/types/agent-plan.ts` and is versioned via
+`metadata.plan_schema_version` (currently `1`).
+
+Top-level shape:
+
+```jsonc
+{
+  "id": "plan-scene_create-1714850000-abc123",
+  "intent": "make me a chill lo-fi beat",
+  "type": "scene_create",
+  "preconditions": { "project_bound": true },
+  "steps": [
+    { "id": "plan-…0.scene_create",     "type": "scene_create",     "inputs": { "name": "lo-fi" } },
+    { "id": "plan-…1.dsl_track_create", "type": "dsl_track_create", "inputs": { "name": "Bass", "role": "bass" } }
+  ],
+  "rollback": { "strategy": "checkpoint_undo" },
+  "metadata": {
+    "created_at": "2026-05-04T15:00:00.000Z",
+    "created_by": "cli",
+    "plan_schema_version": 1
+  }
+}
+```
+
+PlanTypes recognized today: `scene_create`, `scene_revise`,
+`track_revise`, `transition_create`, `mix_balance`, `render_preview`,
+`composite`.
+
+### `sas validate <plan-file|->` — check before apply
+
+```bash
+sas validate beat.plan.json
+sas plan "make a beat" --plan-out /tmp/p.json && sas validate /tmp/p.json
+
+# Pipe directly — validate reads stdin when the file arg is "-"
+sas plan "make a beat" --json | jq '.data.changes.plan' | sas validate -
+```
+
+Returns a `PlanValidationResult`:
+
+```jsonc
+{
+  "valid": false,
+  "errors": [
+    {
+      "path": "$.preconditions.project_bound",
+      "code": "missing_precondition",
+      "message": "No project is bound — open or create one first.",
+      "suggestedFix": { "tool": "list_projects", "args": {} }
+    }
+  ],
+  "warnings": [],
+  "preview": {
+    "wouldCreate": { "scenes": 1, "tracks": 4 },
+    "riskLevel": "medium",
+    "requiresConfirmation": false
+  }
+}
+```
+
+Exit codes:
+
+- `0` — valid, no errors
+- `1` — invalid (one or more errors); script can branch on this
+- `2` — bad input (file not found, malformed JSON)
+
+`suggestedFix` is the agent's recovery hook: it points at the exact
+tool + args that would unblock the failed precondition, so the agent
+can self-correct without re-prompting the user.
+
+### `sas apply <plan-file|->` — execute reversibly
+
+```bash
+# Auto-checkpoint pre-apply (default). Restorable via `sas history undo`.
+sas apply beat.plan.json
+
+# Override the checkpoint name
+sas apply beat.plan.json --checkpoint pre-techno
+
+# Validate-only mode; print the preview block, don't mutate
+sas apply beat.plan.json --dry-run
+
+# Skip the checkpoint entirely (caller handles undo themselves)
+sas apply beat.plan.json --skip-checkpoint
+
+# Pipe from `plan` directly
+sas plan "make me a beat" --json | jq '.data.changes.plan' | sas apply -
+```
+
+Default behavior:
+
+1. Validate the plan. If invalid, exit `1` with the error list.
+2. **Auto-create a checkpoint** named `pre-apply-<plan.id>-<ts>` capturing
+   DB rows + engine surface state (mute/solo/volume/pan/plugin state).
+3. Execute steps sequentially. Each step's `outputs` resolve `${steps.<id>.outputs.<key>}`
+   references in later step `inputs`.
+4. On any step failure, fire `compensate` hooks LIFO and return
+   `failed_step_id` + `rolled_back_to`. The checkpoint is preserved so
+   the user can recover with `sas history undo`.
+
+Idempotent: re-running an interrupted plan replays from the last
+non-completed step. Step ids are deterministic (`${plan.id}.${idx}.${type}`).
+
+### `sas preview [sceneId]` — render audio
+
+```bash
+sas preview                              # active scene
+sas preview <sceneId>
+sas preview --track-id <trackId>         # bounce just this track
+sas preview <sceneId> --refresh          # force re-render (skip cache)
+sas preview <sceneId> --bpm 120 --bars 8 # render-time overrides
+```
+
+Returns:
+
+```jsonc
+{
+  "audio": {
+    "url": "file:///…/render-cache/<hash>.wav",
+    "durationSeconds": 7.74,
+    "sampleRate": 48000,
+    "contentHash": "sha256:…",
+    "summary": "4 tracks · 4 bars @ 90 BPM",
+    "cacheHit": true,
+    "staleness": "fresh"
+  }
+}
+```
+
+Backed by the content-addressable render cache. `staleness` values:
+
+| Value | Meaning |
+|---|---|
+| `fresh` | Render cache hit; the WAV reflects current state |
+| `stale_render` | Cache exists but content hash drifted; pass `--refresh` to rebuild |
+| `no_render` | First render request — `--refresh` not needed; we'll build it |
+| `rendered_now` | We just rendered for this call |
+
+Per-track preview uses the C++ `trackIds` filter in `SceneRenderer.cpp`
+to bounce one track in isolation — handy for A/B-ing a `track_revise`
+plan before applying it.
+
+### `sas history …` — checkpoints + undo
+
+```bash
+sas history list --limit 10                       # newest first
+sas history checkpoint pre-experiment             # manual save point
+sas history checkpoint pre-experiment --notes "before mix tweaks"
+sas history undo pre-experiment                   # restore
+sas history delete pre-experiment                 # drop one
+sas history prune                                 # drop expired (default TTL 24h)
+```
+
+`undo` runs in a single SQLite transaction + sequence of engine RPCs.
+Render cache entries are content-addressable and survive undo
+independently — restoring scene state hits the cache immediately when
+you `sas preview` after the undo.
+
+Audio bounces are **not** included in checkpoints. To preserve a render
+explicitly, run `sas preview` (or `render_to_performance`) before the
+checkpoint — it lands in the cache and stays there.
+
+### Universal flags for plan/apply/preview
+
+Following [clig.dev][clig], every plan-shaped command accepts:
+
+| Flag | All commands | Mutating | Apply-only |
+|------|-------------|----------|-----------|
+| `--json` | yes | yes | yes |
+| `--no-color` | yes | yes | yes |
+| `--verbose` | yes | yes | yes |
+| `--dry-run` | — | yes | yes |
+| `--plan-out <file>` | — | yes (`plan`) | — |
+| `--checkpoint <name>` | — | — | yes |
+| `--skip-checkpoint` | — | — | yes |
+
 [template]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md#236-tool-description-template
 [design]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md
+[clig]: https://clig.dev/
