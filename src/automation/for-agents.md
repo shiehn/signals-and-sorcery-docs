@@ -133,11 +133,34 @@ what **composite tools** are for — they bundle multi-step operations so
 MCP-only agents aren't stuck chaining 10+ tool calls:
 
 - `compose_scene` instead of `scene_create` + N × `dsl_track_create` + N ×
-  `dsl_generate_midi`
+  `dsl_generate_midi` (creates scene + LLM contract + all tracks in one call)
+- `compose_contract` for the "contract first, then instruments" flow —
+  creates the scene + LLM contract (genre/key/chords/BPM) with **no
+  tracks**, then the agent calls `add_instrument` N times. Use this when
+  the user wants to nail the contract before committing to instruments.
 - `add_instrument` instead of `dsl_track_create` + `dsl_generate_midi`
 - `play_scene` instead of `scene_activate` + `dsl_play`
 - `render_to_performance` for main-output playback
 - `create_transition` for bridges between scenes
+
+### Scene loop length: pass `barLength` (2, 4, 8, or 16)
+
+`compose_scene` and `compose_contract` both accept a `barLength` input —
+the SCENE's loop length in bars. Must be one of `{2, 4, 8, 16}`, default
+`4`. Pass it when the user specifies a scene length:
+
+```bash
+# "A 2-bar disco beat" — pass barLength=2 so the scene loops every 2 bars
+sas compose_contract --name "Disco" --description "2-bar disco beat" --bar-length 2
+
+# "A long 16-bar intro" — pass barLength=16
+sas compose_scene --description "ambient 16-bar intro" --scene-name "Intro" --bar-length 16 \
+  --json '{"tracks":[{"name":"Pad","role":"pads","prompt":"slow swell"}]}'
+```
+
+Don't confuse `barLength` (scene loop length) with the per-track `bars`
+field inside the `tracks[]` array (how many bars of MIDI to generate for
+that track). They're independent.
 
 If you find yourself wanting to do something that requires composing
 results across tool calls, check if a composite exists via
@@ -213,7 +236,9 @@ marked **deferred** require `tool_search` to discover.
 | **Musical context** | `get_musical_context`, `set_musical_context` |
 | **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
 | **Export** *(deferred)* | `export_audio` |
-| **Composites** | `compose_scene`, `add_instrument`, `play_scene`, `render_to_performance`, `create_transition` |
+| **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `play_scene`, `render_to_performance`, `create_transition` |
+| **Preset shuffle** | `dsl_shuffle_preset` — re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
+| **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec` — see [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
 | **Discovery** | `tool_search` (always visible — finds any registered tool, deferred or not) |
 
 ## Pattern: observe → reason → act
@@ -278,6 +303,7 @@ round-trips to `get_status`.
 - [Plan-as-artifact loop](./plan-loop.md) — the six-verb agent surface
   end-to-end: Plan schema, validator semantics, checkpoints, recovery.
 - [CLI reference](./cli-reference.md)
+- [Capability tools](./capability-tools.md) — filesystem + shell access from the agent, gated by per-call user consent.
 - [Worked examples](./examples.md)
 - [Plugin SDK](/plugin-sdk/) — for building your own generator plugins
 - Full design rationale: [`sas-assistant/docs-ai-planning/ai-orchestration-design.md`](https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md)

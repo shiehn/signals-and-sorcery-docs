@@ -273,6 +273,78 @@ sas compose_scene \
   }'
 ```
 
+## Scene loop length: `--bar-length`
+
+`compose_scene` and `compose_contract` both accept `--bar-length` (one of
+`2`, `4`, `8`, `16`; default `4`). It sets the SCENE's loop length —
+distinct from the per-track `bars` field inside the `tracks[]` array
+(which controls how many bars of MIDI to generate for each track).
+
+```bash
+# Two-bar disco contract — no tracks yet, agent adds instruments next
+sas compose_contract \
+  --name "Disco" \
+  --description "punchy 2-bar disco" \
+  --bar-length 2
+
+# Long 16-bar ambient intro, three tracks generated at once
+sas compose_scene \
+  --description "ambient 16-bar intro in F minor" \
+  --scene-name "Intro" \
+  --bar-length 16 \
+  --json '{"tracks":[
+    {"name":"Pad","role":"pads","prompt":"slow swell"},
+    {"name":"Bass","role":"bass","prompt":"sub drone"},
+    {"name":"Lead","role":"lead","prompt":"sparse melodic line"}
+  ]}'
+```
+
+Passing an invalid `--bar-length` returns a structured remediation
+envelope pointing at the allowed values; the LLM-extracted bars from the
+prompt (when detectable) override the hint.
+
+### `compose_contract` vs `compose_scene`
+
+| Use case | Tool |
+|---|---|
+| One-shot "scene + contract + tracks" | `compose_scene` |
+| "Contract first, then I'll pick instruments" | `compose_contract` then N × `add_instrument` |
+
+`compose_contract` returns the new scene's `sceneId` / `engineSceneId` in
+its result and a `nextSteps` array pre-substituted with the scene ID, so
+the agent can pipe straight into `add_instrument`.
+
+## Change a track's sound without re-rolling MIDI: `dsl_shuffle_preset`
+
+`dsl_shuffle_preset` swaps the Surge XT preset on a synth track without
+touching its MIDI clip. It's the CLI/agent counterpart of the 🎲 button
+on the track row in the UI.
+
+```bash
+# Pick a fresh preset for the snare — MIDI stays, only the timbre changes
+sas dsl_shuffle_preset --track Snare
+
+# Or by engine track id (from `sas dsl_list_tracks`)
+sas dsl_shuffle_preset --track engine-track-1067
+```
+
+When to reach for it (vs. neighbouring tools):
+
+| User intent | Tool |
+|---|---|
+| "Change the sound of the snare" / "give me a different bass preset" | `dsl_shuffle_preset` |
+| "Change the snare pattern" / "regenerate the kick" | `dsl_generate_midi` |
+| "Add reverb to the lead" / "compress the drums" | `dsl_set_track_fx` |
+
+The category is auto-derived from the track's role + MIDI note range
+(via the same `buildPresetCategory` helper the UI uses), so a bass track
+gets a bass preset, a low-range bass gets a `basses-low` preset, etc.
+Failure envelopes follow the standard remediation taxonomy —
+`no_project_bound`, `track_not_found`, `clarification_needed` (when the
+selector matches multiple tracks), `unsupported_value` (track has no
+role, or no presets installed for the category), `engine_unreachable`
+(Surge XT couldn't be loaded or applied).
+
 ## Plan-as-artifact surface
 
 Granular tools (`scene_create`, `dsl_track_create`, …) remain available
