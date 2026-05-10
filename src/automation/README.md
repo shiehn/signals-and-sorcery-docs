@@ -71,7 +71,7 @@ uniformly across platforms.
 
 **Examples:** Cursor Agent, Claude Desktop, any MCP client.
 
-S&S spawns a local MCP server (DeclarAgent on port 19100) that exposes the
+S&S runs a native MCP server in-process (SSE on port 19100) that exposes the
 same tool surface. Connect your MCP client to it — the tools register
 automatically. See [For agents](./for-agents.md) for per-client setup.
 
@@ -100,9 +100,11 @@ CLI and the MCP server wrap.
   react to state changes in real time.
 - **Idempotency keys** so retrying a failed call is safe — no duplicate
   tracks, no corrupted state.
-- **Progressive disclosure** — a small core tool set is always visible;
-  everything else is discoverable via `sas tool_search` or
-  `sas list-actions`.
+- **Progressive disclosure** — a curated core tool set (~24 scene-scoped
+  verbs) is always visible; everything else is discoverable via
+  `sas tool_search`. The CLI and the in-app chat-plugin agent share a
+  single discovery filter, so adding a tool exposes it on both surfaces
+  atomically.
 
 ## Quick start
 

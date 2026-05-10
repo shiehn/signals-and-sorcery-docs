@@ -167,9 +167,10 @@ enforced to have:
 
 ## Progressive disclosure
 
-By default `list-actions` returns the core tool set (~15 tools). Less-common
-tools (samples, export, etc.) are *deferred* — agents discover them via
-`tool_search`:
+By default `list-actions` returns the curated core tool set (~24 scene-scoped
+verbs covering create, mix, transport, scene navigation, plus the plan-loop
+verbs). Less-common tools (samples, export, advanced scene plumbing, etc.)
+are *deferred* — agents discover them via `tool_search`:
 
 ```bash
 # Agent: I need something to export audio. Let me search.
@@ -178,11 +179,28 @@ sas tool_search --query "export wav" --limit 3
 # so the agent can invoke directly.
 ```
 
-To see every registered tool (including deferred), pass `--all` on the
-HTTP API or set the env var:
+The same default-curated set is what the in-app chat-plugin agent sees —
+`/api/v1/actions` (used by the `sas` CLI) and `host.listAppTools` (used by
+the chat-plugin) share a single filter implementation. Adding a tool to
+the registry exposes it on both surfaces atomically; promoting a deferred
+tool reaches both at once.
+
+### Filter parameters
+
+| Query | Effect |
+|---|---|
+| *(none)* | Curated default — non-deferred tools across all scopes |
+| `?scope=scene` | Non-deferred, scene-scoped only (mirrors the chat-plugin's default) |
+| `?scope=project` | Non-deferred, project-scoped only |
+| `?include_deferred=true` | All registered tools incl. deferred |
+| `?all=true` | Legacy alias of `?include_deferred=true` |
 
 ```bash
-curl 'http://localhost:7655/api/v1/actions?all=true'
+# What the chat-plugin's agent sees by default
+curl 'http://localhost:7655/api/v1/actions?scope=scene'
+
+# Every registered tool (admin/debug visibility)
+curl 'http://localhost:7655/api/v1/actions?include_deferred=true'
 ```
 
 ## Events

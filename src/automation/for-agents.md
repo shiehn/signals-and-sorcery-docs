@@ -179,29 +179,42 @@ with requests.get(f"{API}/api/v1/events/stream", stream=True) as r:
 ### Tool discovery
 
 ```bash
-# List the default core tool set
+# Default curated set — what every agent sees out of the box
 curl http://localhost:7655/api/v1/actions
 
-# List every tool (including deferred)
-curl 'http://localhost:7655/api/v1/actions?all=true'
+# Just scene-scoped tools (matches the in-app chat-plugin's default surface)
+curl 'http://localhost:7655/api/v1/actions?scope=scene'
+
+# Every registered tool, including deferred (admin/debug)
+curl 'http://localhost:7655/api/v1/actions?include_deferred=true'
 ```
+
+The CLI (`sas list-actions`) and the in-app chat-plugin agent both read
+from the same registry with the same default filter — Errantry's CLI tests
+therefore exercise the chat-plugin's surface too. **Whatever's reachable
+via `sas` is reachable from the chat agent**, and vice versa.
 
 ## Tool surface summary
 
-| Category | Tools |
+The default curated set (`?scope=scene` or chat-plugin default) covers
+the natural verbs an agent reaches for during music production. Tools
+marked **deferred** require `tool_search` to discover.
+
+| Category | Tools (default surface unless noted) |
 |---|---|
 | **Plan loop** (recommended) | `sas_inspect_project`, `sas_inspect_scene`, `sas_inspect_track`, `sas_inspect_history`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_history_list`, `sas_history_checkpoint`, `sas_history_undo`, `sas_history_delete`, `sas_history_prune` |
 | **Project** | `project_get_status`, `list_projects` |
-| **Scenes** | `scene_create`, `scene_activate`, `scene_delete`, `scene_get_all`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_find_by_name` |
-| **Tracks** | `dsl_track_create`, `dsl_track_delete`, `dsl_track_mute`, `dsl_track_solo`, `dsl_list_tracks` |
-| **MIDI generation** | `dsl_generate_midi`, `dsl_generate_drums` |
+| **Scene navigation** | `scene_get_all`, `scene_activate`, `scene_duplicate`, `scene_delete`, `scene_find_by_name` |
+| **Scene plumbing** *(deferred)* | `scene_create`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_queue`, `scene_set_collapsed` |
+| **Tracks** | `dsl_track_create`, `dsl_list_tracks`, `dsl_track_delete`, `dsl_track_mute`, `dsl_track_solo`, `dsl_track_volume`, `dsl_track_pan`, `dsl_track_rename` |
+| **Transport** | `dsl_play`, `dsl_stop`, `dsl_set_tempo` (deferred: `dsl_get_tempo_info`) |
+| **MIDI generation** | `dsl_generate_midi` (deferred: `dsl_generate_drums`) |
 | **FX** | `dsl_set_track_fx`, `dsl_get_track_fx`, `set_scene_fx`, `dsl_load_fx_chain` |
-| **Transport** | `dsl_play`, `dsl_stop`, `dsl_set_tempo`, `dsl_get_tempo_info` |
 | **Musical context** | `get_musical_context`, `set_musical_context` |
-| **Samples** | `search_samples`, `import_samples`, `add_sample_track` |
-| **Export** | `export_audio` |
+| **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
+| **Export** *(deferred)* | `export_audio` |
 | **Composites** | `compose_scene`, `add_instrument`, `play_scene`, `render_to_performance`, `create_transition` |
-| **Discovery** | `tool_search` (finds deferred tools by keyword) |
+| **Discovery** | `tool_search` (always visible — finds any registered tool, deferred or not) |
 
 ## Pattern: observe → reason → act
 
