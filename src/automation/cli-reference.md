@@ -78,13 +78,37 @@ MCP paths instead — they work uniformly.
 
 ## Verify
 
+Two health checks ship with the CLI — pick the right one for the job.
+
 ```bash
+# Reachability — is the API server responding?
 sas health
 # { "status": "ok", "timestamp": "2026-04-14T..." }
 ```
 
-If that fails with *"Cannot reach S&S API at http://localhost:7655"*, the
-app isn't running. Start it and try again.
+`sas health` hits `GET /api/v1/health` and returns immediately. Use it
+in CI smoke tests and `set -e` preludes.
+
+```bash
+# Layered service health — API, audio engine, database, auth
+sas status
+#   ✓ api          version=v1
+#   ✓ engine       reachable=true, bpm=120
+#   ✓ database     migrations=ok, project_bound=true
+#   ✓ auth         token=present
+```
+
+`sas status` reports each subsystem's `ok` flag plus a short detail line.
+Exits `0` when every service is `ok: true`, `2` otherwise, `3` on
+connection refused. Pair with `--json` for scripting:
+
+```bash
+sas status --json | jq '.data.engine'
+```
+
+If either command fails with *"Connection refused — is the Signals &
+Sorcery app running?"*, launch the app and retry. The CLI is a thin HTTP
+client; it needs the in-app API server on `http://localhost:7655`.
 
 ## Usage shape
 
@@ -92,12 +116,16 @@ app isn't running. Start it and try again.
 sas <action> [--key value]...        Run a tool action by name
 sas list-actions                     List every registered tool
 sas help [action]                    Show top-level help, or per-action help
-sas health                           Reachability check
-sas events stream                    SSE stream of typed domain events
-sas jobs list [--status <s>]         Background jobs
-sas jobs get <id>                    One job's state
-sas jobs wait <id> [--timeout <ms>]  Long-poll until a job completes
-sas jobs cancel <id>                 Cancel a running job
+sas health                           Reachability check (GET /health)
+sas status                           Layered service health (API / engine / db / auth)
+sas events stream [--filter <e>]     SSE stream of typed domain + job events
+sas refresh                          Re-fetch the /actions manifest cache
+
+# Async job management (every state-mutating tool returns a jobId)
+sas job list [--status <s>]          List jobs (filter: queued|running|completed|failed|cancelled)
+sas job status <id>                  One job's state
+sas job wait <id> [--timeout <sec>]  Long-poll until a job completes (default 300s)
+sas job cancel <id>                  Cancel a running job
 
 # Plan-as-artifact surface (recommended for agents)
 sas inspect project [--include …]    Read-only project snapshot
@@ -115,14 +143,32 @@ sas history delete <name>            Drop one checkpoint
 sas history prune                    Drop expired checkpoints
 ```
 
+> **Async jobs are the default.** Every state-mutating tool now wraps
+> its workflow in an async job. Calls return a `jobId` immediately; you
+> (or your agent) call `sas job wait <jobId>` before invoking anything
+> that depends on the result. See
+> [Status & async jobs](./status-and-jobs.md) for the full contract,
+> including HTTP endpoints, SSE events, and the `wait_for_job` MCP tool.
+
 ## Global flags
+
+Parsed before the subcommand. All commands honour them.
 
 | Flag | Effect |
 |---|---|
-| `--pretty` | Indent JSON output (default is compact for pipe-friendliness) |
-| `--quiet` | Suppress error messages on stderr |
-| `--api <url>` | Override API base URL (also via `$SAS_API_URL`) |
+| `--json` | Emit raw JSON envelopes (default is a human-friendly summary) |
+| `--host <host>` | Override API server host (default `localhost`) |
+| `--port <port>` | Override API server port (default `7655`) |
+| `--token <token>` | Bearer token (also read from `~/.sas/token`) |
+| `--verbose` | More chatty logs |
+| `--no-color` | Disable ANSI colour (also honours `NO_COLOR=1`) |
 | `-h`, `--help` | Top-level help, or per-action help if passed after an action name |
+
+Environment variables: `SAS_TIMEOUT_MS` overrides the default 300 s HTTP
+timeout (composite tools like `make_beat` routinely run 30–120 s, so the
+default is intentionally generous). `NO_COLOR=1` disables colour output.
+Config persists in `~/.sas/config.json`; the bearer token in
+`~/.sas/token` (mode `600`).
 
 ## Argument conventions
 
@@ -140,11 +186,23 @@ sas history prune                    Drop expired checkpoints
 | Code | Meaning |
 |---|---|
 | `0` | Success |
-| `1` | Tool returned `success: false`, OR a runtime error (engine offline, bad JSON, etc.) |
-| `2` | Argument parsing failure (bad flag, missing required value, bad type) |
+| `1` | Plan validation failed (`sas validate` only) |
+| `2` | Argument parsing, tool failure, or generic non-zero |
+| `3` | Connection refused — the app isn't running on `http://localhost:7655` |
+| `4` | Timeout — typically `sas job wait` hit its `--timeout` before terminal |
+| `5` | Job terminated with `status: 'failed'` (`sas job wait` only) |
 
 This means `set -e` works in shell scripts — a failing tool stops the
-script unless you explicitly handle it.
+script unless you explicitly handle it. For async-aware scripting:
+
+```bash
+sas job wait "$JOB" --timeout 120
+case $? in
+  0) echo "Job completed" ;;
+  4) echo "Timed out; keep waiting?" ;;
+  5) echo "Job failed — sas job status $JOB for details" ;;
+esac
+```
 
 ## Tool discovery
 
@@ -223,23 +281,53 @@ Event types include: `scene:created`, `scene:activated`, `track:created`,
 `track:midi-written`, `track:fx-changed`, `bpm:changed`,
 `deck:state-changed`, `sample:imported`, `transition:created`, and more.
 
-## Jobs
+## Async jobs (every state-mutating tool returns a `jobId`)
 
-Long-running tools (like `compose_scene`) open a `JobManager` job so
-consumers can watch progress:
+> **Breaking change (May 2026).** The CLI's job subcommand is now
+> `sas job` (singular). The old plural `sas jobs …` form was retired
+> alongside the universal async-job rollout. Update scripts accordingly.
+
+Every state-mutating tool (`compose_scene`, `make_beat`, `dsl_generate_midi`,
+`render_to_performance`, `export_audio`, `sas_split_stems`, …) now wraps
+its workflow in an async job and **returns a `jobId` immediately**. The
+work continues in the background.
 
 ```bash
-# Start a compose and capture the response
+# 1. Kick off the job — call returns in < 1 s.
 JOB=$(sas compose_scene --description "chill lo-fi" --scene-name "Verse" \
   --json '{"tracks":[{"name":"Bass","role":"bass","prompt":"deep slow"}]}' \
-  | jq -r '.jobId // empty')
+  | jq -r '.data.changes.jobId')
 
-# If job-based, wait for completion
-[ -n "$JOB" ] && sas jobs wait "$JOB" --timeout 60000
+# 2. Block until the workflow reaches terminal state.
+sas job wait "$JOB" --timeout 180
+
+# 3. Or peek without blocking.
+sas job status "$JOB"
+
+# 4. Or list everything currently running.
+sas job list --status running
 ```
 
-Even without `jobs wait`, the tool returns the final result when the
-composite finishes — the job is for progress observers, not callers.
+**The agent recovery rule:** if any tool response includes
+`changes.jobId`, call `sas job wait <id>` (CLI) or `wait_for_job` (MCP /
+HTTP) before invoking any tool that depends on the result. The async
+tool's response already includes a `nextSteps` array whose first entry is
+the wait call pre-substituted with the job id, so agents that follow
+`nextSteps` are async-correct by construction.
+
+`sas job` is the wrapper around four HTTP endpoints:
+
+| Verb | HTTP | Behaviour |
+|---|---|---|
+| `sas job list [--status …]` | `GET /api/v1/jobs[?status=…]` | Newest-first array |
+| `sas job status <id>` | `GET /api/v1/jobs/:id` | One job; `404` if unknown |
+| `sas job wait <id> [--timeout N]` | `GET /api/v1/jobs/:id/wait?timeout=<ms>` | Long-poll; `--timeout` is **seconds** |
+| `sas job cancel <id>` | `POST /api/v1/jobs/:id/cancel` | `404` if unknown or already terminal |
+
+See [Status & async jobs](./status-and-jobs.md) for the complete
+contract: which tools are wrapped, the SSE event stream (`jobProgress`,
+`jobComplete`, `jobFailed`), the `wait_for_job` MCP tool, Python/bash
+worked examples, and troubleshooting.
 
 ## Idempotency keys
 

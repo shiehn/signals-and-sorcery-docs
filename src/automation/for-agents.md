@@ -23,6 +23,12 @@ how to recover from a missing precondition. Direct tool calls (the
 ~70-tool catalog further down) still work, but the loop is the
 recommended path for any change you might want to undo or iterate on.
 
+> **Async-by-default.** Every state-mutating tool now returns
+> `changes.jobId` immediately and finishes in the background. Before
+> depending on the result, agents MUST call `wait_for_job` (or
+> `sas job wait` from a shell). See
+> [Status & async jobs](./status-and-jobs.md) for the full contract.
+
 ## Shell-capable agents (recommended)
 
 ### Claude Code
@@ -41,13 +47,21 @@ Preferred path for any non-trivial change: the plan-as-artifact loop.
   sas inspect project          # see current state
   sas plan "<intent>" --plan-out plan.json
   sas validate plan.json       # check, read errors[].suggestedFix
-  sas apply plan.json          # auto-checkpoint pre-apply
+  sas apply plan.json          # auto-checkpoint pre-apply, returns jobId
+  sas job wait <jobId>         # block until apply finishes
   sas preview                  # hear it
   sas history undo <name>      # revert if needed
 
+Async-by-default: every state-mutating tool returns `changes.jobId`. Call
+`sas job wait <jobId>` (or `wait_for_job` via `sas run`) before any tool
+that depends on the result.
+
 Direct tools work too — discover with `sas list-actions` / `sas help
-<action>`. Every action returns JSON; pipe through `jq`. Exit codes:
-0 success, 1 tool/validation failure, 2 bad args.
+<action>`. Every action returns JSON; pipe through `jq`.
+
+Exit codes: 0 success; 1 plan-validation failure; 2 bad args / tool
+failure; 3 connection refused (app not running); 4 `sas job wait`
+timeout; 5 job ended in failed state.
 ```
 
 That's it — the agent reads tools on demand and writes shell scripts
@@ -88,12 +102,46 @@ compose-lofi() {
 ## MCP-capable agents
 
 For agents without shell (Cursor Agent, Claude Desktop, some Anthropic API
-clients), use the MCP path. S&S spawns a local MCP server automatically:
+clients), use the MCP path. S&S runs an in-process MCP server automatically
+inside the Electron main process while the app is open:
 
 - **Transport:** SSE over HTTP
 - **Endpoint:** `http://localhost:19100/sse`
 - **Discovery file:** `~/.signals-and-sorcery/mcp.json` (written by S&S at
   startup; contains the active port and auth token if applicable)
+
+The MCP server exposes **8 tools** following the Anthropic six-primitive
+ceiling plus two meta-tools for progressive disclosure. All eight funnel
+through the same `ToolRegistry.execute()` chokepoint as the CLI and HTTP
+paths, so behaviour and remediation envelopes are identical across
+surfaces.
+
+| MCP tool | Purpose | Async? |
+|---|---|---|
+| `sas_inspect` | Read-only view; `resource: project\|scene\|track\|history` | No (sub-second) |
+| `sas_create_plan` | Free-text intent → typed JSON Plan | No |
+| `sas_validate_plan` | Validate a Plan; errors carry `suggestedFix` | No |
+| `sas_apply_plan` | Execute Plan reversibly (auto-checkpoint) | **Yes — returns `jobId`** |
+| `sas_render_preview` | Content-addressed audio preview | No (cache-aware) |
+| `sas_undo_checkpoint` | Restore to a named checkpoint | No |
+| `tool_search` | Find a tool by keyword in the granular catalog | No |
+| `sas_run` | Invoke any registered action by name (post-discovery) | Depends on action |
+
+The flow for an MCP-only agent:
+
+1. `sas_inspect` to read state.
+2. `sas_create_plan` → `sas_validate_plan` → `sas_apply_plan`.
+3. Because `sas_apply_plan` is async-wrapped, it returns
+   `changes.jobId`. Call `sas_run` with `action: "wait_for_job"` and the
+   `jobId` to block until the work is done.
+4. `sas_render_preview` to hear the result.
+5. `sas_undo_checkpoint` if the result missed.
+
+Granular tools (`scene_create`, `dsl_track_create`, `make_beat`, etc.)
+are discoverable via `tool_search` and invokable via `sas_run`. Each
+async wrapped tool returns the same `{ jobId, status, operation }`
+envelope; the agent always reaches for `wait_for_job` afterwards. See
+[Status & async jobs](./status-and-jobs.md) for the full list.
 
 ### Cursor Agent
 
@@ -125,6 +173,15 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
   }
 }
 ```
+
+### Claude Code (via MCP — alternative to the CLI)
+
+```bash
+claude mcp add signals-and-sorcery --transport sse http://localhost:19100/sse
+```
+
+When `sas` is also on PATH, Claude Code can use either surface; the CLI
+is more ergonomic for shell scripting, MCP for tool-call discovery.
 
 ### MCP-only tips
 
@@ -225,7 +282,9 @@ marked **deferred** require `tool_search` to discover.
 
 | Category | Tools (default surface unless noted) |
 |---|---|
-| **Plan loop** (recommended) | `sas_inspect_project`, `sas_inspect_scene`, `sas_inspect_track`, `sas_inspect_history`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_history_list`, `sas_history_checkpoint`, `sas_history_undo`, `sas_history_delete`, `sas_history_prune` |
+| **MCP primitives** (always visible to MCP clients) | `sas_inspect`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_undo_checkpoint`, `tool_search`, `sas_run` — see [MCP-capable agents](#mcp-capable-agents) for routing details |
+| **Plan loop** (CLI surface) | `sas inspect project\|scene\|track\|history`, `sas plan`, `sas validate`, `sas apply` (async), `sas preview`, `sas history list\|checkpoint\|undo\|delete\|prune` |
+| **Async job control** | `sas job list\|status\|wait\|cancel` (CLI) · `wait_for_job` (via `sas_run` for MCP) — see [Status & async jobs](./status-and-jobs.md) |
 | **Project** | `project_get_status`, `list_projects` |
 | **Scene navigation** | `scene_get_all`, `scene_activate`, `scene_duplicate`, `scene_delete`, `scene_find_by_name` |
 | **Scene plumbing** *(deferred)* | `scene_create`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_queue`, `scene_set_collapsed` |
@@ -302,6 +361,9 @@ round-trips to `get_status`.
 
 - [Plan-as-artifact loop](./plan-loop.md) — the six-verb agent surface
   end-to-end: Plan schema, validator semantics, checkpoints, recovery.
+- [Status & async jobs](./status-and-jobs.md) — `sas health` / `sas
+  status`, the `/api/v1/jobs*` endpoints, SSE event names, the
+  `wait_for_job` MCP tool, and the list of async-wrapped tools.
 - [CLI reference](./cli-reference.md)
 - [Capability tools](./capability-tools.md) — filesystem + shell access from the agent, gated by per-call user consent.
 - [Worked examples](./examples.md)

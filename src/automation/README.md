@@ -96,8 +96,15 @@ CLI and the MCP server wrap.
   the agent reads to pick the right one.
 - **5 composite tools** that wrap multi-step flows: `compose_scene`,
   `add_instrument`, `play_scene`, `render_to_performance`, `create_transition`.
+- **[Async-by-default execution](./status-and-jobs.md)** — every
+  state-mutating tool returns a `jobId` immediately and finishes in the
+  background. Agents call `wait_for_job` (MCP) or `sas job wait` (CLI)
+  before depending on the result. No more dropped sockets, no more
+  silent in-flight state.
 - **Typed domain events** streamed over SSE so agents (and the app UI)
-  react to state changes in real time.
+  react to state changes in real time. Includes `jobProgress`,
+  `jobComplete`, and `jobFailed` alongside business events like
+  `scene:created` and `track:fx-changed`.
 - **Idempotency keys** so retrying a failed call is safe — no duplicate
   tracks, no corrupted state.
 - **Progressive disclosure** — a curated core tool set (~24 scene-scoped
@@ -117,13 +124,17 @@ CLI and the MCP server wrap.
 #       Settings → Developer Tools → sas CLI → Install
 #    Then open a NEW terminal window so your shell picks up the PATH change.
 
-# 3. Verify
-sas health
-# → { "status": "ok", ... }
+# 3. Verify health
+sas health                    # is the API server reachable?
+sas status                    # is every subsystem (engine, db, auth) ok?
 
 # 4. See what you can do
 sas list-actions
 sas help compose_scene
+
+# 5. Kick off async work. Every state-mutating tool returns a jobId.
+JOB=$(sas make beat --vibe "lo-fi 90 BPM" --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 180   # block until done
 ```
 
 **Can't run `sas`?** The CLI isn't strictly required — everything it
@@ -153,8 +164,15 @@ Then either:
 - **[Plan-as-artifact loop](./plan-loop.md)** — the six-verb pattern
   (`inspect → plan → validate → apply → preview → undo`), Plan schema,
   and checkpoint contract. **Start here if you're an agent.**
+- **[Status & async jobs](./status-and-jobs.md)** — the universal async
+  job contract: `sas health` / `sas status`, the `/api/v1/jobs*`
+  endpoints, SSE `jobProgress`/`jobComplete`/`jobFailed` events, the
+  `wait_for_job` MCP tool, and the list of async-wrapped tools. **Read
+  this if you're writing scripts or agents that mutate state.**
 - **[CLI reference](./cli-reference.md)** — `sas` install, flags, exit
   codes, argument conventions, every verb.
+- **[Capability tools](./capability-tools.md)** — filesystem + shell
+  access from the agent, gated by per-call user consent.
 - **[Examples](./examples.md)** — worked bash scripts for common flows.
 - **[For agents](./for-agents.md)** — integration notes for Claude Code,
-  OpenClaw, Cursor, and custom clients.
+  OpenClaw, Cursor, Claude Desktop, and custom MCP clients.
