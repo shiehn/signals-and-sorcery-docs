@@ -1,9 +1,20 @@
 {
   "latest": {
-    "version": "2.48.0",
-    "date": "2026-05-13T23:32:48.853Z"
+    "version": "2.49.0",
+    "date": "2026-05-16T01:45:42.635Z"
   },
   "versions": [
+    {
+      "version": "2.49.0",
+      "date": "2026-05-16T01:45:42.636Z",
+      "downloads": {
+        "mac": {
+          "arm64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_49_0-arm64.dmg",
+          "x64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_49_0-x64.dmg"
+        }
+      },
+      "changelog": "Version 2.49.0 release"
+    },
     {
       "version": "2.48.0",
       "date": "2026-05-13T23:32:48.854Z",
@@ -102,32 +113,21 @@
         }
       },
       "changelog": "Version 2.40.0 release"
-    },
-    {
-      "version": "2.39.0",
-      "date": "2026-04-12T21:19:36.390Z",
-      "downloads": {
-        "mac": {
-          "arm64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_39_0-arm64.dmg",
-          "x64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_39_0-x64.dmg"
-        }
-      },
-      "changelog": "Version 2.39.0 release"
     }
   ],
   "platforms": {
     "mac": {
       "arm64": {
-        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_48_0-arm64.dmg",
-        "version": "2.48.0",
-        "size": "797.8 MB",
-        "date": "2026-05-13T23:32:48.854Z"
+        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_49_0-arm64.dmg",
+        "version": "2.49.0",
+        "size": "797.9 MB",
+        "date": "2026-05-16T01:45:42.636Z"
       },
       "x64": {
-        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_48_0-x64.dmg",
-        "version": "2.48.0",
-        "size": "805.8 MB",
-        "date": "2026-05-13T23:32:48.854Z"
+        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-2_49_0-x64.dmg",
+        "version": "2.49.0",
+        "size": "805.7 MB",
+        "date": "2026-05-16T01:45:42.636Z"
       }
     }
   }
