@@ -64,8 +64,8 @@ Built-in plugins that ship with Signals & Sorcery. Source is open for study or f
 | Plugin | Link |
 |--------|------|
 | Synth Plugin | [github.com/shiehn/sas-synth-plugin](https://github.com/shiehn/sas-synth-plugin) |
-| Sample Plugin | [github.com/shiehn/sas-sample-plugin](https://github.com/shiehn/sas-sample-plugin) |
-| Audio Plugin | [github.com/shiehn/sas-audio-plugin](https://github.com/shiehn/sas-audio-plugin) |
+| Loops Plugin | [github.com/shiehn/sas-loops-plugin](https://github.com/shiehn/sas-loops-plugin) |
+| Stems Plugin | [github.com/shiehn/sas-stems-plugin](https://github.com/shiehn/sas-stems-plugin) |
 
 ### Additional Plugins
 
@@ -370,8 +370,8 @@ These ship with Signals & Sorcery and serve as reference implementations:
 | Plugin | Type | Description |
 |--------|------|-------------|
 | `@signalsandsorcery/synth-generator` | midi | AI-powered MIDI generation with Surge XT presets |
-| `@signalsandsorcery/sample-player` | sample | Sample library browser with time-stretching |
-| `@signalsandsorcery/audio-texture` | audio | AI audio texture generation via Lyria 3 |
+| `@signalsandsorcery/loops` | sample | Audio loop / sample library browser with time-stretching |
+| `@signalsandsorcery/stems` | audio | AI audio-from-text via Lyria 3, with stem splitting |
 
 ## Security Model
 

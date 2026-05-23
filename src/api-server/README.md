@@ -24,8 +24,8 @@ Built around the core concept of private preview and public performance:
 All built-in generators run on the Plugin SDK:
 
 - **Synth Generator** - AI MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
-- **Sample Player** - Sample-based tracks with FX chains
-- **Audio Texture** - AI audio generation with Lyria
+- **Loops** - Sample / loop tracks with FX chains and time-stretching
+- **Stems** - AI audio-from-text generation with Lyria, with optional stem splitting
 
 Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
 
