@@ -8,11 +8,11 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new category of music tool built around contract-based composing. Define musical contracts (key, chords, tempo, bars), then generate MIDI with **Gemini** and audio with **Lyria**. All generators run on an extensible **Plugin SDK**, with hardware-level headphone/main output routing for live performance.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)**, a new category of music tool built around contract-based composing. Define musical contracts (key, chords, tempo, bars), then generate MIDI with **Gemini** and audio with **Stable Audio** and **Lyria**. All generators run on an extensible **Plugin SDK**, with hardware-level headphone/main output routing for live performance.
 
 ## The Vision
 
-We believe generative music should keep you *in* the creative process, not replace it. Where one-shot tools hand you a finished song, Signals & Sorcery generates infinite MIDI and audio layers within the contract you define — so you stay in control to compose, preview, and perform AI-generated music in real-time. Intuitive and immediate, with the barriers between your ideas and their realization removed.
+We believe generative music should keep you *in* the creative process, not replace it. Where one-shot tools hand you a finished song, Signals & Sorcery generates infinite MIDI and audio layers within the contract you define, so you stay in control to compose, preview, and perform AI-generated music in real-time. Intuitive and immediate, with the barriers between your ideas and their realization removed.
 
 ## Community
 
@@ -76,7 +76,7 @@ A: I'm not doing anything weird. May add basic analytics for crash reporting.
 A: Surge XT ships as the default. Any VST3/AU instrument plugin can be loaded per track.
 
 **Q: What AI powers the generation?**
-A: **Gemini** for MIDI generation and **Lyria** for audio generation.
+A: **Gemini** for MIDI generation, and **Stable Audio** and **Lyria** for audio generation.
 
 ## Credits
 
@@ -86,13 +86,13 @@ A: **Gemini** for MIDI generation and **Lyria** for audio generation.
 ### Technologies
 - Built with [Electron](https://www.electronjs.org/) and [React](https://react.dev/)
 - MIDI generation powered by [Gemini](https://deepmind.google/technologies/gemini/)
-- Audio generation powered by [Lyria](https://deepmind.google/technologies/lyria/)
+- Audio generation powered by [Stable Audio](https://stability.ai) and [Lyria](https://deepmind.google/technologies/lyria/)
 - Native audio engine built on [Tracktion Engine](https://github.com/Tracktion/tracktion_engine)
 - Default synthesizer: [Surge XT](https://surge-synthesizer.github.io/)
 - Extensible via [Plugin SDK](/plugin-sdk/)
 
 ### Special Thanks
-- Google for Gemini and Lyria
+- Google for Gemini and Lyria, and Stability AI for Stable Audio
 - The Tracktion team for the amazing audio engine
 - The Surge XT team for the best free synth
 - Anthropic for the MCP protocol

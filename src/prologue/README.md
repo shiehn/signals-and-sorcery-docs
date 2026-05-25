@@ -6,9 +6,9 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new kind of music tool built around contract-based composing. Define a musical contract (key, chords, tempo, bars), then let AI generate MIDI via **Gemini** and audio via **Lyria** within those constraints. Preview privately in headphones, refine, and push approved material to your audience in real-time.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)**, a new kind of music tool built around contract-based composing. Define a musical contract (key, chords, tempo, bars), then let AI generate MIDI via **Gemini** and audio via **Stable Audio** and **Lyria** within those constraints. Preview privately in headphones, refine, and push approved material to your audience in real-time.
 
-Most AI music tools are one-shot: type a prompt, get a finished song, and you're done — great for background music, but it skips the creative process. Signals & Sorcery takes the opposite approach. You generate infinite MIDI and audio layers within a contract you define, then compose, preview, and perform with them — the speed of generation, without giving up creative control.
+Most AI music tools are one-shot: type a prompt, get a finished song, and you're done. That works for background music, but it skips the creative process. Signals & Sorcery takes the opposite approach. You generate infinite MIDI and audio layers within a contract you define, then compose, preview, and perform with them. You get the speed of generation without giving up creative control.
 
 The platform features hardware-level audio routing: separate headphone (cue) and main outputs let you audition AI-generated clips privately before your audience hears them.
 
@@ -25,8 +25,8 @@ The platform features hardware-level audio routing: separate headphone (cue) and
 ### Core Technology
 
 - **Native Audio Engine**: Built on Tracktion Engine (C++) with JSON-RPC communication
-- **AI-Powered Generation**: Uses **Gemini** for MIDI generation and **Lyria** for audio generation
-- **Contract-Based Composing**: Define key, chords, BPM, and bars — AI composes within those constraints
+- **AI-Powered Generation**: Uses **Gemini** for MIDI generation, and **Stable Audio** and **Lyria** for audio generation
+- **Contract-Based Composing**: Define key, chords, BPM, and bars, and AI composes within those constraints
 - **Dual-Deck Architecture**: Composition Deck (preview) and Performance Deck (audience) with independent routing
 - **Plugin SDK**: All generators (synths, samples, audio textures) are built on the extensible Plugin SDK
 - **Custom Instrument Support**: Load any VST3/AU instrument plugin on synth tracks
@@ -42,15 +42,15 @@ The platform features hardware-level audio routing: separate headphone (cue) and
 ### Key Features
 
 - **Contract-Based Generation**: Musical contracts ensure coherent compositions across tracks
-- **Gemini MIDI + Lyria Audio**: Purpose-built AI models for music generation
+- **Gemini MIDI + Stable Audio & Lyria**: Purpose-built AI models for music generation
 - **Private Preview**: Audition generated content in headphones before the audience hears it
 - **Deck Transfer**: Move material from composition to performance deck
-- **Plugin SDK**: Built-in synth, drum, instrument, sample, and audio generators plus an AI chat assistant — with upcoming integrations for Splice, ElevenLabs, live coding, and agentic prompting
+- **Plugin SDK**: Built-in synth, drum, instrument, sample, and audio generators plus an AI chat assistant, with upcoming integrations for Splice, ElevenLabs, live coding, and agentic prompting
 - **Custom Instruments**: Load any VST3/AU synth plugin alongside or instead of the default Surge XT
 
 ## Video Tutorials
 
-See Signals & Sorcery in action — check out the [Video Tutorials](/tutorials/) for demos of MIDI generation, samples, plugins, and AI audio.
+See Signals & Sorcery in action. Check out the [Video Tutorials](/tutorials/) for demos of MIDI generation, samples, plugins, and AI audio.
 
 ## Current Limitations
 
