@@ -17,16 +17,15 @@ sidebar: auto
 ### Getting Started
 
 ```bash
-# Clone the repository
-git clone https://github.com/shiehn/signals-and-sorcery.git
-cd signals-and-sorcery
+# Clone the monorepo
+git clone https://github.com/shiehn/sas-platform.git
+cd sas-platform/sas-assistant
 
 # Install dependencies
 npm install
 
 # Run in development mode
-npm run start         # Standard development mode
-npm run dev:safe      # Safe mode with crash protection
+npm run start         # Default dev server (safe mode, crash protection)
 npm run dev:smart     # Auto-restarts on crashes
 ```
 
@@ -35,39 +34,32 @@ npm run dev:smart     # Auto-restarts on crashes
 ### Project Structure
 
 ```
-signals-and-sorcery/
-├── src/
-│   ├── main/              # Electron main process
-│   │   ├── index.ts       # App entry point
-│   │   ├── services/      # Core services
-│   │   └── setup-handlers.ts  # IPC handlers
-│   ├── renderer/          # React UI
-│   │   ├── App.tsx        # Main component
-│   │   ├── pages/         # UI pages
-│   │   └── components/    # React components
-│   ├── audio-engine/      # Tracktion Engine TypeScript API
-│   │   └── tracktion-engine.ts  # JSON-RPC client
-│   ├── mcp-server/        # TypeScript MCP
-│   │   ├── index.ts       # Server entry
-│   │   └── dsl/tools/     # DSL tool definitions
-│   └── music-engine/      # Composition engine
-│       ├── services/      # Project binding, transitions
-│       └── harmonic-rules-engine.ts
-├── sas-audio-engine/      # Native C++ audio engine
+sas-platform/                   # monorepo root
+├── sas-assistant/              # Electron desktop app
 │   ├── src/
-│   │   ├── main.cpp       # Entry point
-│   │   ├── Deck.cpp       # Deck management
-│   │   ├── DeckManager.cpp # Multi-deck coordination
-│   │   └── SceneManager.cpp # Scene management
+│   │   ├── main/               # Electron main process: services, IPC, tool registry
+│   │   ├── renderer/           # React UI (pages, components)
+│   │   ├── audio-engine/       # TypeScript JSON-RPC client for the native engine
+│   │   ├── music-engine/       # Composition engine + harmonic-rules-engine.ts
+│   │   ├── plugins/            # Built-in plugin registration (plugins/index.ts)
+│   │   └── shared/             # Shared types
+│   └── resources/              # Bundled native binaries
+├── sas-audio-engine/           # Native C++ audio engine (Tracktion Engine)
+│   ├── src/
+│   │   ├── main.cpp            # Entry point (JSON-RPC over TCP, port 9998)
+│   │   ├── DeckManager.cpp     # Multi-deck coordination
+│   │   └── SceneManager.cpp    # Scene management
 │   └── CMakeLists.txt
-├── scripts/              # Build & test scripts
-└── docs/                 # Documentation
+├── sas-audio-tool/             # Native C++ audio utility
+├── sas-stem-splitter/          # Stem separation (Demucs)
+├── sas-plugin-sdk/             # @signalsandsorcery/plugin-sdk
+└── signals-and-sorcery-docs/   # This documentation site
 ```
 
 ### Key Technologies
 
 - **Electron** - Desktop application framework
-- **React 19** - UI framework
+- **React 18** - UI framework
 - **TypeScript** - Type-safe JavaScript
 - **Tracktion Engine** - Native C++ audio engine
 - **MCP** - Model Context Protocol for LLM tools
@@ -203,9 +195,9 @@ The release script handles everything:
 npm run release
 
 # Release with version type
-npm run release:minor  # 0.12.0 → 0.13.0
-npm run release:patch  # 0.12.0 → 0.12.1
-npm run release:major  # 0.12.0 → 1.0.0
+npm run release:minor  # 2.51.0 → 2.52.0
+npm run release:patch  # 2.51.0 → 2.51.1
+npm run release:major  # 2.51.0 → 3.0.0
 
 # Build only (no upload)
 npm run release:build-only
@@ -250,17 +242,16 @@ test: add unit tests for scene manager
 ## Resources
 
 ### Documentation
-- [Main README](https://github.com/shiehn/signals-and-sorcery)
-- [Audio Engine Architecture](https://github.com/shiehn/signals-and-sorcery/blob/main/sas-audio-engine/README.md)
-- [Tool Architecture](https://github.com/shiehn/signals-and-sorcery/blob/main/TOOL_ARCHITECTURE.md)
+- [Main README](https://github.com/shiehn/sas-platform)
+- [Audio Engine Architecture](https://github.com/shiehn/sas-platform/blob/main/sas-audio-engine/README.md)
 
 ### Support
-- [GitHub Issues](https://github.com/shiehn/signals-and-sorcery/issues)
+- [GitHub Issues](https://github.com/shiehn/sas-platform/issues)
 - [Discord Community](https://discord.gg/UcHCjfpRkV)
 - Email: stevehiehn@gmail.com
 
 ### Related Projects
-- [Model Context Protocol](https://github.com/anthropics/mcp)
+- [Model Context Protocol](https://github.com/modelcontextprotocol/modelcontextprotocol)
 - [Tracktion Engine](https://github.com/Tracktion/tracktion_engine)
 - [Electron](https://www.electronjs.org/)
 - [React](https://react.dev/)

@@ -21,11 +21,15 @@ Built around the core concept of private preview and public performance:
 - **Performance Deck** - Play approved clips for your audience
 
 ### 🧩 Extensible Plugin SDK
-All built-in generators run on the Plugin SDK:
+All built-in generators and tools run on the Plugin SDK:
 
 - **Synth Generator** - AI MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
-- **Loops** - Sample / loop tracks with FX chains and time-stretching
+- **Drum Generator** - AI drum-pattern MIDI generation with a built-in sample-based drum sampler
+- **Instrument Generator** - AI-generated MIDI for pitched, polyphonic sample-based instruments
+- **Loops** - Sample / loop library browser with FX chains and time-stretching
 - **Stems** - AI audio-from-text generation with Lyria, with optional stem splitting
+- **Chat** - Conversational AI assistant that builds and edits your scene from natural-language prompts
+- **Recorder** - Loop-aware microphone recording (opt-in)
 
 Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
 
