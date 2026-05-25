@@ -8,6 +8,8 @@ sidebar: auto
 
 Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new kind of music tool built around contract-based composing. Define a musical contract (key, chords, tempo, bars), then let AI generate MIDI via **Gemini** and audio via **Lyria** within those constraints. Preview privately in headphones, refine, and push approved material to your audience in real-time.
 
+Most AI music tools are one-shot: type a prompt, get a finished song, and you're done — great for background music, but it skips the creative process. Signals & Sorcery takes the opposite approach. You generate infinite MIDI and audio layers within a contract you define, then compose, preview, and perform with them — the speed of generation, without giving up creative control.
+
 The platform features hardware-level audio routing: separate headphone (cue) and main outputs let you audition AI-generated clips privately before your audience hears them.
 
 ## Who is this for?

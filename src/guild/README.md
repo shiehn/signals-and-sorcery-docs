@@ -12,7 +12,7 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** — a new category
 
 ## The Vision
 
-We believe that generative music performance should be intuitive and immediate. Signals & Sorcery removes the barriers between your ideas and their realization, giving you a platform to compose, preview, and perform AI-generated music in real-time.
+We believe generative music should keep you *in* the creative process, not replace it. Where one-shot tools hand you a finished song, Signals & Sorcery generates infinite MIDI and audio layers within the contract you define — so you stay in control to compose, preview, and perform AI-generated music in real-time. Intuitive and immediate, with the barriers between your ideas and their realization removed.
 
 ## Community
 
