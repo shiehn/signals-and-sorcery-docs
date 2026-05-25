@@ -17,8 +17,8 @@ actions:
 tagline: Generative Audio Workstation
 heroImage: ./sas_logo_two.png
 features:
-    - title: Contract-Based Composing
-      details: Define musical contracts (key, chords, BPM, bars), then generate MIDI and audio layers within them. You compose with the results and keep full creative control, not a one-shot finished song.
+    - title: Compose with infinite sounds
+      details: Define a musical contract, then generate endless MIDI and audio layers within it. MIDI via Gemini, audio via Stable Audio and Lyria. Not one-shot song generation, but a creative platform for building, previewing, shaping, and performing music with full control.
     - title: Extensible Plugin SDK
       details: Built-in synth, sample, and audio generators all run on the Plugin SDK. Upcoming integrations include Splice, ElevenLabs, live coding, and agentic prompting.
     - title: Free Tier Available
@@ -26,7 +26,3 @@ features:
 
 footer: Made by Steve Hiehn with ❤️
 ---
-
-## Compose with infinite sounds
-
-Define a musical contract, then generate endless MIDI and audio layers within it. MIDI via **Gemini**, audio via **Stable Audio** and **Lyria**. Signals & Sorcery is not one-shot song generation. It is a creative AI platform for building, previewing, shaping, and performing music with full control.
