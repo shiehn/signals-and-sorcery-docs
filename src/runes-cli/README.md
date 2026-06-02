@@ -19,7 +19,7 @@ sidebar: auto
 ```bash
 # Clone the monorepo
 git clone https://github.com/shiehn/sas-platform.git
-cd sas-platform/sas-assistant
+cd sas-platform/sas-app
 
 # Install dependencies
 npm install
@@ -35,7 +35,7 @@ npm run dev:smart     # Auto-restarts on crashes
 
 ```
 sas-platform/                   # monorepo root
-├── sas-assistant/              # Electron desktop app
+├── sas-app/              # Electron desktop app
 │   ├── src/
 │   │   ├── main/               # Electron main process: services, IPC, tool registry
 │   │   ├── renderer/           # React UI (pages, components)

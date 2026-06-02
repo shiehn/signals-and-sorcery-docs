@@ -368,4 +368,4 @@ round-trips to `get_status`.
 - [Capability tools](./capability-tools.md) — filesystem + shell access from the agent, gated by per-call user consent.
 - [Worked examples](./examples.md)
 - [Plugin SDK](/plugin-sdk/) — for building your own generator plugins
-- Full design rationale: [`sas-assistant/docs-ai-planning/ai-orchestration-design.md`](https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md)
+- Full design rationale: [`sas-app/docs-ai-planning/ai-orchestration-design.md`](https://github.com/shiehn/sas-platform/blob/main/sas-app/docs-ai-planning/ai-orchestration-design.md)

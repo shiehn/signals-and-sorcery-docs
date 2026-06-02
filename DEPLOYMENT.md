@@ -62,10 +62,10 @@ With JavaScript fetching `downloads.json` — this approach is unreliable in the
 
 ## Releasing a New App Version
 
-The release process is **fully automated** via the release script in `sas-assistant`. Run:
+The release process is **fully automated** via the release script in `sas-app`. Run:
 
 ```bash
-cd /Users/stevehiehn/sas-platform/sas-assistant
+cd /Users/stevehiehn/sas-platform/sas-app
 
 # For minor version bump (0.12.0 → 0.13.0)
 npm run release
@@ -79,7 +79,7 @@ npm run release:patch  # 0.12.0 → 0.12.1
 **What the release script does automatically:**
 
 1. Runs tests
-2. Bumps version in `sas-assistant/package.json`
+2. Bumps version in `sas-app/package.json`
 3. Builds the DMG (arm64 + x64)
 4. Uploads DMGs to Google Cloud Storage (`gs://docs-assets/`)
 5. Updates `src/.vuepress/public/downloads.json` in the docs source with the new release entry
@@ -88,7 +88,7 @@ npm run release:patch  # 0.12.0 → 0.12.1
 8. Creates a git tag in the assistant repo
 9. Optionally creates a GitHub release
 
-**Release script location:** `sas-assistant/scripts/release.js`
+**Release script location:** `sas-app/scripts/release.js`
 
 The script automatically finds and updates download links using this regex:
 ```javascript

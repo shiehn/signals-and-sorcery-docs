@@ -393,4 +393,4 @@ plan loop when:
   Code, OpenClaw, Cursor, and HTTP-direct.
 - Source-of-truth Plan schema: [`agent-plan.ts`][types] in the S&S repo.
 
-[types]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/src/shared/types/agent-plan.ts
+[types]: https://github.com/shiehn/sas-platform/blob/main/sas-app/src/shared/types/agent-plan.ts

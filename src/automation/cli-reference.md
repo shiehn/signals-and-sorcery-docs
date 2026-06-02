@@ -657,6 +657,6 @@ Following [clig.dev][clig], every plan-shaped command accepts:
 | `--checkpoint <name>` | — | — | yes |
 | `--skip-checkpoint` | — | — | yes |
 
-[template]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md#236-tool-description-template
-[design]: https://github.com/shiehn/sas-platform/blob/main/sas-assistant/docs-ai-planning/ai-orchestration-design.md
+[template]: https://github.com/shiehn/sas-platform/blob/main/sas-app/docs-ai-planning/ai-orchestration-design.md#236-tool-description-template
+[design]: https://github.com/shiehn/sas-platform/blob/main/sas-app/docs-ai-planning/ai-orchestration-design.md
 [clig]: https://clig.dev/
