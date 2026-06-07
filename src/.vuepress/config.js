@@ -34,6 +34,10 @@ export default {
                 link: '/api-server/',
             },
             {
+                text: 'Ableton',
+                link: '/ableton/',
+            },
+            {
                 text: 'Automation',
                 link: '/automation/',
             },
@@ -73,7 +77,7 @@ export default {
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true }],
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2&family=Rye&display=swap' }],
         // SEO meta tags
-        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, AI music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, AI music layers, compose AI music, prompt to layer' }],
+        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, AI music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, AI music layers, compose AI music, prompt to layer, Ableton, Ableton Live, Ableton integration, export to Ableton' }],
         ['meta', { property: 'og:title', content: 'Signals & Sorcery - Generative Audio Workstation' }],
         ['meta', { property: 'og:description', content: 'You compose; AI generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
         ['meta', { property: 'og:type', content: 'website' }],
