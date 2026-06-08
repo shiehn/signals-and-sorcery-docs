@@ -15,6 +15,7 @@ sidebar: auto
 - **Internet connection** for AI generation features
 - **A free account** (email or Google sign-in)
 - **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
+- **Optional — [Ableton Live](/ableton/) integration:** Ableton Live 12 Suite (beta build 12.4.5+) to export scenes straight into Live's Session view
 
 ### Installation
 
@@ -114,6 +115,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 - Watch the [Video Tutorials](/tutorials/) to see each feature in action
 - Experiment with different sound descriptions and musical contracts
 - Set up Performance Mode for dual-deck workflow
+- [Export to Ableton Live](/ableton/) — send any scene into Live's Session view as audio + MIDI
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
 - Check the [Features](/api-server/) section for advanced capabilities
 - Read the [Plugin SDK](/plugin-sdk/) documentation to build custom generators

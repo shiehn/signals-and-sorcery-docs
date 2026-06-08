@@ -14,7 +14,7 @@ actions:
   - text: Mac (Intel)
     link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_1_0-x64.dmg
     type: secondary
-tagline: Generative Audio Workstation
+tagline: Generative Audio Workstation — free to try, no credit card required
 heroImage: ./sas_logo_two.png
 features:
     - title: Compose with infinite sounds
@@ -23,8 +23,6 @@ features:
       details: Send any generated scene straight into Ableton's Session view — one click in S&S, one right-click in Live. Each layer arrives as audio plus editable MIDI, at the right tempo. The companion extension installs itself.
     - title: Extensible Plugin SDK
       details: Built-in synth, sample, and audio generators all run on the Plugin SDK. Upcoming integrations include Splice, ElevenLabs, live coding, and agentic prompting.
-    - title: Free Tier Available
-      details: No credit card required to get started. Explore generative composition, MIDI and audio generation, and the plugin ecosystem on the free tier before deciding to upgrade.
 
 footer: Made by Steve Hiehn with ❤️
 ---

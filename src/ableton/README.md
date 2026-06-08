@@ -49,12 +49,33 @@ extension. You can confirm it under **Live → Settings → Extensions**.
 
 1. In **Signals & Sorcery**, generate or open a scene, then click **Export to
    Ableton** — the ▦ button on a scene, or **Project menu → Export to Ableton…**
+   to send every scene in the project at once. A progress bar shows the render;
+   you never pick a save location.
 2. In **Ableton**, switch to **Session view**, **right-click a scene** (the launch
    buttons in the rightmost column) and choose **Import S&S scene…**
-3. Your scene materializes — tempo set, one row of clips, audio + MIDI ready to play.
+3. If you've exported more than one scene, a **"Choose scenes to import"** window
+   appears — tick the scenes you want (your newest export is pre-selected) and
+   confirm. A single scene imports straight away, no picker.
+4. Each chosen scene materializes as its own **Session row** — tempo set, audio +
+   MIDI clips ready to play, with each track's level and pan carried over from
+   your S&S mix.
 
-You never pick a save location: S&S hands the scene directly to the extension,
-which imports your most recent export.
+Re-importing is **additive**: scenes are appended as new rows, so an earlier
+import is never overwritten. Export the same scene again and it re-renders in
+place, ready to import fresh.
+
+## Where your exports live
+
+You normally never need these paths — but if you want to find, open, or clean up
+your exports, **Signals & Sorcery → Settings → File Locations** lists them all
+(read-only, each with an **Open** button):
+
+- **Export Folder** — where S&S stages each scene for Live to import.
+- **Extension Install Folder** — where the *Import S&S scene* extension is installed.
+- **Clear Exports** — a one-click button to delete staged export bundles once
+  you've imported them into Live.
+
+The same panel also shows your sample, loop, SurgeXT preset, and app-data folders.
 
 ## Troubleshooting
 
@@ -64,3 +85,8 @@ which imports your most recent export.
   import in Live.
 - **Right-click where?** On a **scene** in Session view (the launch buttons in the
   rightmost column) — not on an empty clip slot.
+- **Picker shows an old scene?** Every export you haven't cleared stays available
+  to import. Tick only the scenes you want, or clear old bundles from
+  **Settings → File Locations → Clear Exports**.
+- **Imported a scene twice?** Re-import appends a new row rather than replacing the
+  old one — delete the extra Session row in Live by hand.
