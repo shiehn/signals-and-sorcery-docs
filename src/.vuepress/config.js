@@ -2,8 +2,27 @@ import {defineUserConfig} from 'vuepress'
 import { fileURLToPath, URL } from 'node:url'
 
 import { defaultTheme } from 'vuepress'
-import {googleAnalyticsPlugin} from "@vuepress/plugin-google-analytics";
 import {sitemapPlugin} from "vuepress-plugin-sitemap2";
+
+// Cookieless GA4 (no banner needed): consent is defaulted to DENIED before
+// gtag('config') runs, so gtag never writes cookies or stores identifiers —
+// GA4 falls back to anonymous consent-mode pings and models the counts.
+// Expect lower/modeled numbers than the old cookie-based plugin; that is the
+// deliberate trade for not running a consent banner. The inline snippet
+// replaces @vuepress/plugin-google-analytics, which offered no consent hook.
+const GA4_ID = 'G-B2QMDKHWHF'
+const GTAG_BOOTSTRAP = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied'
+});
+gtag('js', new Date());
+gtag('config', '${GA4_ID}');
+`
 export default {
     lang: 'en-US',
     title: 'Signals & Sorcery',
@@ -65,14 +84,15 @@ export default {
         ],
     }),
     plugins: [
-        googleAnalyticsPlugin({
-            id: 'G-B2QMDKHWHF'
-        }),
         sitemapPlugin({
             hostname: 'https://signalsandsorcery.com',
         }),
     ],
     head: [
+        // Order matters: the consent-default bootstrap MUST run before the
+        // gtag library processes its queue, so no cookie is ever written.
+        ['script', {}, GTAG_BOOTSTRAP],
+        ['script', { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}` }],
         ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true }],
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2&family=Rye&display=swap' }],
