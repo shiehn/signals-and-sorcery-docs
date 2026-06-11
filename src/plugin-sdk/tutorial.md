@@ -8,7 +8,7 @@ Build a complete plugin that generates polyrhythmic drum patterns using the Eucl
 
 ## What We're Building
 
-The **Euclidean algorithm** distributes a number of pulses as evenly as possible across a number of steps. For example, `E(5, 16)` produces `[x . . x . . x . . x . . x . . . .]` — the pattern behind many classic rhythms.
+The **Euclidean algorithm** distributes a number of pulses as evenly as possible across a number of steps. For example, `E(5, 16)` produces `[x . . x . . x . . x . . x . . . .]`, the pattern behind many classic rhythms.
 
 Our plugin will:
 - Create a drum track with Surge XT loaded
@@ -19,7 +19,7 @@ Our plugin will:
 
 ## Step 1: Project Setup
 
-Create the plugin directory. The parent path depends on your OS —
+Create the plugin directory. The parent path depends on your OS;
 see [Install a Plugin](./install-a-plugin.md) for Windows / Linux paths.
 
 ```bash
@@ -29,7 +29,7 @@ cd ~/Library/Application\ Support/signals-and-sorcery/plugins/euclidean-rhythm
 ```
 
 Easier shortcut: open **Settings → Plugins → Open Folder** in the app to
-reveal the correct plugins directory — then `cd` into it.
+reveal the correct plugins directory, then `cd` into it.
 
 ### plugin.json
 
@@ -441,11 +441,11 @@ function LayerRow({
 When your plugin calls `host.createTrack()`, the host records that your plugin owns that track. You can only modify tracks you own:
 
 ```typescript
-// This works — you created this track
+// This works; you created this track
 const track = await host.createTrack({ name: 'My Drums' });
 await host.writeMidiClip(track.id, clipData);
 
-// This throws NOT_OWNED — track belongs to another plugin
+// This throws NOT_OWNED; the track belongs to another plugin
 await host.writeMidiClip(someOtherTrackId, clipData);
 ```
 
@@ -525,10 +525,10 @@ npx tsc --outDir .
 Ideas for extending this plugin:
 
 - **Add more layers** with an "Add Layer" button
-- **MIDI pitch mapping** — let users assign any MIDI note per layer
-- **Preset management** — save/load pattern configurations using `host.savePluginPreset()`
-- **Live preview** — use `host.auditionNote()` to preview patterns before committing
-- **AI-assisted patterns** — use `host.generateWithLLM()` to suggest interesting step/pulse combinations based on the genre
-- **Transport sync** — use `host.onDeckBoundary()` to regenerate patterns on each loop
+- **MIDI pitch mapping**: let users assign any MIDI note per layer
+- **Preset management**: save/load pattern configurations using `host.savePluginPreset()`
+- **Live preview**: use `host.auditionNote()` to preview patterns before committing
+- **LLM-assisted patterns**: use `host.generateWithLLM()` to suggest interesting step/pulse combinations based on the genre
+- **Transport sync**: use `host.onDeckBoundary()` to regenerate patterns on each loop
 
 See the [API Reference](./api-reference.md) for the complete list of available methods.

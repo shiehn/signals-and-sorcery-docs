@@ -12,7 +12,7 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)**, a new category of
 
 ## The Vision
 
-We believe generative music should keep you *in* the creative process, not replace it. Where one-shot tools hand you a finished song, Signals & Sorcery generates infinite MIDI and audio layers within the contract you define, so you stay in control to compose, preview, and perform AI-generated music in real-time. Intuitive and immediate, with the barriers between your ideas and their realization removed.
+We believe generative music should keep you *in* the creative process, not replace it. Where one-shot tools hand you a finished song, Signals & Sorcery generates infinite MIDI and audio layers within the contract you define, so you stay in control to compose, preview, and perform generated music in real-time. Intuitive and immediate, with the barriers between your ideas and their realization removed.
 
 ## Community
 
@@ -46,7 +46,7 @@ Forever grateful for any feedback:
 
 - macOS 10.15+ (Apple Silicon & Intel)
 - 4GB RAM minimum (8GB recommended)
-- Internet connection for AI features
+- Internet connection for generative features
 - Audio interface with 4+ outputs (recommended for performance with headphone/main separation)
 
 ## Support
@@ -67,7 +67,7 @@ A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-inst
 A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
 
 **Q: Can I use it offline?**
-A: No, the app requires an internet connection for AI generation.
+A: No, the app requires an internet connection for music generation.
 
 **Q: Is my data secure?**
 A: I'm not doing anything weird. May add basic analytics for crash reporting.
@@ -75,7 +75,7 @@ A: I'm not doing anything weird. May add basic analytics for crash reporting.
 **Q: What synthesizers are supported?**
 A: Surge XT ships as the default. Any VST3/AU instrument plugin can be loaded per track.
 
-**Q: What AI powers the generation?**
+**Q: What models power the generation?**
 A: **Gemini** for MIDI generation, and **Stable Audio** and **Lyria** for audio generation.
 
 ## Credits

@@ -6,16 +6,16 @@ sidebar: auto
 
 ## Quick Start Guide
 
-**Free to try — no credit card required.** The Free plan includes a daily allowance of AI generations; no billing setup is needed to start composing.
+**Free to try, no credit card required.** The Free plan includes a daily allowance of generations; no billing setup is needed to start composing.
 
 ### System Requirements
 
 - **macOS** with Apple M-Series or Intel chip
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
-- **Internet connection** for AI generation features
+- **Internet connection** for generation features
 - **A free account** (email or Google sign-in)
 - **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
-- **Optional — [Ableton Live](/ableton/) integration:** Ableton Live 12 Suite (beta build 12.4.5+) to export scenes straight into Live's Session view
+- **Optional [Ableton Live](/ableton/) integration:** Ableton Live 12 Suite (beta build 12.4.5+) to export scenes straight into Live's Session view
 
 ### Installation
 
@@ -37,7 +37,7 @@ macOS shows a one-time confirmation prompt the first time you open Signals & Sor
 :::
 
 4. **The setup wizard will guide you through installing Surge XT and configuring everything automatically**
-5. **Sign in or create your free account** when prompted — takes about 30 seconds and no credit card is required
+5. **Sign in or create your free account** when prompted; it takes about 30 seconds and no credit card is required
 
 ![runes_cli](/sas_runes_cli_2.png)
 
@@ -55,7 +55,7 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
 
 1. **Define a Contract** - Set key, chords, tempo, and structure for your scene
 
-2. **Generate** - AI creates clips that fit your contract:
+2. **Generate** - The generators create clips that fit your contract:
    - **Gemini** generates MIDI for synth tracks
    - **Lyria** generates audio for texture tracks
 
@@ -115,7 +115,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 - Watch the [Video Tutorials](/tutorials/) to see each feature in action
 - Experiment with different sound descriptions and musical contracts
 - Set up Performance Mode for dual-deck workflow
-- [Export to Ableton Live](/ableton/) — send any scene into Live's Session view as audio + MIDI
+- [Export to Ableton Live](/ableton/): send any scene into Live's Session view as audio + MIDI
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
 - Check the [Features](/api-server/) section for advanced capabilities
 - Read the [Plugin SDK](/plugin-sdk/) documentation to build custom generators

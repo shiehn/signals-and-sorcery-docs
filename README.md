@@ -12,6 +12,6 @@ npm run build    # local build verification (output: src/.vuepress/dist/, not de
 
 ## Deployment
 
-**CI auto-deploys on push to `main`.** Do not run `npm run deploy` manually — that script is legacy and bypasses CI. Just commit to `main` and the site will update.
+**CI auto-deploys on push to `main`.** Do not run `npm run deploy` manually; that script is legacy and bypasses CI. Just commit to `main` and the site will update.
 
 For details on how releases (download link bumps, version updates) are handled, see [`DEPLOYMENT.md`](DEPLOYMENT.md).

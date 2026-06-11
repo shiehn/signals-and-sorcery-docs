@@ -1,6 +1,6 @@
 # Documentation Deployment Guide
 
-> **Deployment is handled by CI.** Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds VuePress and publishes the site at [signalsandsorcery.com](https://signalsandsorcery.com). **Do NOT run `npm run deploy`** — that script is legacy and bypasses CI.
+> **Deployment is handled by CI.** Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds VuePress and publishes the site at [signalsandsorcery.com](https://signalsandsorcery.com). **Do NOT run `npm run deploy`**; that script is legacy and bypasses CI.
 
 This guide covers how the docs source is structured and how new app releases update the download links on the site.
 
@@ -8,16 +8,16 @@ This guide covers how the docs source is structured and how new app releases upd
 
 The documentation system uses two Git repositories:
 
-1. **signals-and-sorcery-docs/** (this repo) — VuePress source files. **The single source of truth.**
+1. **signals-and-sorcery-docs/** (this repo): VuePress source files. **The single source of truth.**
    - Contains markdown documentation in `src/`
    - Static assets, including `downloads.json`, in `src/.vuepress/public/`
    - Build configuration in `src/.vuepress/`
    - **Push to `main` here → GitHub Actions builds and deploys the site**
 
-2. **dawnet-docs-gh-pages/** — Built HTML output, served by GitHub Pages
+2. **dawnet-docs-gh-pages/**: Built HTML output, served by GitHub Pages
    - Written exclusively by the `Deploy Docs` GitHub Action via deploy key
-   - **Never edit files here directly** — they are overwritten on the next deploy
-   - **Never push from a script directly** — the release pipeline pushes to `signals-and-sorcery-docs` source only
+   - **Never edit files here directly**; they are overwritten on the next deploy
+   - **Never push from a script directly**; the release pipeline pushes to `signals-and-sorcery-docs` source only
 
 ## Download Link System
 
@@ -48,7 +48,7 @@ Choose the version for your system:
 
 ### About `downloads.json`
 
-`downloads.json` lives at `src/.vuepress/public/downloads.json` and is published to the site root by the VuePress build. It is **not** used by the website for display — the hardcoded markdown links are. It exists as an API surface for the desktop app (version checks, release history, file sizes).
+`downloads.json` lives at `src/.vuepress/public/downloads.json` and is published to the site root by the VuePress build. It is **not** used by the website for display; the hardcoded markdown links are. It exists as an API surface for the desktop app (version checks, release history, file sizes).
 
 The release script writes this file in source. CI publishes it on the next deploy. The release script also uploads a copy to `gs://docs-assets/downloads.json` so the desktop app can fetch a stable URL without going through the docs site.
 
@@ -58,7 +58,7 @@ The release script writes this file in source. CI publishes it on the next deplo
 ```html
 <div id="download-links"><p>Loading download links...</p></div>
 ```
-With JavaScript fetching `downloads.json` — this approach is unreliable in the VuePress build system and not needed since the release script auto-updates the markdown.
+With JavaScript fetching `downloads.json`: this approach is unreliable in the VuePress build system and not needed since the release script auto-updates the markdown.
 
 ## Releasing a New App Version
 
@@ -84,7 +84,7 @@ npm run release:patch  # 0.12.0 → 0.12.1
 4. Uploads DMGs to Google Cloud Storage (`gs://docs-assets/`)
 5. Updates `src/.vuepress/public/downloads.json` in the docs source with the new release entry
 6. **Updates hardcoded download links** in `src/README.md`, `src/getting-started/README.md`, and `src/guild/README.md` via regex
-7. Commits and pushes the docs source changes — the `Deploy Docs` GitHub Action then builds VuePress and publishes to `dawnet-docs-gh-pages`
+7. Commits and pushes the docs source changes; the `Deploy Docs` GitHub Action then builds VuePress and publishes to `dawnet-docs-gh-pages`
 8. Creates a git tag in the assistant repo
 9. Optionally creates a GitHub release
 
@@ -108,7 +108,7 @@ cd /Users/stevehiehn/sas-platform/signals-and-sorcery-docs
 # 2. Optionally preview locally
 npm run dev
 
-# 3. Commit and push to main — CI deploys
+# 3. Commit and push to main; CI deploys
 git add src/
 git commit -m "Update documentation"
 git push origin main
@@ -138,15 +138,15 @@ signals-and-sorcery-docs/
 
 From `package.json`:
 
-- `npm run dev` — Start local dev server (http://localhost:8080)
-- `npm run build` — Build site locally (verification only; CI does the real build)
+- `npm run dev`: Start local dev server (http://localhost:8080)
+- `npm run build`: Build site locally (verification only; CI does the real build)
 
 ## Common Issues
 
 ### Changes don't appear on live site
 
 1. **Did CI run?** Check the CI status for your push to `main`. If CI failed, fix the build error and push again.
-2. **GitHub Pages cache** — Wait 2–3 minutes after CI completes, then hard refresh (Cmd+Shift+R).
+2. **GitHub Pages cache**: Wait 2–3 minutes after CI completes, then hard refresh (Cmd+Shift+R).
 3. **Did you actually push to `main`?** CI only deploys from the `main` branch.
 
 ### Old version number still showing after a release
@@ -173,7 +173,7 @@ npm run dev
 
 ## Quick Reference: Release Checklist
 
-Most of this is automated by the release script — listed here for visibility:
+Most of this is automated by the release script; listed here for visibility:
 
 - [ ] DMG uploaded to Google Cloud Storage (script handles)
 - [ ] Download link URL updated in `src/getting-started/README.md` (script handles)

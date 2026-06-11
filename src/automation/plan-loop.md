@@ -10,8 +10,8 @@ title: The plan-as-artifact loop
 > command surface that lets the agent inspect → plan → validate →
 > preview → commit → undo.*
 
-S&S takes that pattern literally. Every mutation an AI agent triggers
-begins life as a **typed JSON Plan** — a self-describing artifact the
+S&S takes that pattern literally. Every mutation an agent triggers
+begins life as a **typed JSON Plan**, a self-describing artifact the
 agent can read, edit, validate against current state, hand to the
 executor, and undo cleanly if the result misses the mark.
 
@@ -25,10 +25,10 @@ via `suggestedFix`, and the relationship to checkpoints.
 |---|---|
 | Multi-step musical change ("make a beat", "add bass + drums + keys") | Plan loop |
 | One-shot read ("what scenes exist?") | `sas inspect …` directly |
-| One-shot mutation already covered by a composite (`compose_scene`) | Either — composite auto-applies with checkpoint |
+| One-shot mutation already covered by a composite (`compose_scene`) | Either; composites auto-apply with a checkpoint |
 | Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`) |
 | Anything you might want to undo | Plan loop |
-| State-dependent change ("revise the bass darker") | Plan loop — validator catches missing preconditions |
+| State-dependent change ("revise the bass darker") | Plan loop; the validator catches missing preconditions |
 
 The non-loop tools are still there. The loop is a *higher-leverage* path
 for changes the agent expects to think about: it forces a state check,
@@ -112,7 +112,7 @@ Plans are versioned JSON. The current schema is `plan_schema_version: 1`.
   // Stable id; agents key revisions by this.
   "id": "plan-scene_create-1714850000-abc123",
 
-  // Free-text user-facing goal — mirrored from the user's input.
+  // Free-text user-facing goal, mirrored from the user's input.
   "intent": "make a chill 4-bar lo-fi beat",
 
   // Top-level type tag. Determines validator branch + builder template.
@@ -196,10 +196,10 @@ even before the engine has assigned IDs.
     {
       // JSONPath into the offending Plan.
       "path": "$.preconditions.project_bound",
-      // Stable error code — programmatic dispatch.
+      // Stable error code for programmatic dispatch.
       "code": "missing_precondition",
       "message": "No project is bound — open or create one first.",
-      // Concrete recovery — exactly what to call to unblock.
+      // Concrete recovery: exactly what to call to unblock.
       "suggestedFix": { "tool": "list_projects", "args": {} }
     }
   ],
@@ -215,7 +215,7 @@ even before the engine has assigned IDs.
     "wouldCreate": { "scenes": 1, "tracks": 4, "clips": 4 },
     // Names/IDs modified in place.
     "wouldModify": { "tracks": [] },
-    // Names/IDs deleted — high-risk.
+    // Names/IDs deleted (high-risk).
     "wouldDelete": { "tracks": [] },
     // Aggregate risk: low ≤2 mods, no deletes; medium ≤5 mods OR creates;
     // high any delete OR ≥6 mods.
@@ -234,7 +234,7 @@ to the user.
 | Code | Meaning | Typical `suggestedFix` |
 |------|---------|------------------------|
 | `missing_precondition` | A required `preconditions.*` flag isn't satisfied | Tool that creates the missing state (`list_projects`, `scene_activate`, …) |
-| `unknown_step_type` | Step `type` not registered in ToolRegistry | None — agent should pick a different action |
+| `unknown_step_type` | Step `type` not registered in ToolRegistry | None; the agent should pick a different action |
 | `unresolved_reference` | `${steps.…}` placeholder references a non-existent step | Reorder steps; verify ids |
 | `duplicate_step_id` | Two steps share the same id | Regenerate ids; the convention is `${plan.id}.${idx}.${type}` |
 | `invalid_chord` | Chord token doesn't parse via `parseChordString` | Use `Root:type` form (`C#:min`, `G:7`, …) |
@@ -264,11 +264,11 @@ The pattern is: **read errors → apply suggested fixes → re-validate →
 repeat → apply when valid**. The agent never has to guess what state
 the engine needs.
 
-## Checkpoints — the safety net
+## Checkpoints: the safety net
 
 Every `apply` call auto-creates a checkpoint named
 `pre-apply-<plan.id>-<timestamp>`. Override the name with
-`--checkpoint <name>`. Disable with `--skip-checkpoint` (rare — use
+`--checkpoint <name>`. Disable with `--skip-checkpoint` (rare; use
 when the caller is itself a higher-level reversible flow).
 
 What's captured:
@@ -283,7 +283,7 @@ What's captured:
 
 What's **not** captured:
 
-- Full audio bounces — they're content-addressable and survive in the
+- Full audio bounces: they're content-addressable and survive in the
   render cache independently. To preserve a specific render before a
   checkpoint, run `sas preview` (or `render_to_performance`) first.
 - Raw plugin DLL state beyond serialized form. If a plugin doesn't
@@ -365,7 +365,7 @@ creation. Render cache entries from after the checkpoint are preserved
 (content-addressable + immutable), so re-applying the same plan would
 hit the cache.
 
-## Composite tools — same loop, less typing
+## Composite tools: same loop, less typing
 
 `compose_scene`, `add_instrument`, `play_scene`, `render_to_performance`,
 and `create_transition` already follow the same pattern under the hood:
@@ -385,11 +385,11 @@ plan loop when:
 
 ## See also
 
-- **[CLI reference](./cli-reference.md)** — full flag reference for
+- **[CLI reference](./cli-reference.md)**: full flag reference for
   every plan verb.
-- **[Worked examples](./examples.md)** — runnable shell scripts
+- **[Worked examples](./examples.md)**: runnable shell scripts
   including the plan loop.
-- **[For agents](./for-agents.md)** — integration notes for Claude
+- **[For agents](./for-agents.md)**: integration notes for Claude
   Code, OpenClaw, Cursor, and HTTP-direct.
 - Source-of-truth Plan schema: [`agent-plan.ts`][types] in the S&S repo.
 

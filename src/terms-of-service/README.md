@@ -3,7 +3,7 @@ sidebar: auto
 head:
   - - meta
     - name: description
-      content: Terms of Service for Signals & Sorcery — simple subscription terms that always favor the user. Cancel anytime, no questions asked.
+      content: Terms of Service for Signals & Sorcery. Simple subscription terms that always favor the user. Cancel anytime, no questions asked.
   - - meta
     - name: robots
       content: index, follow
@@ -28,7 +28,7 @@ We run Signals & Sorcery as a **dead-simple subscription service that always ope
 
 ## 1. The Service
 
-Signals & Sorcery is a macOS desktop application for generative music composition and performance. It uses AI models (Gemini for MIDI and Lyria for audio) hosted by Google Cloud to generate musical content within user-defined constraints.
+Signals & Sorcery is a macOS desktop application for generative music composition and performance. It uses generative models (Gemini for MIDI and Lyria for audio) hosted by Google Cloud to generate musical content within user-defined constraints.
 
 ## 2. Your Account
 
@@ -45,13 +45,13 @@ Signals & Sorcery is a macOS desktop application for generative music compositio
 
 ### Cancellation
 - **You can cancel at any time**, directly from the app or by emailing **stevehiehn@gmail.com**.
-- When you cancel, your subscription remains active until the end of the current billing period — we do not cut off access early.
+- When you cancel, your subscription remains active until the end of the current billing period; we do not cut off access early.
 - **No questions asked.** We won't email you guilt trips or try to talk you out of it.
 
 ### Refunds
 - If the Service is not working as advertised, or if you were billed in error, contact us and we will make it right.
 - If you forgot to cancel and were billed for a period you didn't intend to use, email us within **30 days** and we will refund it, no questions asked.
-- We value fairness over squeezing every last dollar. If something feels wrong, reach out — we'll do the right thing.
+- We value fairness over squeezing every last dollar. If something feels wrong, reach out; we'll do the right thing.
 
 ### Price Changes
 - If we ever change the subscription price, we will notify you by email at least **30 days in advance**.
@@ -65,7 +65,7 @@ Signals & Sorcery is a macOS desktop application for generative music compositio
 You agree **not** to:
 - Use the Service for anything illegal.
 - Try to reverse engineer, break, or attack the Service or its infrastructure.
-- Use the AI generation features to produce content that infringes someone else's copyright, is defamatory, harmful, or violates any applicable law.
+- Use the generation features to produce content that infringes someone else's copyright, is defamatory, harmful, or violates any applicable law.
 - Share your account credentials with others or resell access to the Service.
 
 We reserve the right to suspend accounts that are clearly abusing the Service or attempting to harm other users, but we will always try to contact you first and give you a chance to resolve the issue.
@@ -73,15 +73,15 @@ We reserve the right to suspend accounts that are clearly abusing the Service or
 ## 5. Your Content & Ownership
 
 - **You own your music.** Any MIDI, audio, or project files you create with the Service belong to you. We claim no rights over your creative output.
-- You are responsible for making sure your use of AI-generated content complies with the terms of the underlying AI providers (Google Cloud for Gemini and Lyria).
+- You are responsible for making sure your use of generated content complies with the terms of the underlying model providers (Google Cloud for Gemini and Lyria).
 - You grant us a limited technical license to process your inputs (musical contracts, prompts) only to the extent necessary to deliver the Service to you.
 
 ## 6. Third-Party Services
 
 The Service relies on third-party providers, including:
-- **Stripe** — for subscription payments ([Stripe Terms](https://stripe.com/legal))
-- **Google Cloud (Gemini and Lyria)** — for AI generation ([Google Cloud Terms](https://cloud.google.com/terms))
-- **Surge XT** — an optional default synthesizer ([Surge XT License](https://surge-synthesizer.github.io/))
+- **Stripe**: for subscription payments ([Stripe Terms](https://stripe.com/legal))
+- **Google Cloud (Gemini and Lyria)**: for MIDI and audio generation ([Google Cloud Terms](https://cloud.google.com/terms))
+- **Surge XT**: an optional default synthesizer ([Surge XT License](https://surge-synthesizer.github.io/))
 
 Your use of the Service is also subject to these third parties' terms where they apply.
 
@@ -95,7 +95,7 @@ Your use of the Service is also subject to these third parties' terms where they
 
 The Service is provided **"as is"** and **"as available"**. To the maximum extent permitted by law, we disclaim all warranties, express or implied, including warranties of merchantability, fitness for a particular purpose, and non-infringement.
 
-AI-generated content is produced by third-party models (Gemini and Lyria) and may be unpredictable. We do not guarantee that generated content will be novel, original, or free from similarity to existing works.
+Generated content is produced by third-party models (Gemini and Lyria) and may be unpredictable. We do not guarantee that generated content will be novel, original, or free from similarity to existing works.
 
 ## 9. Limitation of Liability
 

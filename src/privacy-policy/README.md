@@ -3,7 +3,7 @@ sidebar: auto
 head:
   - - meta
     - name: description
-      content: Privacy Policy for Signals & Sorcery — what information we collect, how it's used, and how we protect it.
+      content: Privacy Policy for Signals & Sorcery. What information we collect, how it's used, and how we protect it.
   - - meta
     - name: robots
       content: index, follow
@@ -17,11 +17,11 @@ Signals & Sorcery ("we", "us", "the app") is built and operated by Steve Hiehn a
 
 ## Summary (the short version)
 
-- We collect the **minimum information** needed to run your account, bill your subscription, and power the AI features inside the app.
+- We collect the **minimum information** needed to run your account, bill your subscription, and power the generative features inside the app.
 - We **do not sell, rent, or share** your personal information with advertisers.
 - You can **cancel your subscription and delete your account at any time**, no questions asked.
 - Payments are processed by **Stripe**. We never see or store your full credit card details.
-- AI generation requests (musical contracts, prompts) are sent to **Google Cloud** (Gemini and Lyria) to produce MIDI and audio output.
+- Generation requests (musical contracts, prompts) are sent to **Google Cloud** (Gemini and Lyria) to produce MIDI and audio output.
 
 ## Information We Collect
 
@@ -38,8 +38,8 @@ When you subscribe, payment is processed by **Stripe, Inc.** We never receive or
 
 Stripe's own privacy policy applies to the payment data they process: [https://stripe.com/privacy](https://stripe.com/privacy)
 
-### 3. AI Generation Data
-When you use the app's AI features, the musical contract you define (key, chords, tempo, bars, and any text prompts) is sent to **Google Cloud** so that **Gemini** can generate MIDI and **Lyria** can generate audio. Google's handling of this data is governed by the Google Cloud Privacy Notice: [https://cloud.google.com/terms/cloud-privacy-notice](https://cloud.google.com/terms/cloud-privacy-notice)
+### 3. Generation Data
+When you use the app's generative features, the musical contract you define (key, chords, tempo, bars, and any text prompts) is sent to **Google Cloud** so that **Gemini** can generate MIDI and **Lyria** can generate audio. Google's handling of this data is governed by the Google Cloud Privacy Notice: [https://cloud.google.com/terms/cloud-privacy-notice](https://cloud.google.com/terms/cloud-privacy-notice)
 
 We do not retain copies of your prompts on our servers beyond what is required to deliver the response back to the app.
 
@@ -58,7 +58,7 @@ We use the information above only to:
 1. Provide, maintain, and improve the app
 2. Authenticate you and manage your account
 3. Process your subscription payments
-4. Deliver AI-generated MIDI and audio back to the app
+4. Deliver generated MIDI and audio back to the app
 5. Respond to your support requests
 6. Detect and fix crashes and security issues
 
@@ -71,7 +71,7 @@ We share the minimum necessary information with the following service providers:
 | Provider | Purpose | Data Shared |
 |----------|---------|-------------|
 | **Stripe** | Subscription billing | Email, subscription status |
-| **Google Cloud (Gemini / Lyria)** | AI MIDI & audio generation | Musical contract and prompt data |
+| **Google Cloud (Gemini / Lyria)** | MIDI & audio generation | Musical contract and prompt data |
 | **Google Analytics** (website only) | Anonymous website traffic stats | Standard web analytics (IP, page views) |
 
 We do not sell your data to anyone, ever.
@@ -81,7 +81,7 @@ We will only disclose information to law enforcement if required by a valid lega
 ## How We Protect Your Information
 
 - All network traffic between the app and our services is encrypted with **HTTPS/TLS**.
-- Payment data is handled exclusively by **Stripe**, a PCI-DSS Level 1 certified processor — we never see or store it.
+- Payment data is handled exclusively by **Stripe**, a PCI-DSS Level 1 certified processor; we never see or store it.
 - Account credentials and authentication tokens are stored securely and never shared with third parties.
 - We use reputable cloud providers (Google Cloud, Stripe) that maintain industry-standard security practices.
 
@@ -91,7 +91,7 @@ No system is 100% secure, but we make a good-faith effort to protect your inform
 
 You can, at any time:
 
-- **Cancel your subscription** — directly from the app or by emailing us. No questions asked, no retention offers, no dark patterns.
+- **Cancel your subscription**: directly from the app or by emailing us. No questions asked, no retention offers, no dark patterns.
 - **Request a copy** of the personal information we hold about you.
 - **Request deletion** of your account and associated personal information.
 - **Correct** any inaccurate information.

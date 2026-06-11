@@ -5,7 +5,7 @@ import { defaultTheme } from 'vuepress'
 import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 
 // Cookieless GA4 (no banner needed): consent is defaulted to DENIED before
-// gtag('config') runs, so gtag never writes cookies or stores identifiers —
+// gtag('config') runs, so gtag never writes cookies or stores identifiers;
 // GA4 falls back to anonymous consent-mode pings and models the counts.
 // Expect lower/modeled numbers than the old cookie-based plugin; that is the
 // deliberate trade for not running a consent banner. The inline snippet
@@ -97,13 +97,13 @@ export default {
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true }],
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2&family=Rye&display=swap' }],
         // SEO meta tags
-        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, AI music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, AI music layers, compose AI music, prompt to layer, Ableton, Ableton Live, Ableton integration, export to Ableton' }],
+        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, generative music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, music layers, prompt to layer, Ableton, Ableton Live, Ableton integration, export to Ableton' }],
         ['meta', { property: 'og:title', content: 'Signals & Sorcery - Generative Audio Workstation' }],
-        ['meta', { property: 'og:description', content: 'You compose; AI generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
+        ['meta', { property: 'og:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
         ['meta', { property: 'og:type', content: 'website' }],
         ['meta', { property: 'og:url', content: 'https://signalsandsorcery.com' }],
         ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
         ['meta', { name: 'twitter:title', content: 'Signals & Sorcery - Generative Audio Workstation' }],
-        ['meta', { name: 'twitter:description', content: 'You compose; AI generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
+        ['meta', { name: 'twitter:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
     ],
 }

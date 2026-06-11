@@ -1,7 +1,7 @@
 {
   "name": "@signalsandsorcery/plugin-sdk",
   "version": "1.0.0",
-  "description": "Plugin SDK for Signals & Sorcery — TypeScript types and build helpers for external generator plugins",
+  "description": "Plugin SDK for Signals & Sorcery: TypeScript types and build helpers for external generator plugins",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

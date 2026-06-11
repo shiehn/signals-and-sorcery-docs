@@ -1,12 +1,12 @@
 ---
 sidebar: auto
-title: Capability tools — filesystem & shell
+title: "Capability tools: filesystem & shell"
 ---
 
-# Capability tools — filesystem & shell
+# Capability tools: filesystem & shell
 
 The Signals & Sorcery agent surface includes a small set of **capability
-tools** that reach *outside* the music app — they read and write files
+tools** that reach *outside* the music app: they read and write files
 on your machine and run external commands like `ffmpeg`. They're how
 the in-app chat-plugin agent fulfils requests like:
 
@@ -25,10 +25,10 @@ When the agent calls a capability tool, you see a native dialog showing:
 
 - **What the agent wants to do** ("Read directory", "Write file", "Run shell command").
 - **A short reason** the agent provided.
-- **The exact details** — full path, args list, byte counts, timeout, cwd. Args are shown as a list (`["-i", "in.wav", "out.mp3"]`), never concatenated into a shell string.
+- **The exact details**: full path, args list, byte counts, timeout, cwd. Args are shown as a list (`["-i", "in.wav", "out.mp3"]`), never concatenated into a shell string.
 
 You click **Allow** or **Cancel**. Cancel returns a structured failure
-to the agent — it can ask you a different way or move on.
+to the agent; it can ask you a different way or move on.
 
 **No persistent allowlist in v1.** Every call prompts every time. We
 may add an "always allow" toggle later based on real-world friction;
@@ -89,7 +89,7 @@ Returns `{ resolvedRoot, matches: [{ path, size, modifiedMs }], truncated }`.
 
 ### `fs_write_file`
 
-Create, overwrite, or append a text file. Atomic write — produces a
+Create, overwrite, or append a text file. Atomic write: produces a
 `.tmp` sibling then renames.
 
 ```bash
@@ -103,9 +103,9 @@ sas run fs_write_file -p path=~/notes.txt -p content="hello" -p mode=append
 | `content` | Required string. (For binary writes, use a different tool.) |
 | `mode` | Optional, `"overwrite"` (default) or `"append"`. |
 
-If the target file exists, the consent dialog explicitly warns
-**"OVERWRITE — current contents will be lost"** with the existing file
-size shown.
+If the target file exists, the consent dialog warns explicitly that the
+file will be **overwritten and its current contents lost**, with the
+existing file size shown.
 
 Returns `{ resolvedPath, bytesWritten, mode, replacedSize? }`.
 
@@ -113,7 +113,7 @@ Returns `{ resolvedPath, bytesWritten, mode, replacedSize? }`.
 
 Run an external command. Uses `execFile`-style invocation: args are
 passed positionally to the OS, never through a shell interpreter.
-This means there is **no shell-injection vector** — even if the agent
+This means there is **no shell-injection vector**: even if the agent
 tries to pass `; rm -rf /` as an arg, it lands as a literal arg to the
 named command, which almost certainly errors out.
 
@@ -132,7 +132,7 @@ sas run shell_exec --json '{"command":"brew","args":["install","ffmpeg"]}'
 
 Returns `{ command, args, cwd, exitCode, stdout, stderr, durationMs, truncated }`.
 
-A non-zero exit code is reported with `success: true` — the agent has
+A non-zero exit code is reported with `success: true`; the agent has
 the exit code and decides whether to retry. Only timeouts and spawn
 failures return `success: false`.
 
@@ -155,7 +155,7 @@ outside the chat-plugin.
 |---|---|
 | `fs_delete` | No good undo path without a trash-folder mechanism. The agent doesn't get to delete files in v1. |
 | `package_install` (wrapper) | Already covered by `shell_exec("brew", ["install", "X"])`. Keeping a single consent surface is cleaner than two parallel paths. |
-| Persistent "always allow" allowlist | v1 design choice — always-prompt. Will revisit based on real friction. |
+| Persistent "always allow" allowlist | v1 design choice: always-prompt. Will revisit based on real friction. |
 
 ## How the consent dialog feels
 
@@ -177,7 +177,7 @@ For a read:
 ```
 
 For a shell call, the dialog uses warning styling and **Cancel is the
-default button** — accidental `Enter` denies:
+default button**; accidental `Enter` denies:
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -199,7 +199,7 @@ default button** — accidental `Enter` denies:
 
 The capability tools are part of the default `/api/v1/actions` curated
 surface. They're project-scoped, so the chat-plugin's scene-default
-view (`?scope=scene`) doesn't list them by default — the chat-plugin
+view (`?scope=scene`) doesn't list them by default; the chat-plugin
 internally queries without a scope filter, so it sees them too.
 
 ```bash

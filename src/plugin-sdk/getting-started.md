@@ -10,12 +10,12 @@ This guide walks you through creating, installing, and debugging a Signals & Sor
 Clone the **[Plugin Template](https://github.com/shiehn/sas-plugin-template)** to skip the boilerplate. It includes a working hello-world plugin with heavily commented examples of track creation, MIDI writing, and all common patterns:
 
 ```bash
-# macOS — see Install a Plugin for Windows/Linux paths
+# macOS: see Install a Plugin for Windows/Linux paths
 cd ~/Library/Application\ Support/signals-and-sorcery/plugins/
 git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
 cd @my-org/my-plugin
 npm install && npm run build
-# Restart Signals & Sorcery — plugin appears in the workstation
+# Restart Signals & Sorcery; the plugin appears in the workstation
 ```
 
 Easier shortcut: in-app, go to **Settings → Plugins → Open Folder** to
@@ -30,7 +30,7 @@ If you only want to use an existing plugin, skip this page and read
 
 ## Prerequisites
 
-- **Signals & Sorcery** v2.24.0 or later — install the matching SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v2.7.0)
+- **Signals & Sorcery** v2.24.0 or later; install the matching SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v2.7.0)
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
@@ -43,10 +43,10 @@ npm install @signalsandsorcery/plugin-sdk
 ```
 
 This gives you:
-- **TypeScript types** — `GeneratorPlugin`, `PluginHost`, `PluginUIProps`, and all supporting types
-- **UI Components** — `TrackRow`, `VolumeSlider`, `PanSlider`, `FxToggleBar`, `SorceryProgressBar`, `InstrumentDrawer`
-- **Hooks** — `useSceneState` (scene-keyed state management)
-- **Constants** — `VALID_INSTRUMENT_ROLES`, `FX_CATEGORIES`, `PLUGIN_SDK_VERSION`
+- **TypeScript types**: `GeneratorPlugin`, `PluginHost`, `PluginUIProps`, and all supporting types
+- **UI Components**: `TrackRow`, `VolumeSlider`, `PanSlider`, `FxToggleBar`, `SorceryProgressBar`, `InstrumentDrawer`
+- **Hooks**: `useSceneState` (scene-keyed state management)
+- **Constants**: `VALID_INSTRUMENT_ROLES`, `FX_CATEGORIES`, `PLUGIN_SDK_VERSION`
 
 ```typescript
 // Import types for your plugin class
@@ -71,7 +71,7 @@ These pre-built components match the host app's visual style (Tailwind CSS class
 
 ### useSceneState Hook
 
-Maintains separate state per scene — when the user switches scenes, state is preserved and restored:
+Maintains separate state per scene: when the user switches scenes, state is preserved and restored:
 
 ```typescript
 import { useSceneState } from '@signalsandsorcery/plugin-sdk';
@@ -148,7 +148,7 @@ Every plugin requires a `plugin.json` manifest in its root directory:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `icon` | `string` | 24x24 icon — data URL or relative path from plugin directory |
+| `icon` | `string` | 24x24 icon: data URL or relative path from plugin directory |
 | `author` | `string` | Plugin author name |
 | `license` | `string` | License identifier |
 | `minHostVersion` | `string` | Minimum SDK version required (e.g., `1.0.0`) |
@@ -161,13 +161,13 @@ Every plugin requires a `plugin.json` manifest in its root directory:
 | Type | Description | Use Case |
 |------|-------------|----------|
 | `midi` | Creates MIDI clips on tracks | Synth patterns, drum sequences, arpeggiators |
-| `audio` | Places audio files on tracks | AI audio generation, sound design |
+| `audio` | Places audio files on tracks | Generative audio, sound design |
 | `sample` | Manages sample library tracks | Sample browsers, beat slicers |
 | `hybrid` | Combines MIDI and audio | Multi-layered generators |
 
 ### Capabilities
 
-Capabilities declare what platform features your plugin needs. The host enforces these at runtime — calling a capability-gated method without the right manifest entry throws a `CAPABILITY_DENIED` error.
+Capabilities declare what platform features your plugin needs. The host enforces these at runtime: calling a capability-gated method without the right manifest entry throws a `CAPABILITY_DENIED` error.
 
 ```json
 {
@@ -285,12 +285,12 @@ export class MyPlugin implements GeneratorPlugin {
 
 ### Lifecycle
 
-1. **Discovery** — Host scans plugin directories for `plugin.json` manifests
-2. **Registration** — Plugin is registered with its manifest metadata
-3. **Version check** — Host verifies `minHostVersion` compatibility
-4. **Activation** — `activate(host)` is called with the scoped `PluginHost` instance
-5. **Running** — Plugin renders UI, responds to events, creates tracks/MIDI
-6. **Deactivation** — `deactivate()` is called (5-second timeout)
+1. **Discovery**: Host scans plugin directories for `plugin.json` manifests
+2. **Registration**: Plugin is registered with its manifest metadata
+3. **Version check**: Host verifies `minHostVersion` compatibility
+4. **Activation**: `activate(host)` is called with the scoped `PluginHost` instance
+5. **Running**: Plugin renders UI, responds to events, creates tracks/MIDI
+6. **Deactivation**: `deactivate()` is called (5-second timeout)
 
 If `activate()` throws, the plugin is marked as **failed** and its accordion section shows an error boundary.
 
@@ -402,7 +402,7 @@ Represents a planned track during the progressive bulk-add UX.
 
 ## Installing a Plugin
 
-Place your compiled plugin directory in the plugins folder — the path
+Place your compiled plugin directory in the plugins folder; the path
 depends on your OS:
 
 | OS      | Plugins folder |
@@ -429,7 +429,7 @@ Scoped plugin IDs (`@org/name`) create a nested directory; unscoped IDs
 sit at the top level.
 
 Restart Signals & Sorcery. The plugin appears under **Settings → Plugins**
-and — once enabled — in the workstation accordion. See
+and, once enabled, in the workstation accordion. See
 [Install a Plugin](./install-a-plugin.md) for the full user-facing flow
 including the enable/disable toggle + restart-required modal.
 
@@ -464,8 +464,8 @@ const unsub = host.settings.onChange((key, value) => {
 
 ### Tips
 
-- **Check `isConnected`** before engine operations — the engine may not be ready yet
-- **Check `activeSceneId`** before track/MIDI operations — it can be `null`
+- **Check `isConnected`** before engine operations; the engine may not be ready yet
+- **Check `activeSceneId`** before track/MIDI operations; it can be `null`
 - **Use `showToast()`** to surface errors to the user during development
 - **Use `logMetric()`** to track performance of expensive operations
 - **Use `startTimer()`** for easy duration measurement:

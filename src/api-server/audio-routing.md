@@ -33,7 +33,7 @@ A "channel pair" is a stereo output pair on your audio interface:
 
 ### Use Case
 
-A solo user on a laptop with a single stereo output can listen to the composition deck (Cue) or Master output—but only one at a time.
+A solo user on a laptop with a single stereo output can listen to the composition deck (Cue) or Master output, but only one at a time.
 
 ### Minimum Hardware
 

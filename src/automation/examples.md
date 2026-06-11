@@ -5,8 +5,8 @@ title: Worked examples
 
 # Worked examples
 
-Real shell scripts an AI agent (or you) can run to drive Signals & Sorcery.
-Each example is self-contained — copy/paste and go.
+Real shell scripts an agent (or you) can run to drive Signals & Sorcery.
+Each example is self-contained: copy/paste and go.
 
 ## 1. Compose a chill lo-fi beat
 
@@ -49,7 +49,7 @@ sas compose_scene \
     {"name":"Keys","role":"chords","prompt":"ambient pad chords"}
   ]}'
 
-# Chorus — energetic, same key
+# Chorus: energetic, same key
 sas compose_scene \
   --description "energetic chorus, same key, bigger sound" \
   --scene-name "Chorus" \
@@ -73,7 +73,7 @@ sas dsl_play
 
 ## 3. Add one instrument to the current scene
 
-Common iterative workflow — the agent doesn't need to rebuild the whole
+Common iterative workflow: the agent doesn't need to rebuild the whole
 scene, just add one part.
 
 ```bash
@@ -97,7 +97,7 @@ sas set_scene_fx \
 ```
 
 If some tracks fail, `set_scene_fx` returns `success: true` with a
-`failed` array listing which tracks errored — the agent can then retry
+`failed` array listing which tracks errored; the agent can then retry
 those individually with `dsl_set_track_fx`.
 
 ## 5. Export a scene as WAV
@@ -133,7 +133,7 @@ if [ -n "$MATCH" ]; then
   # Drop it into the active scene
   sas add_sample_track --sample-id "$MATCH"
 else
-  echo "No matching sample found — importing from disk"
+  echo "No matching sample found, importing from disk"
   sas import_samples --paths "/tmp/amen.wav"
 fi
 ```
@@ -184,7 +184,7 @@ done
 ```
 
 Same `idempotency-key` means the first successful response is cached
-(60s, per-project) — subsequent attempts during that window return the
+(60s, per-project); subsequent attempts during that window return the
 cached success without re-executing.
 
 ## 9. Discover a deferred tool and use it
@@ -255,7 +255,7 @@ sas plan "make a chill 4-bar lo-fi beat in A minor at 85 BPM" \
   --plan-out "$PLAN"
 
 # 3. Sanity-check the plan against current state.
-#    Errors come back with `suggestedFix` — the exact tool to call to
+#    Errors come back with `suggestedFix`, the exact tool to call to
 #    unblock. Exit 1 = invalid; exit 0 = valid.
 sas validate "$PLAN" || {
   echo "Validation failed; attempting suggested fix"
@@ -290,10 +290,10 @@ PLAN=/tmp/plan.json
 sas plan "add a sub bass track" --type track_revise --plan-out "$PLAN"
 
 if sas validate "$PLAN"; then
-  echo "Plan is valid — applying"
+  echo "Plan is valid, applying"
   sas apply "$PLAN"
 else
-  echo "Plan invalid — agent should re-prompt"
+  echo "Plan invalid, agent should re-prompt"
   sas validate "$PLAN" --json | jq '.data.changes.validation.errors'
   exit 1
 fi

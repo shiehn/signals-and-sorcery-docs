@@ -4,15 +4,15 @@ sidebar: auto
 
 # Plugin SDK
 
-Signals & Sorcery has an extensible plugin system that lets you build custom **input generators** for the Loop Workstation. Plugins can generate MIDI patterns, manage audio samples, create AI-generated audio textures, or combine all three.
+Signals & Sorcery has an extensible plugin system that lets you build custom **input generators** for the Loop Workstation. Plugins can generate MIDI patterns, manage audio samples, create generative audio textures, or combine all three.
 
-Each plugin gets its own accordion section in the workstation UI and a scoped `PluginHost` API for interacting with tracks, MIDI, audio, and more. Plugins never access the audio engine directly — all interaction goes through the `PluginHost`, which enforces ownership scoping, capability gating, and track limits.
+Each plugin gets its own accordion section in the workstation UI and a scoped `PluginHost` API for interacting with tracks, MIDI, audio, and more. Plugins never access the audio engine directly; all interaction goes through the `PluginHost`, which enforces ownership scoping, capability gating, and track limits.
 
 ## Start Here
 
 ### I just want to use a plugin
 
-The app has a built-in installer. Paste a GitHub URL and click Install —
+The app has a built-in installer. Paste a GitHub URL and click Install;
 no terminal needed.
 
 1. In Signals & Sorcery: **Settings → Plugins → Add Plugin**
@@ -27,16 +27,16 @@ The fastest way to build a plugin is to clone the template into your
 plugins folder and run the build:
 
 ```bash
-# macOS — see Install a Plugin for Windows/Linux paths
+# macOS: see Install a Plugin for Windows/Linux paths
 cd ~/Library/Application\ Support/signals-and-sorcery/plugins/
 git clone https://github.com/shiehn/sas-plugin-template.git @my-org/my-plugin
 cd @my-org/my-plugin
 npm install && npm run build
 ```
 
-Restart Signals & Sorcery — your plugin appears in the workstation. Edit the source, rebuild, and iterate.
+Restart Signals & Sorcery; your plugin appears in the workstation. Edit the source, rebuild, and iterate.
 
-**[Plugin Template on GitHub](https://github.com/shiehn/sas-plugin-template)** — Fully commented hello-world plugin with examples of track creation, MIDI writing, and all common patterns.
+**[Plugin Template on GitHub](https://github.com/shiehn/sas-plugin-template)**: fully commented hello-world plugin with examples of track creation, MIDI writing, and all common patterns.
 
 ## Guides
 
@@ -113,7 +113,7 @@ Props passed to your plugin's React component by the host.
 
 ---
 
-## PluginHost API — Complete Method Reference
+## PluginHost API: Complete Method Reference
 
 All methods below are available on the `host` object your plugin receives in `activate()` and via `PluginUIProps.host`. Methods marked with **ownership** require the track to be owned by the calling plugin.
 
@@ -132,7 +132,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `setTrackPan` | `(trackId: string, pan: number) => Promise<void>` | Set track pan (-1.0 left – 1.0 right). **Ownership.** |
 | `setTrackName` | `(trackId: string, name: string) => Promise<void>` | Rename a track. **Ownership.** |
 | `shufflePreset` | `(trackId: string) => Promise<ShufflePresetResult>` | Randomly change the Surge XT preset based on MIDI pitch analysis. Returns `{ presetName, presetCategory }`. **Ownership.** |
-| `duplicateTrack` | `(trackId: string) => Promise<PluginTrackHandle>` | Clone an owned track — copies MIDI data, role, and loads Surge XT on the new track. **Ownership.** |
+| `duplicateTrack` | `(trackId: string) => Promise<PluginTrackHandle>` | Clone an owned track: copies MIDI data, role, and loads Surge XT on the new track. **Ownership.** |
 
 ### MIDI Operations
 
@@ -148,7 +148,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `writeAudioClip` | `(trackId: string, filePath: string, position?: number) => Promise<void>` | Place an audio file (`.wav`, `.aiff`, `.mp3`, `.flac`, `.ogg`) on a track. **Ownership.** |
-| `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke AI audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds }`. |
+| `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds }`. |
 
 ### Plugin/Synth Operations
 
@@ -199,7 +199,7 @@ Per-track FX with 6 categories in signal chain order: `eq` → `compressor` → 
 | `onDeckBoundary` | `(listener) => UnsubscribeFn` | Subscribe to deck loop boundary events (`deckId`, `bar`, `beat`, `loopCount`). |
 | `onSceneChange` | `(listener) => UnsubscribeFn` | Subscribe to scene change events. Listener receives `string \| null`. |
 
-All event methods return an `UnsubscribeFn` — call it to stop receiving events.
+All event methods return an `UnsubscribeFn`; call it to stop receiving events.
 
 ### LLM Access
 
@@ -369,13 +369,13 @@ These ship with Signals & Sorcery and serve as reference implementations:
 
 | Plugin | Type | Description |
 |--------|------|-------------|
-| `@signalsandsorcery/synth-generator` | midi | AI-powered MIDI generation with Surge XT presets |
+| `@signalsandsorcery/synth-generator` | midi | Generative MIDI with Surge XT presets |
 | `@signalsandsorcery/loops` | sample | Audio loop / sample library browser with time-stretching |
-| `@signalsandsorcery/stems` | audio | AI audio-from-text via Lyria 3, with stem splitting |
+| `@signalsandsorcery/stems` | audio | Audio-from-text via Lyria 3, with stem splitting |
 
 ## Security Model
 
-- **Ownership scoping** — Plugins can only modify tracks they created (enforced at runtime)
-- **Capability gating** — Network and file system access require manifest declarations
-- **Secret isolation** — Each plugin's secrets are encrypted and scoped per plugin
-- **Track limits** — 16 tracks per plugin per scene (configurable)
+- **Ownership scoping**: Plugins can only modify tracks they created (enforced at runtime)
+- **Capability gating**: Network and file system access require manifest declarations
+- **Secret isolation**: Each plugin's secrets are encrypted and scoped per plugin
+- **Track limits**: 16 tracks per plugin per scene (configurable)

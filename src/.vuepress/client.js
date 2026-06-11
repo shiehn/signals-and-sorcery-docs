@@ -1,5 +1,5 @@
 /**
- * VuePress 2 client config — signup-funnel telemetry for the marketing site.
+ * VuePress 2 client config: signup-funnel telemetry for the marketing site.
  *
  * Two jobs:
  *
@@ -45,7 +45,7 @@ function handleDownloadInteraction(event) {
   const anchor = findDownloadAnchor(event.target);
   if (!anchor) return;
 
-  // gtag is installed by the inline snippet in config.js — undefined in
+  // gtag is installed by the inline snippet in config.js; undefined in
   // dev/SSR contexts, in which case we silently no-op.
   if (typeof window.gtag === 'function') {
     const { arch, appVersion } = extractArchAndVersion(anchor.href);

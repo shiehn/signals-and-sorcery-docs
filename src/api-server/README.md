@@ -7,11 +7,11 @@ sidebar: auto
 ## Core Features
 
 ### 🎵 Contract-Based Composing
-Define a musical contract and let AI generate within those constraints:
+Define a musical contract and generate within those constraints:
 
 - Set **key, chords, BPM, and bars** to establish the musical framework
-- AI generates MIDI via **Gemini** that respects the contract
-- AI generates audio via **Lyria** for texture and atmosphere
+- **Gemini** generates MIDI that respects the contract
+- **Lyria** generates audio for texture and atmosphere
 - All tracks in a scene share the same contract for coherent compositions
 
 ### 🎛️ Dual-Deck Performance Workflow
@@ -23,12 +23,12 @@ Built around the core concept of private preview and public performance:
 ### 🧩 Extensible Plugin SDK
 All built-in generators and tools run on the Plugin SDK:
 
-- **Synth Generator** - AI MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
-- **Drum Generator** - AI drum-pattern MIDI generation with a built-in sample-based drum sampler
-- **Instrument Generator** - AI-generated MIDI for pitched, polyphonic sample-based instruments
+- **Synth Generator** - MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
+- **Drum Generator** - Drum-pattern MIDI generation with a built-in sample-based drum sampler
+- **Instrument Generator** - MIDI generation for pitched, polyphonic sample-based instruments
 - **Loops** - Sample / loop library browser with FX chains and time-stretching
-- **Stems** - AI audio-from-text generation with Lyria, with optional stem splitting
-- **Chat** - Conversational AI assistant that builds and edits your scene from natural-language prompts
+- **Stems** - Audio-from-text generation with Lyria, with optional stem splitting
+- **Chat** - Conversational assistant that builds and edits your scene from natural-language prompts
 - **Recorder** - Loop-aware microphone recording (opt-in)
 
 Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
@@ -46,7 +46,7 @@ Hardware-level support for headphone/main output separation:
 
 - **Surge XT** ships as the default synth with bundled presets
 - **Any VST3/AU instrument** can be loaded per track via the instrument selector
-- AI selects appropriate Surge XT patches based on sound descriptions
+- The synth generator picks appropriate Surge XT patches based on sound descriptions
 - Custom instruments preserve their state across scenes and project save/load
 
 ### 🔄 Scene-Based Composition

@@ -4,11 +4,11 @@ sidebar: auto
 
 # API Reference
 
-Complete reference for the `PluginHost` API — the scoped interface that plugins use to interact with Signals & Sorcery. Each plugin receives its own `PluginHost` instance with ownership-scoped access.
+Complete reference for the `PluginHost` API, the scoped interface that plugins use to interact with Signals & Sorcery. Each plugin receives its own `PluginHost` instance with ownership-scoped access.
 
 ## Track Management
 
-All track methods are **ownership-scoped** — plugins can only modify tracks they created. Attempting to modify another plugin's track throws a `NOT_OWNED` error.
+All track methods are **ownership-scoped**: plugins can only modify tracks they created. Attempting to modify another plugin's track throws a `NOT_OWNED` error.
 
 ### createTrack(options)
 
@@ -23,10 +23,10 @@ createTrack(options: CreateTrackOptions): Promise<PluginTrackHandle>
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | `string` | auto-generated | Display name for the track |
-| `role` | `string` | — | Musical role hint: `'bass'`, `'drums'`, `'lead'`, `'chords'`, `'pad'`, `'arp'`, `'fx'` |
+| `role` | `string` | - | Musical role hint: `'bass'`, `'drums'`, `'lead'`, `'chords'`, `'pad'`, `'arp'`, `'fx'` |
 | `loadSynth` | `boolean` | `false` | Load a synth plugin immediately |
 | `synthName` | `string` | `'Surge XT'` | Which synth to load (ignored if `loadSynth` is false) |
-| `metadata` | `Record<string, unknown>` | — | Plugin-specific metadata stored in the database |
+| `metadata` | `Record<string, unknown>` | - | Plugin-specific metadata stored in the database |
 
 **Returns:** `PluginTrackHandle` with `id`, `name`, `dbId`, and optional `role`.
 
@@ -142,7 +142,7 @@ setTrackName(trackId: string, name: string): Promise<void>
 
 ### adoptSceneTracks()
 
-Adopt unowned tracks in the active scene that match this plugin's generator type. Useful when re-activating a plugin or restoring state — tracks that were previously created by a plugin of the same type but currently have no owner will be claimed.
+Adopt unowned tracks in the active scene that match this plugin's generator type. Useful when re-activating a plugin or restoring state: tracks that were previously created by a plugin of the same type but currently have no owner will be claimed.
 
 ```typescript
 adoptSceneTracks(): Promise<PluginTrackHandle[]>
@@ -231,13 +231,13 @@ Per-track FX processing with 6 categories in signal chain order: `eq` → `compr
 
 ### getTrackFxState(trackId)
 
-Get the detailed FX state for a track — enabled/disabled, preset index, and dry/wet level for each category.
+Get the detailed FX state for a track: enabled/disabled, preset index, and dry/wet level for each category.
 
 ```typescript
 getTrackFxState(trackId: string): Promise<PluginTrackFxDetailState>
 ```
 
-**`PluginTrackFxDetailState`** is `Record<string, PluginFxCategoryDetailState>` — one entry per FX category.
+**`PluginTrackFxDetailState`** is `Record<string, PluginFxCategoryDetailState>`, with one entry per FX category.
 
 **PluginFxCategoryDetailState:**
 
@@ -299,7 +299,7 @@ setTrackFxPreset(trackId: string, category: string, presetIndex: number): Promis
 | `category` | `string` | FX category |
 | `presetIndex` | `number` | Preset index (0–4) |
 
-**Returns:** `{ dryWet?: number }` — the new dry/wet level if the preset sets one.
+**Returns:** `{ dryWet?: number }`, the new dry/wet level if the preset sets one.
 
 **Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
@@ -417,7 +417,7 @@ postProcessMidi(notes: PluginMidiNote[], options: PostProcessOptions): Promise<P
 | `swing` | `number` | `0` | Swing amount 0–100 |
 | `humanize` | `number` | `0` | Timing/velocity variation 0–100 |
 | `enforceScale` | `boolean` | `false` | Enforce diatonic scale (uses scene key/mode) |
-| `clampRegister` | `[number, number]` | — | Clamp note pitches to `[low, high]` range |
+| `clampRegister` | `[number, number]` | - | Clamp note pitches to `[low, high]` range |
 | `removeOverlaps` | `boolean` | `true` | Remove overlapping notes on same pitch/channel |
 
 ```typescript
@@ -436,7 +436,7 @@ await host.writeMidiClip(track.id, { ...clip, notes: processed });
 
 ### auditionNote(trackId, pitch, velocity, durationMs)
 
-Play a single note on a track for preview. Fire-and-forget — does not record.
+Play a single note on a track for preview. Fire-and-forget; it does not record.
 
 ```typescript
 auditionNote(trackId: string, pitch: number, velocity: number, durationMs: number): Promise<void>
@@ -460,7 +460,7 @@ writeAudioClip(trackId: string, filePath: string, position?: number): Promise<vo
 
 ### generateAudioTexture(request)
 
-Invoke the host's AI audio texture generation pipeline.
+Invoke the host's audio texture generation pipeline.
 
 ```typescript
 generateAudioTexture(request: PluginAudioTextureRequest): Promise<PluginAudioTextureResult>
@@ -470,7 +470,7 @@ generateAudioTexture(request: PluginAudioTextureRequest): Promise<PluginAudioTex
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `prompt` | `string` | — | Text description of the desired audio |
+| `prompt` | `string` | - | Text description of the desired audio |
 | `durationSeconds` | `number` | scene length | Duration in seconds |
 | `bpm` | `number` | project BPM | Target BPM |
 
@@ -505,7 +505,7 @@ interface PluginStemTrackInfo {
 const result = await host.splitStems(audioTrack.id);
 for (const stem of result.stems) {
   console.log(`Created ${stem.stemType} track: ${stem.track.id}`);
-  // Stems are auto-muted — unmute the ones you want
+  // Stems are auto-muted; unmute the ones you want
   await host.setTrackMute(stem.track.id, false);
 }
 ```
@@ -741,7 +741,7 @@ unsub();
 
 ### onDeckBoundary(listener)
 
-Subscribe to deck loop boundary events — fired when a deck loops back to the start.
+Subscribe to deck loop boundary events, fired when a deck loops back to the start.
 
 ```typescript
 onDeckBoundary(listener: DeckBoundaryListener): UnsubscribeFn
@@ -806,8 +806,8 @@ generateWithLLM(request: LLMGenerationRequest): Promise<LLMGenerationResult>
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `system` | `string` | — | System prompt (instructions, role, output format) |
-| `user` | `string` | — | User prompt (the actual request) |
+| `system` | `string` | - | System prompt (instructions, role, output format) |
+| `user` | `string` | - | User prompt (the actual request) |
 | `maxTokens` | `number` | host default | Max tokens for response (host may cap) |
 | `responseFormat` | `string` | `'text'` | `'text'` or `'json'` |
 
@@ -1069,10 +1069,10 @@ httpRequest(options: PluginHttpRequestOptions): Promise<PluginHttpResponse>
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | — | Full URL (host must be in `allowedHosts`) |
+| `url` | `string` | - | Full URL (host must be in `allowedHosts`) |
 | `method` | `string` | `'GET'` | `'GET'`, `'POST'`, `'PUT'`, `'DELETE'`, `'PATCH'` |
-| `headers` | `Record<string, string>` | — | Request headers |
-| `body` | `string \| Record<string, unknown>` | — | Request body |
+| `headers` | `Record<string, string>` | - | Request headers |
+| `body` | `string \| Record<string, unknown>` | - | Request body |
 | `timeoutMs` | `number` | `30000` | Timeout in milliseconds |
 
 **Returns:** `PluginHttpResponse` with `status`, `statusText`, `headers`, and `body`.

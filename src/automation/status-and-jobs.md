@@ -8,8 +8,8 @@ title: Status & async jobs
 Every state-mutating tool in Signals & Sorcery now runs as an **async job**.
 The HTTP call returns immediately with a `jobId`; the work continues in the
 background; you (or your agent) poll or long-poll for the result. This page
-covers the full contract — the endpoints, the CLI verbs, the MCP tools, and
-the SSE event stream — plus how to read the structured status envelopes.
+covers the full contract (the endpoints, the CLI verbs, the MCP tools, and
+the SSE event stream) plus how to read the structured status envelopes.
 
 ## Why async
 
@@ -36,13 +36,13 @@ The contract is identical across CLI, HTTP, MCP, and the in-app chat-plugin.
 > on that result.**
 
 The async tool's response also includes a `nextSteps` array whose first
-entry is the `wait_for_job` call pre-substituted with the job id — agents
+entry is the `wait_for_job` call pre-substituted with the job id; agents
 that follow `nextSteps` are async-correct by construction.
 
 ## Quick start
 
 ```bash
-# 1. Liveness check — does the API server respond?
+# 1. Liveness check: does the API server respond?
 sas health
 # → { "status": "ok", "timestamp": "2026-05-13T…" }
 
@@ -67,7 +67,7 @@ sas job list --status running
 The `sas` CLI has two relevant command families: one-shot health
 (`sas health`, `sas status`) and the `sas job` family for async jobs.
 
-### `sas health` — is the API up?
+### `sas health`: is the API up?
 
 ```bash
 sas health
@@ -81,7 +81,7 @@ If `sas health` fails with *"Connection refused — is the Signals & Sorcery
 app running?"*, launch the app and retry. The CLI is a thin HTTP client; it
 needs the in-app API server (`localhost:7655`) to be listening.
 
-### `sas status` — layered service health
+### `sas status`: layered service health
 
 ```bash
 sas status
@@ -100,7 +100,7 @@ Use `--json` to get the raw envelope for scripting:
 sas status --json | jq '.data.engine.bpm'
 ```
 
-### `sas job …` — manage running jobs
+### `sas job …`: manage running jobs
 
 ```bash
 sas job list                          # every job, newest first
@@ -134,16 +134,16 @@ correctly to in-flight work:
 | `0` | Success |
 | `1` | Plan validation failed (`sas validate` only) |
 | `2` | Argument parsing, tool failure, or generic non-zero |
-| `3` | Connection refused — the app isn't running |
-| `4` | Timeout — typically `sas job wait` hit its `--timeout` before terminal |
+| `3` | Connection refused (the app isn't running) |
+| `4` | Timeout (typically `sas job wait` hit its `--timeout` before terminal) |
 | `5` | Job terminated with `status: 'failed'` |
 
 ```bash
 sas job wait "$JOB" --timeout 120
 case $? in
   0) echo "Job completed" ;;
-  4) echo "Still running after 120s — keep waiting?" ;;
-  5) echo "Job failed — inspect with: sas job status $JOB" ;;
+  4) echo "Still running after 120s. Keep waiting?" ;;
+  5) echo "Job failed. Inspect with: sas job status $JOB" ;;
 esac
 ```
 
@@ -153,7 +153,7 @@ Every CLI verb is a thin wrapper over a stable HTTP route on
 `http://localhost:7655/api/v1`. Hit them directly from Python, curl, or any
 HTTP client.
 
-### `GET /api/v1/health` — liveness
+### `GET /api/v1/health`: liveness
 
 ```bash
 curl -s http://localhost:7655/api/v1/health
@@ -163,7 +163,7 @@ curl -s http://localhost:7655/api/v1/health
 The simplest "is the server up?" probe. Returns immediately, no engine
 RPC.
 
-### `GET /api/v1/jobs` — list jobs
+### `GET /api/v1/jobs`: list jobs
 
 ```bash
 curl -s 'http://localhost:7655/api/v1/jobs'
@@ -172,7 +172,7 @@ curl -s 'http://localhost:7655/api/v1/jobs?status=running'
 
 Returns `{ success: true, data: JobState[] }` newest-first.
 
-### `GET /api/v1/jobs/:id` — one job
+### `GET /api/v1/jobs/:id`: one job
 
 ```bash
 curl -s "http://localhost:7655/api/v1/jobs/$JOB"
@@ -181,7 +181,7 @@ curl -s "http://localhost:7655/api/v1/jobs/$JOB"
 
 Returns `404` if the job id is unknown (e.g. expired from in-memory store).
 
-### `GET /api/v1/jobs/:id/wait?timeout=<ms>` — long-poll
+### `GET /api/v1/jobs/:id/wait?timeout=<ms>`: long-poll
 
 ```bash
 curl -s "http://localhost:7655/api/v1/jobs/$JOB/wait?timeout=60000"
@@ -192,7 +192,7 @@ Blocks server-side until the job reaches `completed` / `failed` /
 server returns HTTP `408` with the in-progress snapshot. Default timeout:
 300 000 ms (5 min).
 
-### `POST /api/v1/jobs/:id/cancel` — cancel
+### `POST /api/v1/jobs/:id/cancel`: cancel
 
 ```bash
 curl -s -X POST "http://localhost:7655/api/v1/jobs/$JOB/cancel"
@@ -202,7 +202,7 @@ curl -s -X POST "http://localhost:7655/api/v1/jobs/$JOB/cancel"
 Transitions the job to `cancelled` only if it hasn't reached a terminal
 state. `404` otherwise.
 
-### `POST /api/v1/execute` — invoke a tool
+### `POST /api/v1/execute`: invoke a tool
 
 ```bash
 curl -s -X POST http://localhost:7655/api/v1/execute \
@@ -211,7 +211,7 @@ curl -s -X POST http://localhost:7655/api/v1/execute \
 ```
 
 Returns an `OperationResult` envelope. When the tool is async-wrapped,
-the response includes `changes.jobId` — call `wait_for_job` (or
+the response includes `changes.jobId`; call `wait_for_job` (or
 `/jobs/:id/wait`) before assuming the work is done.
 
 ## SSE event stream
@@ -240,7 +240,7 @@ sas events stream
 | `jobFailed` | `{ jobId, error, remediation? }` | Async job reached `failed` |
 | `domainEvent` | Typed business event (e.g. `scene:created`) | State changed in the engine or DB |
 
-Use SSE when you want real-time progress without polling — a GUI progress
+Use SSE when you want real-time progress without polling: a GUI progress
 bar, a Slack notification on failure, a live dashboard. Use polling (`sas
 job wait`) when you just want the final answer.
 
@@ -275,7 +275,7 @@ Every `JobState` returned by the endpoints has this shape:
 }
 ```
 
-`result` carries the original tool's `changes`/`data` payload — the same
+`result` carries the original tool's `changes`/`data` payload, the same
 shape it would have returned synchronously pre-async. Read it from
 `sas job wait`, `sas job status`, or the `jobComplete` SSE event.
 
@@ -287,7 +287,7 @@ until every dependency reaches `completed`. If a dependency `fails` or is
 how composite tools (e.g. `generate_scene_midi_bulk`) coordinate per-track
 generation without exposing the orchestration to callers.
 
-## MCP — `wait_for_job` and the async tools
+## MCP: `wait_for_job` and the async tools
 
 MCP clients see the same async contract via a registered tool named
 **`wait_for_job`** (reachable through the meta-tool `sas_run`, since it's
@@ -307,7 +307,7 @@ not one of the six top-level MCP primitives):
 `wait_for_job` polls the JobManager every 250 ms and returns when the job
 reaches terminal state, or after `timeoutSeconds` (default 25, capped at
 60). On timeout it returns `success: true` with `status: 'running'` and
-`stillWaiting: true` — **not an error**; the agent retries.
+`stillWaiting: true`. That's **not an error**; the agent retries.
 
 Among the six default MCP primitives, **`sas_apply_plan`** is the one that
 returns an async `jobId`. Other primitives (`sas_inspect`,
@@ -338,7 +338,7 @@ result directly, no `jobId`.
 If you're unsure whether a tool is async, look at its response: if
 `changes.jobId` is present, treat it as async.
 
-## Worked example — Python
+## Worked example: Python
 
 ```python
 import requests, time
@@ -371,10 +371,10 @@ if final["status"] == "completed":
 elif final["status"] == "failed":
     print("FAILED:", final["error"])
 elif final.get("stillWaiting"):
-    print("Still running — re-poll")
+    print("Still running, re-poll")
 ```
 
-## Worked example — bash
+## Worked example: bash
 
 ```bash
 #!/usr/bin/env bash
@@ -391,7 +391,7 @@ SCENE=$(sas compose_scene \
   ]}' \
   --json)
 
-# compose_scene returns a jobId — block before downstream calls.
+# compose_scene returns a jobId; block before downstream calls.
 JOB=$(echo "$SCENE" | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 180
 
@@ -434,10 +434,10 @@ durable option when reliability matters.
 
 ## See also
 
-- [CLI reference](./cli-reference.md) — every `sas` verb in detail.
-- [For agents](./for-agents.md) — integration patterns for Claude Code,
+- [CLI reference](./cli-reference.md): every `sas` verb in detail.
+- [For agents](./for-agents.md): integration patterns for Claude Code,
   Cursor, Claude Desktop, and custom MCP clients.
-- [Plan-as-artifact loop](./plan-loop.md) — the recommended six-verb
+- [Plan-as-artifact loop](./plan-loop.md): the recommended six-verb
   pattern: `inspect → plan → validate → apply → preview → undo`. `apply`
   is async-wrapped, so plan execution follows the same `wait_for_job`
   rule.

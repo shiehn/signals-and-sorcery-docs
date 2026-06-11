@@ -1,14 +1,14 @@
 ---
 sidebar: auto
-title: For AI agents
+title: For agents
 ---
 
-# For AI agents
+# For agents
 
 Integration notes for the common agent runtimes. Every path is local-only
-(runs on `localhost:7655`) — no cloud dependencies, no account linking.
+(runs on `localhost:7655`): no cloud dependencies, no account linking.
 
-## TL;DR — what to call
+## TL;DR: what to call
 
 If your runtime supports a shell, **prefer the
 [plan-as-artifact loop](./plan-loop.md)**:
@@ -56,7 +56,7 @@ Async-by-default: every state-mutating tool returns `changes.jobId`. Call
 `sas job wait <jobId>` (or `wait_for_job` via `sas run`) before any tool
 that depends on the result.
 
-Direct tools work too — discover with `sas list-actions` / `sas help
+Direct tools work too; discover with `sas list-actions` / `sas help
 <action>`. Every action returns JSON; pipe through `jq`.
 
 Exit codes: 0 success; 1 plan-validation failure; 2 bad args / tool
@@ -64,12 +64,12 @@ failure; 3 connection refused (app not running); 4 `sas job wait`
 timeout; 5 job ended in failed state.
 ```
 
-That's it — the agent reads tools on demand and writes shell scripts
+That's it. The agent reads tools on demand and writes shell scripts
 against them.
 
 ### OpenClaw
 
-Same as Claude Code — OpenClaw has shell access and is bash-fluent. Just
+Same as Claude Code: OpenClaw has shell access and is bash-fluent. Just
 make sure `sas` is on `$PATH` and give the agent a one-line heads-up that
 S&S is running.
 
@@ -121,7 +121,7 @@ surfaces.
 | `sas_inspect` | Read-only view; `resource: project\|scene\|track\|history` | No (sub-second) |
 | `sas_create_plan` | Free-text intent → typed JSON Plan | No |
 | `sas_validate_plan` | Validate a Plan; errors carry `suggestedFix` | No |
-| `sas_apply_plan` | Execute Plan reversibly (auto-checkpoint) | **Yes — returns `jobId`** |
+| `sas_apply_plan` | Execute Plan reversibly (auto-checkpoint) | **Yes, returns `jobId`** |
 | `sas_render_preview` | Content-addressed audio preview | No (cache-aware) |
 | `sas_undo_checkpoint` | Restore to a named checkpoint | No |
 | `tool_search` | Find a tool by keyword in the granular catalog | No |
@@ -174,7 +174,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-### Claude Code (via MCP — alternative to the CLI)
+### Claude Code (via MCP, an alternative to the CLI)
 
 ```bash
 claude mcp add signals-and-sorcery --transport sse http://localhost:19100/sse
@@ -186,12 +186,12 @@ is more ergonomic for shell scripting, MCP for tool-call discovery.
 ### MCP-only tips
 
 Without a shell, the agent can't pipe results or assign variables. That's
-what **composite tools** are for — they bundle multi-step operations so
+what **composite tools** are for: they bundle multi-step operations so
 MCP-only agents aren't stuck chaining 10+ tool calls:
 
 - `compose_scene` instead of `scene_create` + N × `dsl_track_create` + N ×
   `dsl_generate_midi` (creates scene + LLM contract + all tracks in one call)
-- `compose_contract` for the "contract first, then instruments" flow —
+- `compose_contract` for the "contract first, then instruments" flow:
   creates the scene + LLM contract (genre/key/chords/BPM) with **no
   tracks**, then the agent calls `add_instrument` N times. Use this when
   the user wants to nail the contract before committing to instruments.
@@ -202,15 +202,15 @@ MCP-only agents aren't stuck chaining 10+ tool calls:
 
 ### Scene loop length: pass `barLength` (2, 4, 8, or 16)
 
-`compose_scene` and `compose_contract` both accept a `barLength` input —
+`compose_scene` and `compose_contract` both accept a `barLength` input,
 the SCENE's loop length in bars. Must be one of `{2, 4, 8, 16}`, default
 `4`. Pass it when the user specifies a scene length:
 
 ```bash
-# "A 2-bar disco beat" — pass barLength=2 so the scene loops every 2 bars
+# "A 2-bar disco beat": pass barLength=2 so the scene loops every 2 bars
 sas compose_contract --name "Disco" --description "2-bar disco beat" --bar-length 2
 
-# "A long 16-bar intro" — pass barLength=16
+# "A long 16-bar intro": pass barLength=16
 sas compose_scene --description "ambient 16-bar intro" --scene-name "Intro" --bar-length 16 \
   --json '{"tracks":[{"name":"Pad","role":"pads","prompt":"slow swell"}]}'
 ```
@@ -221,7 +221,7 @@ that track). They're independent.
 
 If you find yourself wanting to do something that requires composing
 results across tool calls, check if a composite exists via
-`tool_search`. If not, that's a missing composite — file an issue.
+`tool_search`. If not, that's a missing composite; file an issue.
 
 ## HTTP-direct (Python, notebooks, custom clients)
 
@@ -259,7 +259,7 @@ with requests.get(f"{API}/api/v1/events/stream", stream=True) as r:
 ### Tool discovery
 
 ```bash
-# Default curated set — what every agent sees out of the box
+# Default curated set: what every agent sees out of the box
 curl http://localhost:7655/api/v1/actions
 
 # Just scene-scoped tools (matches the in-app chat-plugin's default surface)
@@ -270,7 +270,7 @@ curl 'http://localhost:7655/api/v1/actions?include_deferred=true'
 ```
 
 The CLI (`sas list-actions`) and the in-app chat-plugin agent both read
-from the same registry with the same default filter — Errantry's CLI tests
+from the same registry with the same default filter; Errantry's CLI tests
 therefore exercise the chat-plugin's surface too. **Whatever's reachable
 via `sas` is reachable from the chat agent**, and vice versa.
 
@@ -282,9 +282,9 @@ marked **deferred** require `tool_search` to discover.
 
 | Category | Tools (default surface unless noted) |
 |---|---|
-| **MCP primitives** (always visible to MCP clients) | `sas_inspect`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_undo_checkpoint`, `tool_search`, `sas_run` — see [MCP-capable agents](#mcp-capable-agents) for routing details |
+| **MCP primitives** (always visible to MCP clients) | `sas_inspect`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_undo_checkpoint`, `tool_search`, `sas_run`. See [MCP-capable agents](#mcp-capable-agents) for routing details |
 | **Plan loop** (CLI surface) | `sas inspect project\|scene\|track\|history`, `sas plan`, `sas validate`, `sas apply` (async), `sas preview`, `sas history list\|checkpoint\|undo\|delete\|prune` |
-| **Async job control** | `sas job list\|status\|wait\|cancel` (CLI) · `wait_for_job` (via `sas_run` for MCP) — see [Status & async jobs](./status-and-jobs.md) |
+| **Async job control** | `sas job list\|status\|wait\|cancel` (CLI) · `wait_for_job` (via `sas_run` for MCP). See [Status & async jobs](./status-and-jobs.md) |
 | **Project** | `project_get_status`, `list_projects` |
 | **Scene navigation** | `scene_get_all`, `scene_activate`, `scene_duplicate`, `scene_delete`, `scene_find_by_name` |
 | **Scene plumbing** *(deferred)* | `scene_create`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_queue`, `scene_set_collapsed` |
@@ -296,26 +296,26 @@ marked **deferred** require `tool_search` to discover.
 | **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
 | **Export** *(deferred)* | `export_audio` |
 | **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `play_scene`, `render_to_performance`, `create_transition` |
-| **Preset shuffle** | `dsl_shuffle_preset` — re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
-| **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec` — see [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
-| **Discovery** | `tool_search` (always visible — finds any registered tool, deferred or not) |
+| **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
+| **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
+| **Discovery** | `tool_search` (always visible; finds any registered tool, deferred or not) |
 
 ## Pattern: observe → reason → act
 
 Modern agents work best when they check state before mutating. The
 canonical pattern is the [plan-as-artifact loop](./plan-loop.md):
 
-1. **Observe** — `sas inspect project` returns scenes, tracks, key/BPM,
+1. **Observe**: `sas inspect project` returns scenes, tracks, key/BPM,
    and recent checkpoints in one call.
-2. **Plan** — `sas plan "<intent>" --plan-out plan.json` produces a
+2. **Plan**: `sas plan "<intent>" --plan-out plan.json` produces a
    typed Plan grounded in current state.
-3. **Validate** — `sas validate plan.json` checks preconditions; errors
+3. **Validate**: `sas validate plan.json` checks preconditions; errors
    include `suggestedFix` so the agent can self-correct without a
    round-trip to the user.
-4. **Apply** — `sas apply plan.json` auto-creates a checkpoint, runs
+4. **Apply**: `sas apply plan.json` auto-creates a checkpoint, runs
    the steps, and rolls compensate hooks LIFO on failure.
-5. **Preview** — `sas preview` returns a content-addressed audio URL.
-6. **Iterate or undo** — `sas history undo <checkpoint>` restores the
+5. **Preview**: `sas preview` returns a content-addressed audio URL.
+6. **Iterate or undo**: `sas history undo <checkpoint>` restores the
    project byte-for-byte if the result missed.
 
 Direct tool calls (`scene_create`, `dsl_track_create`, …) still work
@@ -329,11 +329,11 @@ direct path.
 
 Every failure response has:
 
-- `error` — the reason, short
-- `message` — human-readable one-liner
-- `suggestion` — *what the agent should do next* (concrete: tool name,
+- `error`: the reason, short
+- `message`: human-readable one-liner
+- `suggestion`: *what the agent should do next* (concrete: tool name,
   often with example params)
-- `changes.availableX` — when a referenced entity (track, scene,
+- `changes.availableX`: when a referenced entity (track, scene,
   project) doesn't resolve, the response lists what DOES exist
 
 Example:
@@ -359,13 +359,13 @@ round-trips to `get_status`.
 
 ## Further reading
 
-- [Plan-as-artifact loop](./plan-loop.md) — the six-verb agent surface
-  end-to-end: Plan schema, validator semantics, checkpoints, recovery.
-- [Status & async jobs](./status-and-jobs.md) — `sas health` / `sas
+- [Plan-as-artifact loop](./plan-loop.md): the six-verb agent surface
+  end-to-end, covering the Plan schema, validator semantics, checkpoints, recovery.
+- [Status & async jobs](./status-and-jobs.md): `sas health` / `sas
   status`, the `/api/v1/jobs*` endpoints, SSE event names, the
   `wait_for_job` MCP tool, and the list of async-wrapped tools.
 - [CLI reference](./cli-reference.md)
-- [Capability tools](./capability-tools.md) — filesystem + shell access from the agent, gated by per-call user consent.
+- [Capability tools](./capability-tools.md): filesystem + shell access from the agent, gated by per-call user consent.
 - [Worked examples](./examples.md)
-- [Plugin SDK](/plugin-sdk/) — for building your own generator plugins
+- [Plugin SDK](/plugin-sdk/): for building your own generator plugins
 - Full design rationale: [`sas-app/docs-ai-planning/ai-orchestration-design.md`](https://github.com/shiehn/sas-platform/blob/main/sas-app/docs-ai-planning/ai-orchestration-design.md)

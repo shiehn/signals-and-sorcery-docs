@@ -7,7 +7,7 @@
  * 1. Main process entry (CommonJS) → dist/index.js
  * 2. Renderer UI bundle (UMD) → dist/ui.bundle.js
  *
- * IMPORTANT: React and ReactDOM are externalized — the host provides them.
+ * IMPORTANT: React and ReactDOM are externalized; the host provides them.
  * Your plugin MUST NOT bundle its own copy of React.
  */
 
