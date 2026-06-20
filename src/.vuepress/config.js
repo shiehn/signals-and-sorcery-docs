@@ -4,22 +4,17 @@ import { fileURLToPath, URL } from 'node:url'
 import { defaultTheme } from 'vuepress'
 import {sitemapPlugin} from "vuepress-plugin-sitemap2";
 
-// Cookieless GA4 (no banner needed): consent is defaulted to DENIED before
-// gtag('config') runs, so gtag never writes cookies or stores identifiers;
-// GA4 falls back to anonymous consent-mode pings and models the counts.
-// Expect lower/modeled numbers than the old cookie-based plugin; that is the
-// deliberate trade for not running a consent banner. The inline snippet
-// replaces @vuepress/plugin-google-analytics, which offered no consent hook.
+// Standard GA4 (gtag) bootstrap for the shared property. Full cookie-based
+// measurement is the default — no consent-mode gate. This is the same
+// behaviour the site had via @vuepress/plugin-google-analytics before the
+// cookieless consent-default switch, which (unintentionally) suppressed nearly
+// all reporting: with analytics_storage defaulted to 'denied' and never
+// granted, GA4 only received anonymous cookieless pings, so standard reports
+// and Realtime read as ~zero for a low-traffic site.
 const GA4_ID = 'G-B2QMDKHWHF'
 const GTAG_BOOTSTRAP = `
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('consent', 'default', {
-  ad_storage: 'denied',
-  ad_user_data: 'denied',
-  ad_personalization: 'denied',
-  analytics_storage: 'denied'
-});
 gtag('js', new Date());
 gtag('config', '${GA4_ID}');
 `
@@ -89,8 +84,8 @@ export default {
         }),
     ],
     head: [
-        // Order matters: the consent-default bootstrap MUST run before the
-        // gtag library processes its queue, so no cookie is ever written.
+        // The inline bootstrap defines dataLayer + runs gtag('config') before
+        // the async gtag library loads and drains the queue.
         ['script', {}, GTAG_BOOTSTRAP],
         ['script', { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${GA4_ID}` }],
         ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],

@@ -4,8 +4,8 @@
  * Two jobs:
  *
  * 1. `download_click` events on the .dmg download buttons (arch + version),
- *    fired into the shared GA4 property (G-B2QMDKHWHF, bootstrapped cookieless
- *    in config.js with consent defaulted to denied).
+ *    fired into the shared GA4 property (G-B2QMDKHWHF, bootstrapped via the
+ *    inline gtag snippet in config.js).
  *
  * 2. SPA `page_view` events on client-side route changes. The inline gtag
  *    snippet only reports the initial load; the old analytics plugin's router
