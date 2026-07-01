@@ -48,6 +48,10 @@ export default {
                 link: '/api-server/',
             },
             {
+                text: 'Custom Sounds',
+                link: '/custom-sounds/',
+            },
+            {
                 text: 'Ableton',
                 link: '/ableton/',
             },

@@ -49,6 +49,18 @@ Hardware-level support for headphone/main output separation:
 - The synth generator picks appropriate Surge XT patches based on sound descriptions
 - Custom instruments preserve their state across scenes and project save/load
 
+[How to load your own VST3/AU instruments →](/custom-sounds/#load-your-own-instrument-plugins-vst3-au)
+
+### 🗂️ Bring Your Own Sounds
+
+- **Import your own sample libraries** — drop your WAV drum kits and instrument
+  samples into the drum and instrument generators; they sit alongside (or replace)
+  the factory packs and feed generation and shuffle automatically
+- **Load your own instrument plugins** — put any VST3/AU synth or sampler on a synth track
+- Imports are kept separate from shipped packs, copied safely, and easy to back up
+
+[Custom Sounds guide →](/custom-sounds/)
+
 ### 🔄 Scene-Based Composition
 
 Organize your performance into scenes:

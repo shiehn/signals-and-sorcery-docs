@@ -115,6 +115,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 - Watch the [Video Tutorials](/tutorials/) to see each feature in action
 - Experiment with different sound descriptions and musical contracts
 - Set up Performance Mode for dual-deck workflow
+- [Bring your own sounds](/custom-sounds/): import your own sample libraries or load your own VST3/AU instruments
 - [Export to Ableton Live](/ableton/): send any scene into Live's Session view as audio + MIDI
 - Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
 - Check the [Features](/api-server/) section for advanced capabilities
