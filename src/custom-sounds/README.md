@@ -145,7 +145,7 @@ generates the MIDI; your plugin makes the sound.
 
 ### 1. Install the plugin (once)
 
-Install your plugin the normal way for macOS so it lands in a standard location:
+Install your plugin the normal way for your OS so it lands in a standard location:
 
 - **VST3** → `~/Library/Audio/Plug-Ins/VST3` (or `/Library/Audio/Plug-Ins/VST3`)
 - **AudioUnit** → `~/Library/Audio/Plug-Ins/Components` (or `/Library/Audio/Plug-Ins/Components`)

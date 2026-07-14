@@ -8,13 +8,13 @@ head:
       content: generative audio workstation, GAW, generative music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, electronic music, contract-based composing, plugin SDK, creative control, music layers, prompt to layer, Ableton, Ableton Live, export to Ableton
 home: true
 actions:
-  - text: Mac (Silicon)
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-arm64.dmg
+  - text: Download
+    link: /getting-started/
     type: primary
-  - text: Mac (Intel)
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-x64.dmg
+  - text: Get Started
+    link: /prologue/
     type: secondary
-tagline: Generative Audio Workstation. Free to try, no credit card required
+tagline: Generative Audio Workstation for Mac (Apple Silicon) & Windows. Free to try, no credit card required
 heroImage: ./sas_logo_two.png
 features:
     - title: Compose with infinite sounds
@@ -26,3 +26,10 @@ features:
 
 footer: Made by Steve Hiehn with ❤️
 ---
+
+## Download
+
+Signals & Sorcery runs on **macOS (Apple Silicon)** and **Windows 10/11 (64-bit)**.
+
+<DownloadLinks />
+

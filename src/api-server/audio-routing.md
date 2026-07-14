@@ -4,7 +4,7 @@ sidebar: auto
 
 # Audio Routing Modes
 
-Signals & Sorcery supports a performance workflow where the performer can audition and generate privately while the audience hears only approved output. Routing is explicit and predictable on macOS (Core Audio), with no paid dependencies required.
+Signals & Sorcery supports a performance workflow where the performer can audition and generate privately while the audience hears only approved output. Routing is explicit and predictable on macOS (Core Audio) and Windows (WASAPI), with no paid dependencies required. Where this guide mentions the BlackHole virtual audio device (macOS), the Windows equivalent is [VB-Audio Virtual Cable](https://vb-audio.com/Cable/).
 
 ## Concepts
 

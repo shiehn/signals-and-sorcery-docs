@@ -10,7 +10,7 @@ sidebar: auto
 
 ### System Requirements
 
-- **macOS** with Apple M-Series or Intel chip
+- **macOS** with an Apple M-Series chip, or **Windows 10/11** (64-bit)
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
 - **Internet connection** for generation features
 - **A free account** (email or Google sign-in)
@@ -23,10 +23,11 @@ sidebar: auto
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-arm64.dmg)** - Download for Apple Silicon Macs
-- **[Intel Mac (x64)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-x64.dmg)** - Download for Intel Macs
+<DownloadLinks />
 
 #### 2. Install and Launch
+
+**On macOS:**
 
 1. Double-click the downloaded DMG file to open it
 2. Drag Signals & Sorcery to your Applications folder
@@ -36,8 +37,15 @@ Choose the version for your system:
 macOS shows a one-time confirmation prompt the first time you open Signals & Sorcery. After you right-click → **Open** once, future launches work normally with a double-click. This is expected and safe.
 :::
 
-4. **The setup wizard will guide you through installing Surge XT and configuring everything automatically**
-5. **Sign in or create your free account** when prompted; it takes about 30 seconds and no credit card is required
+**On Windows:**
+
+1. Run the downloaded installer (`signals-and-sorcery-…-win-x64.exe`) and follow the prompts
+2. **If SmartScreen shows "Windows protected your PC":** click **More info** → **Run anyway**. The installer is new and not yet code-signed, so Windows shows this notice until the app builds reputation. This is expected.
+
+**Then, on either platform:**
+
+1. **The setup wizard will guide you through installing Surge XT and configuring everything automatically**
+2. **Sign in or create your free account** when prompted; it takes about 30 seconds and no credit card is required
 
 ![runes_cli](/sas_runes_cli_2.png)
 
@@ -80,7 +88,7 @@ This is the core workflow: compose in headphones, push to audience.
 #### Stream Mode
 For Twitch/YouTube streaming:
 - **Cue Output** → Your headphones
-- **Main Output** → Stream audio (via BlackHole virtual audio)
+- **Main Output** → Stream audio (via a virtual audio device — BlackHole on macOS, VB-Audio Virtual Cable on Windows)
 
 See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructions.
 
@@ -93,7 +101,7 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 
 #### Surge XT Not Loading
 - **Re-run Setup Wizard** - Go to Settings and re-run the plugin installation
-- **Check Architecture** - Ensure you installed the version matching your Mac (Apple Silicon or Intel)
+- **Check Platform** - Ensure you installed the version matching your computer (Apple Silicon Mac or Windows 64-bit)
 - **Manual Installation** - See the manual installation section below
 
 #### Clips Not Generating
@@ -130,9 +138,9 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 #### Install Surge XT
 
 1. Download Surge XT from [https://surge-synthesizer.github.io/](https://surge-synthesizer.github.io/)
-2. Download the version matching your Mac:
+2. Download the version matching your system:
    - **macOS (Apple Silicon)** for M-Series Macs
-   - **macOS (Intel)** for Intel Macs
+   - **Windows (64-bit)** for Windows PCs
 3. Run the installer - it will install the VST3 plugin to the correct location
 
 ![getting-started](/sas_patch_bay.png)

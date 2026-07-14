@@ -28,7 +28,7 @@ We run Signals & Sorcery as a **dead-simple subscription service that always ope
 
 ## 1. The Service
 
-Signals & Sorcery is a macOS desktop application for generative music composition and performance. It uses generative models (Gemini for MIDI and Lyria for audio) hosted by Google Cloud to generate musical content within user-defined constraints.
+Signals & Sorcery is a desktop application for macOS (Apple Silicon) and Windows (64-bit) for generative music composition and performance. It uses generative models (Gemini for MIDI and Lyria for audio) hosted by Google Cloud to generate musical content within user-defined constraints.
 
 ## 2. Your Account
 

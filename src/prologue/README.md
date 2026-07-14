@@ -54,7 +54,7 @@ See Signals & Sorcery in action. Check out the [Video Tutorials](/tutorials/) fo
 
 ## Current Limitations
 
-- **macOS Only**: Tested on M-series & Intel chips (Windows/Linux not supported)
+- **macOS (Apple Silicon) & Windows 10/11 (64-bit)**: Intel Macs and Linux are not supported
 - **Surge XT Default**: Ships with Surge XT as the default synth, but any VST3/AU instrument can be loaded
 
 

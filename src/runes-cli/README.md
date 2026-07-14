@@ -11,7 +11,7 @@ sidebar: auto
 ### Prerequisites
 
 - **Node.js 18+** - Required for TypeScript development
-- **macOS 10.15+** - macOS only (Apple Silicon & Intel)
+- **macOS (Apple Silicon) or Windows 10/11 (64-bit)** - Windows dev setup notes live in the repo's `WINDOWS-PORT.md`
 - **Git** - For version control
 
 ### Getting Started
@@ -182,8 +182,9 @@ npm run build
 # Build for current platform
 npm run dist
 
-# Build DMG for macOS
-npm run dist:mac:dmg
+# Build the platform installer
+npm run dist:mac:dmg   # macOS arm64 DMG
+npm run dist:win       # Windows x64 NSIS installer
 ```
 
 ### Release Process
@@ -203,14 +204,18 @@ npm run release:major  # 2.51.0 → 3.0.0
 npm run release:build-only
 ```
 
-The release script:
+The release script (per-OS — one shared version number, each OS publishes
+its own artifact, possibly staggered):
 1. Runs all tests
-2. Bumps version in package.json
-3. Builds DMGs (arm64 + x64)
+2. Bumps version in package.json — or offers **publish current (no bump)**
+   when the other OS already released this version first
+3. Builds this platform's installer (macOS arm64 DMG / Windows x64 NSIS exe)
 4. Uploads to GCP storage
-5. Updates downloads.json
+5. Merge-updates downloads.json: only this platform's entry changes; the
+   other platform's entry is preserved (the site renders per-platform
+   versions from this manifest)
 6. Deploys documentation
-7. Creates git tag
+7. Creates git tag (skipped when the tag already exists from the other OS)
 8. Creates GitHub release
 
 ## Contributing

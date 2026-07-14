@@ -1,13 +1,25 @@
 /**
- * VuePress 2 client config: signup-funnel telemetry for the marketing site.
+ * VuePress 2 client config: download-links renderer + signup-funnel
+ * telemetry for the marketing site.
  *
- * Two jobs:
+ * Three jobs:
  *
- * 1. `download_click` events on the .dmg download buttons (arch + version),
- *    fired into the shared GA4 property (G-B2QMDKHWHF, bootstrapped via the
- *    inline gtag snippet in config.js).
+ * 1. The `<DownloadLinks/>` component (used by the homepage,
+ *    getting-started, and guild pages): renders the platform download list
+ *    from downloads.json. Releases are cut per-OS and may be staggered, so
+ *    each platform entry carries its own version — the markdown must NEVER
+ *    hardcode versioned artifact URLs (sas-app's
+ *    verify-version-consistency.js enforces this). Supported platforms are
+ *    Mac Apple Silicon + Windows x64; Intel mac is retired (old DMGs stay
+ *    hosted for existing users but are no longer listed). A platform with
+ *    no manifest entry yet renders "Coming soon".
  *
- * 2. SPA `page_view` events on client-side route changes. The inline gtag
+ * 2. `download_click` events on the download links (arch + version), fired
+ *    into the shared GA4 property (G-B2QMDKHWHF, bootstrapped via the
+ *    inline gtag snippet in config.js). The listener is delegated, so it
+ *    catches the dynamically-rendered <DownloadLinks/> anchors too.
+ *
+ * 3. SPA `page_view` events on client-side route changes. The inline gtag
  *    snippet only reports the initial load; the old analytics plugin's router
  *    hook is replicated here.
  *
@@ -18,6 +30,74 @@
  * website at all.
  */
 import { defineClientConfig } from '@vuepress/client';
+import { defineComponent, h, onMounted, ref } from 'vue';
+
+const DOWNLOADS_JSON_URL = 'https://signalsandsorcery.com/downloads.json';
+
+// One manifest fetch per page session, shared by every <DownloadLinks/>
+// instance. A failed fetch clears the cache so a later mount can retry.
+let manifestPromise = null;
+function fetchManifest() {
+  if (!manifestPromise) {
+    manifestPromise = fetch(DOWNLOADS_JSON_URL).then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    });
+    manifestPromise.catch(() => {
+      manifestPromise = null;
+    });
+  }
+  return manifestPromise;
+}
+
+const DownloadLinks = defineComponent({
+  name: 'DownloadLinks',
+  setup() {
+    const state = ref('loading'); // 'loading' | 'ready' | 'error'
+    const macArm = ref(null);
+    const winX64 = ref(null);
+
+    onMounted(async () => {
+      try {
+        const data = await fetchManifest();
+        macArm.value = data.platforms?.mac?.arm64 || null;
+        winX64.value = data.platforms?.windows?.x64 || null;
+        state.value = 'ready';
+      } catch (error) {
+        console.error('Failed to load download links:', error);
+        state.value = 'error';
+      }
+    });
+
+    const item = (label, entry, blurb) => {
+      if (entry && entry.url) {
+        const version = entry.version ? ` (v${entry.version})` : '';
+        return h('li', { style: 'margin: 10px 0;' }, [
+          h('strong', [h('a', { href: entry.url }, label)]),
+          `${version} — ${blurb}`,
+        ]);
+      }
+      return h('li', { style: 'margin: 10px 0;' }, [h('strong', label), ' — Coming soon']);
+    };
+
+    return () => {
+      if (state.value === 'loading') {
+        return h('p', 'Loading download links…');
+      }
+      if (state.value === 'error') {
+        return h('p', [
+          'Unable to load download links. Please visit ',
+          h('a', { href: 'https://signalsandsorcery.com' }, 'signalsandsorcery.com'),
+          '.',
+        ]);
+      }
+      return h('ul', { style: 'list-style: none; padding: 0;' }, [
+        item('Mac — Apple Silicon', macArm.value, 'Download for Apple Silicon Macs'),
+        item('Windows — 64-bit', winX64.value, 'Download for Windows 10/11'),
+      ]);
+    };
+  },
+});
 
 const DOWNLOAD_HREF_PATTERN = /storage\.googleapis\.com\/docs-assets\/signals-and-sorcery-/;
 
@@ -58,6 +138,8 @@ function handleDownloadInteraction(event) {
 
 export default defineClientConfig({
   enhance({ app, router }) {
+    app.component('DownloadLinks', DownloadLinks);
+
     if (typeof window === 'undefined') return;
 
     // Use a single delegated mousedown listener so it picks up future download

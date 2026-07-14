@@ -39,12 +39,11 @@ Forever grateful for any feedback:
 
 ### Latest Release
 
-- **[Download for macOS (Apple Silicon)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-arm64.dmg)**
-- **[Download for macOS (Intel)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-x64.dmg)**
+<DownloadLinks />
 
 ### System Requirements
 
-- macOS 10.15+ (Apple Silicon & Intel)
+- macOS (Apple Silicon) or Windows 10/11 (64-bit)
 - 4GB RAM minimum (8GB recommended)
 - Internet connection for generative features
 - Audio interface with 4+ outputs (recommended for performance with headphone/main separation)
