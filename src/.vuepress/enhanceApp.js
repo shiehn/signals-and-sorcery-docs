@@ -21,17 +21,26 @@ export default ({
         fetch('https://signalsandsorcery.com/downloads.json')
           .then(response => response.json())
           .then(data => {
+            // Supported platforms: Apple Silicon mac + Windows x64. Each
+            // carries its own version — releases are cut per-OS and may be
+            // staggered, so the versions can briefly differ. (Intel mac was
+            // retired; old DMGs remain hosted but are no longer listed.)
             const mac = data.platforms?.mac || {};
+            const windows = data.platforms?.windows || {};
             let html = '<ul style="list-style: none; padding: 0;">';
 
             if (mac.arm64) {
-              html += `<li style="margin: 10px 0;"><strong><a href="${mac.arm64.url}">Apple Silicon Mac</a></strong> - Download for Apple Silicon Macs</li>`;
+              const v = mac.arm64.version ? ` (v${mac.arm64.version})` : '';
+              html += `<li style="margin: 10px 0;"><strong><a href="${mac.arm64.url}">Mac — Apple Silicon</a></strong>${v} - Download for Apple Silicon Macs</li>`;
+            } else {
+              html += '<li style="margin: 10px 0;"><strong>Mac — Apple Silicon</strong> - Coming soon</li>';
             }
 
-            if (mac.x64) {
-              html += `<li style="margin: 10px 0;"><strong><a href="${mac.x64.url}">Intel Mac</a></strong> - Download for Intel Macs</li>`;
+            if (windows.x64) {
+              const v = windows.x64.version ? ` (v${windows.x64.version})` : '';
+              html += `<li style="margin: 10px 0;"><strong><a href="${windows.x64.url}">Windows — 64-bit</a></strong>${v} - Download for Windows 10/11</li>`;
             } else {
-              html += '<li style="margin: 10px 0;"><strong>Intel Mac</strong> - Coming soon</li>';
+              html += '<li style="margin: 10px 0;"><strong>Windows — 64-bit</strong> - Coming soon</li>';
             }
 
             html += '</ul>';
