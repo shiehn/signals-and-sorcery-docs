@@ -1,9 +1,19 @@
 {
   "latest": {
-    "version": "3.15.0",
-    "date": "2026-07-15T03:18:52.046Z"
+    "version": "3.15.1",
+    "date": "2026-07-15T04:33:57.691Z"
   },
   "versions": [
+    {
+      "version": "3.15.1",
+      "date": "2026-07-15T04:33:57.692Z",
+      "downloads": {
+        "windows": {
+          "x64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_15_1-win-x64.exe"
+        }
+      },
+      "changelog": "Version 3.15.1 release"
+    },
     {
       "version": "3.15.0",
       "date": "2026-07-15T03:18:52.047Z",
@@ -100,17 +110,6 @@
         }
       },
       "changelog": "Version 3.7.0 release"
-    },
-    {
-      "version": "3.6.0",
-      "date": "2026-06-20T05:21:19.978Z",
-      "downloads": {
-        "mac": {
-          "arm64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_6_0-arm64.dmg",
-          "x64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_6_0-x64.dmg"
-        }
-      },
-      "changelog": "Version 3.6.0 release"
     }
   ],
   "platforms": {
@@ -130,10 +129,10 @@
     },
     "windows": {
       "x64": {
-        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_15_0-win-x64.exe",
-        "version": "3.15.0",
+        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_15_1-win-x64.exe",
+        "version": "3.15.1",
         "size": "781.8 MB",
-        "date": "2026-07-15T03:18:52.047Z"
+        "date": "2026-07-15T04:33:57.692Z"
       }
     }
   }
