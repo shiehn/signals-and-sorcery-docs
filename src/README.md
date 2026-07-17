@@ -12,7 +12,7 @@ actions:
     link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_15_1-arm64.dmg
     type: primary
   - text: Win 64
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_15_1-win-x64.exe
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_16_0-win-x64.exe
     type: secondary
 tagline: Generative Audio Workstation for Mac & Windows. Free to use, no credit card required
 heroImage: ./sas_logo_two.png
