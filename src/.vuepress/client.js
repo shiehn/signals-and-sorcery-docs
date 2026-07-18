@@ -114,11 +114,20 @@ function findDownloadAnchor(target) {
   return null;
 }
 
-function extractArchAndVersion(href) {
-  const arch = href.includes('arm64') ? 'arm64' : 'x64';
+function extractPlatformInfo(href) {
+  const lower = href.toLowerCase();
+  // Mac installers ship as .dmg, Windows as .exe (electron-builder NSIS).
+  // Fall back to substring hints so a future .msi/.zip still classifies.
+  let os = 'unknown';
+  if (lower.endsWith('.dmg') || lower.includes('mac')) {
+    os = 'mac';
+  } else if (lower.endsWith('.exe') || lower.endsWith('.msi') || lower.includes('win')) {
+    os = 'windows';
+  }
+  const arch = lower.includes('arm64') ? 'arm64' : 'x64';
   const versionMatch = /signals-and-sorcery-([\d_]+)/.exec(href);
   const appVersion = versionMatch ? versionMatch[1].replace(/_/g, '.') : 'unknown';
-  return { arch, appVersion };
+  return { os, arch, appVersion };
 }
 
 function handleDownloadInteraction(event) {
@@ -128,8 +137,12 @@ function handleDownloadInteraction(event) {
   // gtag is installed by the inline snippet in config.js; undefined in
   // dev/SSR contexts, in which case we silently no-op.
   if (typeof window.gtag === 'function') {
-    const { arch, appVersion } = extractArchAndVersion(anchor.href);
+    const { os, arch, appVersion } = extractPlatformInfo(anchor.href);
+    // `os` = which BUILD was grabbed (mac/windows); GA4's auto-collected
+    // operatingSystem dimension separately records what OS the visitor was
+    // ON, so cross-platform downloads are visible too.
     window.gtag('event', 'download_click', {
+      os,
       arch,
       app_version: appVersion,
     });
