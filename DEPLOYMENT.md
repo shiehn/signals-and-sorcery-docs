@@ -25,15 +25,17 @@ The documentation system uses two Git repositories:
 
 Download links are **hardcoded directly in markdown**, NOT dynamically loaded via JavaScript.
 
-**Location:** `src/getting-started/README.md`
+**Location:** `src/README.md` (homepage hero; other pages use the dynamic `<DownloadLinks />` component)
 
 ```markdown
 #### 2. Download Signals & Sorcery
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-0_12_0-arm64.dmg)** - Download for Apple Silicon Macs (v0.12.0)
-- **Intel Mac** - Coming soon
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_16_0-arm64.dmg)** - Download for Apple Silicon Macs (v3.16.0)
+- **[Windows 10/11 (64-bit)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_16_0-win-x64.exe)** - Download for Windows (v3.16.0)
+
+(Intel-mac builds are retired; the manifest's `mac.x64` entry intentionally keeps serving the last Intel build, v3.14.0.)
 
 **Note:** The app is signed and notarized by Apple for security.
 ```
@@ -67,13 +69,13 @@ The release process is **fully automated** via the release script in `sas-app`. 
 ```bash
 cd /Users/stevehiehn/sas-platform/sas-app
 
-# For minor version bump (0.12.0 → 0.13.0)
+# For minor version bump (X.Y.0 → X.Y+1.0)
 npm run release
 
 # Or specify version type
-npm run release:major  # 0.12.0 → 1.0.0
-npm run release:minor  # 0.12.0 → 0.13.0
-npm run release:patch  # 0.12.0 → 0.12.1
+npm run release:major  # X.Y.Z → X+1.0.0
+npm run release:minor  # X.Y.Z → X.Y+1.0
+npm run release:patch  # X.Y.Z → X.Y.Z+1
 ```
 
 **What the release script does automatically:**
