@@ -45,31 +45,41 @@ export default {
             },
             {
                 text: 'Features',
-                link: '/api-server/',
+                children: [
+                    {
+                        text: 'Core Features',
+                        link: '/api-server/',
+                    },
+                    {
+                        text: 'Custom Sounds',
+                        link: '/custom-sounds/',
+                    },
+                    {
+                        text: 'Ableton Integration',
+                        link: '/ableton/',
+                    },
+                ],
             },
             {
-                text: 'Custom Sounds',
-                link: '/custom-sounds/',
-            },
-            {
-                text: 'Ableton',
-                link: '/ableton/',
-            },
-            {
-                text: 'Automation',
-                link: '/automation/',
-            },
-            {
-                text: 'Plugin SDK',
-                link: '/plugin-sdk/',
+                text: 'Developers',
+                children: [
+                    {
+                        text: 'Automation & Agents',
+                        link: '/automation/',
+                    },
+                    {
+                        text: 'Plugin SDK',
+                        link: '/plugin-sdk/',
+                    },
+                ],
             },
             {
                 text: 'About',
-                link: '/guild/',
-            },
-            {
-                text: 'Legal',
                 children: [
+                    {
+                        text: 'About Signals & Sorcery',
+                        link: '/guild/',
+                    },
                     {
                         text: 'Privacy Policy',
                         link: '/privacy-policy/',
