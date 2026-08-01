@@ -32,13 +32,15 @@ Download links are **hardcoded directly in markdown**, NOT dynamically loaded vi
 
 Choose the version for your system:
 
-- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_16_0-arm64.dmg)** - Download for Apple Silicon Macs (v3.16.0)
-- **[Windows 10/11 (64-bit)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_16_0-win-x64.exe)** - Download for Windows (v3.16.0)
+- **[Apple Silicon Mac (M1/M2/M3/M4)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-X_Y_Z-arm64.dmg)** - Download for Apple Silicon Macs (vX.Y.Z)
+- **[Windows 10/11 (64-bit)](https://storage.googleapis.com/docs-assets/signals-and-sorcery-X_Y_Z-win-x64.exe)** - Download for Windows (vX.Y.Z)
 
 (Intel-mac builds are retired; the manifest's `mac.x64` entry intentionally keeps serving the last Intel build, v3.14.0.)
 
 **Note:** The app is signed and notarized by Apple for security.
 ```
+
+(`X_Y_Z` stands in for the current release version — the release script substitutes it via regex. Under the staggered mac/Windows release flow the two lines can briefly cite different versions.)
 
 ### Why Hardcoded Links?
 
