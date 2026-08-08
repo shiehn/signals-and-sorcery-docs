@@ -9,7 +9,7 @@ head:
 home: true
 actions:
   - text: Mac Silicon
-    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_19_0-arm64.dmg
+    link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-4_0_0-arm64.dmg
     type: primary
   - text: Win 64
     link: https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_19_0-win-x64.exe
