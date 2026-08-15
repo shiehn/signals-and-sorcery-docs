@@ -86,19 +86,28 @@ sas add_instrument \
 
 ## 4. Apply reverb to everything
 
-Batch FX across every track in the active scene.
+FX are 3rd-party VST3/AU inserts on each track's rack, so a scene-wide
+effect is a per-track loop: list the tracks, then add the same reverb
+plugin to each one.
 
 ```bash
-sas set_scene_fx \
-  --category reverb \
-  --enabled \
-  --preset 3 \
-  --dry-wet 0.35
+#!/bin/bash
+
+FAILED=()
+for TRACK in $(sas dsl_list_tracks --json | jq -r '.data.changes.tracks[].id'); do
+  sas fx_add_plugin --track "$TRACK" --plugin-id "VST3/ValhallaSupermassive" \
+    && sas dsl_fx_set_param --track "$TRACK" --fx reverb --param-name wet --value 0.35 \
+    || FAILED+=("$TRACK")
+done
+
+[ ${#FAILED[@]} -gt 0 ] && echo "FX failed on: ${FAILED[*]}"
 ```
 
-If some tracks fail, `set_scene_fx` returns `success: true` with a
-`failed` array listing which tracks errored; the agent can then retry
-those individually with `dsl_set_track_fx`.
+Each `fx_add_plugin` call succeeds or fails independently, so one bad
+track doesn't abort the batch — the script collects failures and reports
+them at the end. Each failure envelope carries a `remediation` block
+saying why that track bounced, so the agent can retry the stragglers
+individually.
 
 ## 5. Export a scene as WAV
 
@@ -218,9 +227,10 @@ sas compose_scene \
     {"name":"Lead","role":"lead","prompt":"ominous brass stabs"}
   ]}'
 
-# 2. Tweak the mix
-sas dsl_set_track_fx --track "808" --category compressor --enabled --preset 4 --dry-wet 0.6
-sas set_scene_fx --category reverb --enabled --preset 2 --dry-wet 0.2
+# 2. Tweak the mix — FX are 3rd-party inserts; plugin ids come from your scan
+sas fx_add_plugin --track "808" --plugin-id "VST3/TDR Kotelnikov"          # compressor
+sas fx_add_plugin --track "Lead" --plugin-id "VST3/ValhallaSupermassive"   # reverb
+sas dsl_fx_set_param --track "Lead" --fx reverb --param-name wet --value 0.2
 
 # 3. Send to main output
 sas render_to_performance --scene-name "Drop"

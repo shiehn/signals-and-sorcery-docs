@@ -324,7 +324,7 @@ Wrap status (May 2026):
 | **Scene composition** | `scene_create`, `create_project`, `compose_contract`, `make_beat` |
 | **MIDI generation** | `dsl_generate_midi`, `dsl_generate_drums`, `generate_scene_midi_bulk` |
 | **Revision** | `revise_track`, `revise_scene` |
-| **FX** | `dsl_set_track_fx`, `dsl_load_fx_chain`, `dsl_shuffle_preset` |
+| **FX** | `dsl_load_fx_chain`, `dsl_shuffle_preset` |
 | **Rendering & export** | `render_to_performance`, `export_audio` |
 | **Audio analysis** | `sas_analyze_audio`, `sas_split_stems` |
 | **Sample library** | `scan_audio_directory`, `import_samples_by_criteria` |

@@ -227,43 +227,42 @@ await host.shufflePreset(copy.id);
 
 ## FX Operations
 
-Per-track FX processing with 6 categories in signal chain order: `eq` → `compressor` → `chorus` → `phaser` → `delay` → `reverb`. All FX methods are ownership-scoped.
+Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. There is no built-in FX rack — the inserts come from the plugins installed on the user's machine, discovered via `getAvailableFx()` (same `InstrumentDescriptor` shape as `getAvailableInstruments`, filtered to non-instrument plugins). Insert states persist per track and are re-applied when the project reopens.
 
-### getTrackFxState(trackId)
+All FX methods are ownership-scoped and optional — feature-gate on `typeof host.getTrackExternalFx === 'function'`.
 
-Get the detailed FX state for a track: enabled/disabled, preset index, and dry/wet level for each category.
+### getTrackExternalFx(trackId)
+
+List the track's external FX inserts, in chain order.
 
 ```typescript
-getTrackFxState(trackId: string): Promise<PluginTrackFxDetailState>
+getTrackExternalFx(trackId: string): Promise<TrackExternalFxEntry[]>
 ```
 
-**`PluginTrackFxDetailState`** is `Record<string, PluginFxCategoryDetailState>`, with one entry per FX category.
-
-**PluginFxCategoryDetailState:**
+**TrackExternalFxEntry:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `enabled` | `boolean` | Whether this FX category is active |
-| `presetIndex` | `number` | Current preset index (0–4) |
-| `dryWet` | `number` | Dry/wet mix level (0.0 – 1.0) |
+| `index` | `number` | Engine chain index — pass this back to the remove/bypass/move/editor calls. Not contiguous from 0 |
+| `pluginId` | `string` | Scanned plugin id (matches `InstrumentDescriptor.pluginId`) |
+| `name` | `string` | Display name |
+| `enabled` | `boolean` | `false` when bypassed |
 
 **Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
 ```typescript
-const fxState = await host.getTrackFxState(track.id);
-console.log(fxState.reverb.enabled);     // false
-console.log(fxState.reverb.presetIndex); // 0
-console.log(fxState.reverb.dryWet);      // 0.33
+const inserts = await host.getTrackExternalFx(track.id);
+inserts.forEach((fx) => console.log(fx.index, fx.name, fx.enabled));
 ```
 
 ---
 
-### toggleTrackFx(trackId, category, enabled)
+### loadTrackExternalFx(trackId, pluginId)
 
-Toggle an FX category on or off for a track.
+Add an FX plugin to the end of the track's chain. Instrument plugins are rejected.
 
 ```typescript
-toggleTrackFx(trackId: string, category: string, enabled: boolean): Promise<void>
+loadTrackExternalFx(trackId: string, pluginId: string): Promise<TrackExternalFxEntry>
 ```
 
 **Parameters:**
@@ -271,70 +270,95 @@ toggleTrackFx(trackId: string, category: string, enabled: boolean): Promise<void
 | Field | Type | Description |
 |-------|------|-------------|
 | `trackId` | `string` | Engine track ID (must be owned) |
-| `category` | `string` | FX category: `'eq'`, `'compressor'`, `'chorus'`, `'phaser'`, `'delay'`, `'reverb'` |
-| `enabled` | `boolean` | Whether to enable or disable the FX |
+| `pluginId` | `string` | Scanned plugin id, from `getAvailableFx()` |
+
+**Returns:** the new insert's `TrackExternalFxEntry`.
 
 **Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
 ```typescript
-// Enable reverb on a track
-await host.toggleTrackFx(track.id, 'reverb', true);
-```
-
----
-
-### setTrackFxPreset(trackId, category, presetIndex)
-
-Set the FX preset for a category. Each category has 5 presets (index 0–4). Returns the new dry/wet value if the preset changes it.
-
-```typescript
-setTrackFxPreset(trackId: string, category: string, presetIndex: number): Promise<{ dryWet?: number }>
-```
-
-**Parameters:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `trackId` | `string` | Engine track ID (must be owned) |
-| `category` | `string` | FX category |
-| `presetIndex` | `number` | Preset index (0–4) |
-
-**Returns:** `{ dryWet?: number }`, the new dry/wet level if the preset sets one.
-
-**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
-
-```typescript
-// Set reverb to preset 2 (e.g., "Hall")
-const result = await host.setTrackFxPreset(track.id, 'reverb', 2);
-if (result.dryWet !== undefined) {
-  console.log('New dry/wet:', result.dryWet);
+// Add the first available reverb to a track
+const fxList = await host.getAvailableFx();
+const reverb = fxList.find((p) => /reverb/i.test(p.name));
+if (reverb) {
+  const entry = await host.loadTrackExternalFx(track.id, reverb.pluginId);
+  console.log('Added at chain index', entry.index);
 }
 ```
 
 ---
 
-### setTrackFxDryWet(trackId, category, value)
+### removeTrackExternalFx(trackId, fxIndex)
 
-Set the dry/wet mix level for an FX category.
+Remove an insert by its `TrackExternalFxEntry.index`.
 
 ```typescript
-setTrackFxDryWet(trackId: string, category: string, value: number): Promise<void>
+removeTrackExternalFx(trackId: string, fxIndex: number): Promise<void>
 ```
 
-**Parameters:**
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `trackId` | `string` | Engine track ID (must be owned) |
-| `category` | `string` | FX category |
-| `value` | `number` | Dry/wet level (0.0 fully dry – 1.0 fully wet) |
+---
+
+### setTrackExternalFxEnabled(trackId, fxIndex, enabled)
+
+Bypass (or un-bypass) an insert without removing it.
+
+```typescript
+setTrackExternalFxEnabled(trackId: string, fxIndex: number, enabled: boolean): Promise<void>
+```
 
 **Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
 ```typescript
-// Set delay mix to 50%
-await host.setTrackFxDryWet(track.id, 'delay', 0.5);
+// Bypass the first insert
+const [first] = await host.getTrackExternalFx(track.id);
+await host.setTrackExternalFxEnabled(track.id, first.index, false);
 ```
+
+---
+
+### moveTrackExternalFx(trackId, fromFxIndex, toFxIndex)
+
+Move an insert to another slot in the chain (drag-to-reorder). Both indices are `TrackExternalFxEntry.index` values, with splice semantics — the FX lands *at* `toFxIndex`. Only external inserts are movable or valid landing slots (never the instrument). Feature-gate on `typeof host.moveTrackExternalFx === 'function'`.
+
+```typescript
+moveTrackExternalFx(trackId: string, fromFxIndex: number, toFxIndex: number): Promise<void>
+```
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+---
+
+### showTrackExternalFxEditor(trackId, fxIndex)
+
+Open the native editor window for an insert.
+
+```typescript
+showTrackExternalFxEditor(trackId: string, fxIndex: number): Promise<void>
+```
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+---
+
+### copyTrackFxFrom(destTrackId, sourceTrackDbId)
+
+Copy a source track's whole FX chain (external inserts with their states) onto an owned track. The source is addressed by DB row id and may live in another scene; only the destination is ownership-asserted. Partial success is normal — third-party plugins missing from this machine land in `externalMissing` while everything else still copies. Feature-gate on `typeof host.copyTrackFxFrom === 'function'`.
+
+```typescript
+copyTrackFxFrom(destTrackId: string, sourceTrackDbId: string): Promise<TrackFxCopyResult>
+```
+
+**TrackFxCopyResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `builtIn` | `string[]` | Always empty since SDK 3.0.0 (the built-in FX system was removed); retained for wire-shape compatibility |
+| `externalCopied` | `number` | External inserts successfully rebuilt on the destination |
+| `externalMissing` | `string[]` | Plugin names that failed to load (missing from this machine) |
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
 
 ---
 

@@ -44,16 +44,16 @@ npm install @signalsandsorcery/plugin-sdk
 
 This gives you:
 - **TypeScript types**: `GeneratorPlugin`, `PluginHost`, `PluginUIProps`, and all supporting types
-- **UI Components**: `TrackRow`, `VolumeSlider`, `PanSlider`, `FxToggleBar`, `SorceryProgressBar`, `InstrumentDrawer`
+- **UI Components**: `TrackRow`, `VolumeSlider`, `PanSlider`, `SorceryProgressBar`, `InstrumentDrawer`
 - **Hooks**: `useSceneState` (scene-keyed state management)
-- **Constants**: `VALID_INSTRUMENT_ROLES`, `FX_CATEGORIES`, `PLUGIN_SDK_VERSION`
+- **Constants**: `PLUGIN_SDK_VERSION` (the valid track roles are fetched at runtime via `host.getValidRoles()`, not shipped as a static constant)
 
 ```typescript
 // Import types for your plugin class
 import type { GeneratorPlugin, PluginHost, PluginUIProps } from '@signalsandsorcery/plugin-sdk';
 
 // Import UI components for your React panel
-import { TrackRow, useSceneState, VolumeSlider, FxToggleBar } from '@signalsandsorcery/plugin-sdk';
+import { TrackRow, useSceneState, VolumeSlider } from '@signalsandsorcery/plugin-sdk';
 ```
 
 ### SDK UI Components
@@ -65,7 +65,6 @@ These pre-built components match the host app's visual style (Tailwind CSS class
 | `TrackRow` | Full-featured track row with prompt input, generate/shuffle/copy buttons, mute/solo, volume/pan, FX drawer, instrument drawer, and progress overlay |
 | `VolumeSlider` | Compact horizontal volume slider (0-1) with dB tooltip |
 | `PanSlider` | Compact horizontal pan slider (-1 to +1) with double-click to center |
-| `FxToggleBar` | Per-track FX control panel with 6 categories, preset buttons, and dry/wet sliders |
 | `SorceryProgressBar` | Animated progress bar with time-based pacing for long operations |
 | `InstrumentDrawer` | Searchable grid of available VST3/AU instrument plugins |
 

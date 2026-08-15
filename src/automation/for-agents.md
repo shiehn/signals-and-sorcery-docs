@@ -291,7 +291,7 @@ marked **deferred** require `tool_search` to discover.
 | **Tracks** | `dsl_track_create`, `dsl_list_tracks`, `dsl_track_delete`, `dsl_track_mute`, `dsl_track_solo`, `dsl_track_volume`, `dsl_track_pan`, `dsl_track_rename` |
 | **Transport** | `dsl_play`, `dsl_stop`, `dsl_set_tempo` (deferred: `dsl_get_tempo_info`) |
 | **MIDI generation** | `dsl_generate_midi` (deferred: `dsl_generate_drums`) |
-| **FX** | `dsl_set_track_fx`, `dsl_get_track_fx`, `set_scene_fx`, `dsl_load_fx_chain` |
+| **FX** (3rd-party VST3/AU inserts) | `dsl_fx_remove`, `dsl_fx_set_bypass`, `dsl_fx_set_param`, `dsl_sweep` (deferred: `fx_list_plugins`, `fx_add_plugin`, `fx_remove_plugin`, `fx_move_plugin`, `fx_set_bypass`, `fx_set_param`, `dsl_load_fx_chain`, `rack_apply_random_fx`) |
 | **Musical context** | `get_musical_context`, `set_musical_context` |
 | **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
 | **Export** *(deferred)* | `export_audio` |

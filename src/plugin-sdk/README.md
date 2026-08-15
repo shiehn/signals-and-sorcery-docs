@@ -171,14 +171,17 @@ All methods below are available on the `host` object your plugin receives in `ac
 
 ### FX Operations
 
-Per-track FX with 6 categories in signal chain order: `eq` → `compressor` → `chorus` → `phaser` → `delay` → `reverb`.
+Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. All methods are optional — feature-gate on `typeof host.getTrackExternalFx === 'function'`.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `getTrackFxState` | `(trackId: string) => Promise<PluginTrackFxDetailState>` | Get FX state for all categories (`enabled`, `presetIndex`, `dryWet` per category). **Ownership.** |
-| `toggleTrackFx` | `(trackId: string, category: string, enabled: boolean) => Promise<void>` | Enable or disable an FX category. **Ownership.** |
-| `setTrackFxPreset` | `(trackId: string, category: string, presetIndex: number) => Promise<{ dryWet?: number }>` | Set FX preset (0–4). Returns new dry/wet if the preset changes it. **Ownership.** |
-| `setTrackFxDryWet` | `(trackId: string, category: string, value: number) => Promise<void>` | Set dry/wet mix (0.0 dry – 1.0 wet). **Ownership.** |
+| `getTrackExternalFx` | `(trackId: string) => Promise<TrackExternalFxEntry[]>` | List the track's FX inserts. Returns `{ index, pluginId, name, enabled }[]`. **Ownership.** |
+| `loadTrackExternalFx` | `(trackId: string, pluginId: string) => Promise<TrackExternalFxEntry>` | Add an FX plugin by scanned `pluginId` (from `getAvailableFx`). Instruments are rejected. **Ownership.** |
+| `removeTrackExternalFx` | `(trackId: string, fxIndex: number) => Promise<void>` | Remove an insert by its `TrackExternalFxEntry.index`. **Ownership.** |
+| `setTrackExternalFxEnabled` | `(trackId: string, fxIndex: number, enabled: boolean) => Promise<void>` | Bypass (or un-bypass) an insert. **Ownership.** |
+| `moveTrackExternalFx` | `(trackId: string, fromFxIndex: number, toFxIndex: number) => Promise<void>` | Move an insert to another slot (splice semantics — it lands *at* `toFxIndex`). **Ownership.** |
+| `showTrackExternalFxEditor` | `(trackId: string, fxIndex: number) => Promise<void>` | Open the plugin's native editor window. **Ownership.** |
+| `copyTrackFxFrom` | `(destTrackId: string, sourceTrackDbId: string) => Promise<TrackFxCopyResult>` | Copy a source track's whole FX chain onto an owned track. Partial success is normal: plugins missing from this machine land in `externalMissing`. **Ownership (dest only).** |
 
 ### Scene Context
 

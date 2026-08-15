@@ -212,7 +212,7 @@ sas list-actions
 
 # One action's full help (parameters + when-to-use)
 sas help compose_scene
-sas help dsl_set_track_fx
+sas help fx_add_plugin
 ```
 
 Help output follows the [4-section template][template] every tool is
@@ -422,7 +422,7 @@ When to reach for it (vs. neighbouring tools):
 |---|---|
 | "Change the sound of the snare" / "give me a different bass preset" | `dsl_shuffle_preset` |
 | "Change the snare pattern" / "regenerate the kick" | `dsl_generate_midi` |
-| "Add reverb to the lead" / "compress the drums" | `dsl_set_track_fx` |
+| "Add reverb to the lead" / "compress the drums" | `fx_add_plugin` (a 3rd-party insert on the track's rack) |
 
 The category is auto-derived from the track's role + MIDI note range
 (via the same `buildPresetCategory` helper the UI uses), so a bass track
