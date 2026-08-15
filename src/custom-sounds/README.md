@@ -163,7 +163,7 @@ app** to pick it up reliably.
 
 1. On a synth track row, click the **▾ "Sound"** button (the chevron at the right of the
    row's button strip).
-2. In the drawer, open the **"Pick"** tab.
+2. In the drawer, open the **"Synth"** tab.
 3. You'll see a searchable grid of instruments. The first cell is always
    **"Surge XT / Default"**; every other cell is one of your installed VST3/AU
    instruments, labeled with its name, maker, and format (VST3 or AU).
