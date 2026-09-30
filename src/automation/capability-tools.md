@@ -65,7 +65,7 @@ sas run fs_read_file -p path=~/notes.md -p maxBytes=1000000
 | Input | Notes |
 |---|---|
 | `path` | Required. Tilde-expanded. |
-| `maxBytes` | Optional cap, default 1 MB. Files larger than this are rejected without prompting. |
+| `maxBytes` | Optional cap, default 1 MB. Files larger than this are rejected without prompting (`error: "too_large"`). |
 
 Returns `{ resolvedPath, size, content }`.
 
@@ -85,7 +85,8 @@ sas run fs_search -p rootPath=~/Documents -p namePattern=todo
 | `extensions` | Optional `["wav","mp3"]` allowlist. |
 | `maxResults` | Optional cap, default 100. |
 
-Returns `{ resolvedRoot, matches: [{ path, size, modifiedMs }], truncated }`.
+Searches up to 6 folder levels below `rootPath`. Returns
+`{ resolvedRoot, matches: [{ path, size, modifiedMs }], truncated }`.
 
 ### `fs_write_file`
 
@@ -118,9 +119,12 @@ tries to pass `; rm -rf /` as an arg, it lands as a literal arg to the
 named command, which almost certainly errors out.
 
 ```bash
-sas run shell_exec --json '{"command":"ffmpeg","args":["-version"]}'
-sas run shell_exec --json '{"command":"brew","args":["install","ffmpeg"]}'
+sas run shell_exec --json-body '{"command":"ffmpeg","args":["-version"]}'
+sas run shell_exec --json-body '{"command":"brew","args":["install","ffmpeg"]}'
 ```
+
+`args` is an array, so pass the whole input as JSON with `--json-body`
+(the global `--json` flag only switches the output to JSON).
 
 | Input | Notes |
 |---|---|
@@ -133,8 +137,10 @@ sas run shell_exec --json '{"command":"brew","args":["install","ffmpeg"]}'
 Returns `{ command, args, cwd, exitCode, stdout, stderr, durationMs, truncated }`.
 
 A non-zero exit code is reported with `success: true`; the agent has
-the exit code and decides whether to retry. Only timeouts and spawn
-failures return `success: false`.
+the exit code and decides whether to retry. Only timeouts, spawn
+failures, a cancelled consent dialog and the deny list below return
+`success: false` (with `error` set to `timeout`, `consent_denied` or
+`denied_by_safety_rule`).
 
 #### Built-in safety: the deny list
 
@@ -145,6 +151,9 @@ A short pre-consent denylist refuses obviously-malicious commands
 - `dd of=/dev/sda` (and any raw block device)
 - `mkfs*` (any filesystem reformat tool)
 - The classic fork bomb (`:(){ :|:& };:`)
+- On Windows: `format`, `cipher /w`, a recursive `rd /s` or `del /s`
+  of a drive root through `cmd`, and `Remove-Item -Recurse -Force` of a
+  drive root through `powershell` or `pwsh`
 
 If you ever need to run one of these legitimately, you'll have to do it
 outside the chat-plugin.

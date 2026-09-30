@@ -6,6 +6,8 @@ sidebar: auto
 
 Complete reference for the `PluginHost` API, the scoped interface that plugins use to interact with Signals & Sorcery. Each plugin receives its own `PluginHost` instance with ownership-scoped access.
 
+Methods described as optional are declared with `?` on `PluginHost` because older hosts may not have them. Check `typeof host.method === 'function'` before calling one.
+
 ## Track Management
 
 All track methods are **ownership-scoped**: plugins can only modify tracks they created. Attempting to modify another plugin's track throws a `NOT_OWNED` error.
@@ -23,12 +25,13 @@ createTrack(options: CreateTrackOptions): Promise<PluginTrackHandle>
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `name` | `string` | auto-generated | Display name for the track |
-| `role` | `string` | - | Musical role hint: `'bass'`, `'drums'`, `'lead'`, `'chords'`, `'pad'`, `'arp'`, `'fx'` |
+| `role` | `string` | - | Musical role hint: `'bass'`, `'drums'`, `'lead'`, `'chords'`, `'pad'`, `'arp'`, `'fx'` (see `getValidRoles()` for the full list) |
 | `loadSynth` | `boolean` | `false` | Load a synth plugin immediately |
 | `synthName` | `string` | `'Surge XT'` | Which synth to load (ignored if `loadSynth` is false) |
+| `instrumentPluginId` | `string \| null` | - | Scanned plugin id of a custom instrument to load instead of `synthName` (with `loadSynth: true`) |
 | `metadata` | `Record<string, unknown>` | - | Plugin-specific metadata stored in the database |
 
-**Returns:** `PluginTrackHandle` with `id`, `name`, `dbId`, and optional `role`.
+**Returns:** `PluginTrackHandle` with `id`, `name`, `dbId`, and optional `role`, `prompt`, `instrumentPluginId`, `instrumentName`.
 
 **Errors:** `NO_ACTIVE_SCENE`, `TRACK_LIMIT_EXCEEDED`, `ENGINE_ERROR`
 
@@ -140,6 +143,38 @@ setTrackName(trackId: string, name: string): Promise<void>
 
 ---
 
+### setTrackRole(trackId, role)
+
+Persist a track's musical role, for example after an LLM call classifies what you generated. Other features, such as transition generation, read the stored role.
+
+```typescript
+setTrackRole(trackId: string, role: string): Promise<void>
+```
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+---
+
+### getValidRoles()
+
+The host's canonical list of role tokens (e.g. `bass`, `lead`, `pad`, `kicks`, `hats`). Use it when building prompts or validating a role before `setTrackRole`; do not ship your own hard-coded list.
+
+```typescript
+getValidRoles(): readonly string[]
+```
+
+---
+
+### reorderTracks(orderedTrackIds)
+
+Persist this plugin's row order for the active scene. Pass track `dbId`s top to bottom; `getPluginTracks()` then returns tracks in that order across scene switches and reopen. Tracks you leave out keep their natural order at the end. The `useTrackReorder` hook drives drag-and-drop and calls this on drop.
+
+```typescript
+reorderTracks(orderedTrackIds: readonly string[]): Promise<void>
+```
+
+---
+
 ### adoptSceneTracks()
 
 Adopt unowned tracks in the active scene that match this plugin's generator type. Useful when re-activating a plugin or restoring state: tracks that were previously created by a plugin of the same type but currently have no owner will be claimed.
@@ -183,8 +218,19 @@ await host.setTrackSolo(track.id, true);
 Randomly change the Surge XT preset on an owned track. Reads the track's existing MIDI notes to analyze the pitch range, then selects a random preset from a matching category (e.g., bass notes get bass presets). The current preset is excluded so you always get a different sound.
 
 ```typescript
-shufflePreset(trackId: string): Promise<ShufflePresetResult>
+shufflePreset(
+  trackId: string,
+  excludeNames?: readonly string[],
+  options?: ShufflePresetOptions
+): Promise<ShufflePresetResult>
 ```
+
+**Parameters:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `excludeNames` | `readonly string[]` | Preset names to leave out of the pool (e.g. your shuffle history, for no repeats until the pool is used up) |
+| `options.description` | `string` | The user's sound description. Hosts with a preset index pick the closest match to it instead of a random preset; others ignore it |
 
 **Returns:**
 
@@ -204,13 +250,13 @@ host.showToast('info', 'New Preset', `${result.presetName} (${result.presetCateg
 
 ### duplicateTrack(trackId)
 
-Create a copy of an owned track. Copies the track's MIDI data, role, and loads Surge XT on the new track. The new track is automatically owned by the calling plugin.
+Create a copy of an owned track. Copies the track's MIDI data and role. A Surge XT track's copy gets a different preset; a custom instrument's copy keeps the source's plugin state. The new track is automatically owned by the calling plugin.
 
 ```typescript
 duplicateTrack(trackId: string): Promise<PluginTrackHandle>
 ```
 
-**Returns:** `PluginTrackHandle` for the new track (name will be `"<original>-copy"`).
+**Returns:** `PluginTrackHandle` for the new track (name will be `"<original>-copy"`, or `"<original>-copy-2"` and so on if that name is taken).
 
 **Errors:** `NOT_OWNED`, `NO_ACTIVE_SCENE`, `TRACK_LIMIT_EXCEEDED`, `ENGINE_ERROR`
 
@@ -230,6 +276,16 @@ await host.shufflePreset(copy.id);
 Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. There is no built-in FX rack — the inserts come from the plugins installed on the user's machine, discovered via `getAvailableFx()` (same `InstrumentDescriptor` shape as `getAvailableInstruments`, filtered to non-instrument plugins). Insert states persist per track and are re-applied when the project reopens.
 
 All FX methods are ownership-scoped and optional — feature-gate on `typeof host.getTrackExternalFx === 'function'`.
+
+### getAvailableFx()
+
+Optional. The FX (non-instrument) plugins scanned on this machine, for an FX picker. Served from a cache; the optional `rescanAvailableFx()` forces a slow re-scan (20 to 60 seconds) when the user installs a plugin mid-session.
+
+```typescript
+getAvailableFx(): Promise<InstrumentDescriptor[]>
+```
+
+---
 
 ### getTrackExternalFx(trackId)
 
@@ -362,6 +418,58 @@ copyTrackFxFrom(destTrackId: string, sourceTrackDbId: string): Promise<TrackFxCo
 
 ---
 
+## Panel Mix Bus
+
+Each plugin can have one mix bus per scene: a fader, mute, solo and an FX chain on the sum of its tracks, shown as a strip at the top of the panel. The host methods (`getPanelBusState`, `setPanelBusVolume`, `setPanelBusMute`, `setPanelBusSolo`, `loadPanelBusFx`, `removePanelBusFx`, `setPanelBusFxEnabled`, `movePanelBusFx`, `showPanelBusFxEditor`, `disengagePanelBus`) are optional and scoped to this plugin: a panel can never reach another panel's bus.
+
+Most panels do not call them directly. The `usePanelBus` hook reads and updates the bus (and recovers on its own if the first read fails during a slow project load), and `PanelMasterStrip` renders it:
+
+```tsx
+import { usePanelBus, PanelMasterStrip } from '@signalsandsorcery/plugin-sdk';
+
+const bus = usePanelBus(host, activeSceneId);
+
+// After creating a track, and at the end of reloading your tracks,
+// so new tracks join the bus right away (SDK 3.19.0):
+bus.notifyTracksChanged();
+
+// In your render: `supported` is false on hosts without the bus surface
+{bus.supported && bus.bus && (
+  <div ref={bus.meterVisibilityRef}>
+    <PanelMasterStrip
+      bus={bus.bus}
+      levels={bus.levels}
+      availableFx={bus.availableFx}
+      fxLoading={bus.fxLoading}
+      fxPickerOpen={bus.fxPickerOpen}
+      onToggleFxPicker={bus.setFxPickerOpen}
+      onRefreshFx={bus.refreshFx}
+      onVolumeChange={bus.onVolumeChange}
+      onMuteToggle={bus.onMuteToggle}
+      onSoloToggle={bus.onSoloToggle}
+      onAddFx={bus.onAddFx}
+      onRemoveFx={bus.onRemoveFx}
+      onToggleFxEnabled={bus.onToggleFxEnabled}
+      onShowFxEditor={bus.onShowFxEditor}
+    />
+  </div>
+)}
+```
+
+`notifyTracksChanged` has a stable identity, coalesces repeated calls, and does nothing on hosts without the bus surface. The `meterVisibilityRef` wrapper lets the hook stop metering while the strip is off screen.
+
+**PanelBusState:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `engaged` | `boolean` | `false` when the panel has no bus in this scene (flat routing) |
+| `volume` | `number` | Bus fader in dB (`0` = unity) |
+| `muted` | `boolean` | Bus mute |
+| `soloed` | `boolean` | Bus solo |
+| `fx` | `PanelBusFxEntry[]` | Bus FX chain, same shape as `TrackExternalFxEntry` |
+
+---
+
 ## MIDI Operations
 
 ### writeMidiClip(trackId, clip)
@@ -390,6 +498,7 @@ writeMidiClip(trackId: string, clip: MidiClipData): Promise<MidiWriteResult>
 | `durationBeats` | `number` | Duration in quarter-note beats |
 | `velocity` | `number` | Velocity 1–127 |
 | `channel` | `number` | MIDI channel 0–15 (default: 0) |
+| `slide` | `boolean` | Optional. The note deliberately overlaps the next one (a 303-style glide); `postProcessMidi` keeps that overlap instead of trimming it |
 
 **Returns:** `MidiWriteResult` with `notesInserted` count and actual `bars` covered.
 
@@ -417,6 +526,19 @@ Clear all MIDI from a track.
 
 ```typescript
 clearMidi(trackId: string): Promise<void>
+```
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
+
+---
+
+### readMidiNotes(trackId)
+
+Optional. Read a track's current MIDI for in-place editing (e.g. a piano roll). Returns every clip with beat-based notes in the same shape as `MidiClipData.notes`; an empty `clips` array means the track has no MIDI. Write edits back with the clip's own `startTime`/`endTime` so the clip length never changes.
+
+```typescript
+readMidiNotes(trackId: string): Promise<ReadMidiResult>
+// ReadMidiResult = { clips: Array<{ startTime: number; endTime: number; notes: PluginMidiNote[] }> }
 ```
 
 **Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`
@@ -498,7 +620,7 @@ generateAudioTexture(request: PluginAudioTextureRequest): Promise<PluginAudioTex
 | `durationSeconds` | `number` | scene length | Duration in seconds |
 | `bpm` | `number` | project BPM | Target BPM |
 
-**Returns:** `PluginAudioTextureResult` with `filePath` and `durationSeconds`.
+**Returns:** `PluginAudioTextureResult` with `filePath`, `durationSeconds`, and `cuePoints` (detected beat positions, or `null`; store them with `setCuePoints` after writing the clip).
 
 ---
 
@@ -585,6 +707,17 @@ getPluginState(trackId: string, pluginIndex: number): Promise<string>
 
 ---
 
+### setRawPluginState / getRawPluginState
+
+Like `setPluginState` / `getPluginState`, but in the plugin's own VST3/AU state format. Use these for third-party instruments whose patches do not survive the default format; Surge XT presets use `setPluginState`.
+
+```typescript
+setRawPluginState(trackId: string, pluginIndex: number, stateBase64: string): Promise<void>
+getRawPluginState(trackId: string, pluginIndex: number): Promise<string>
+```
+
+---
+
 ### getTrackPlugins(trackId)
 
 List plugins loaded on a track.
@@ -624,14 +757,44 @@ isPluginAvailable(pluginName: string): Promise<boolean>
 
 ---
 
-## Scene Context
+## Instrument Plugin Selection
 
-### getGenerationContext(excludeTrackId?)
-
-Get the full generation context for the active scene, including concurrent track MIDI data. Use `excludeTrackId` to omit the current track's data (common when generating for that track).
+Let users swap a track's instrument for any scanned VST3/AU synth.
 
 ```typescript
-getGenerationContext(excludeTrackId?: string): Promise<PluginGenerationContext>
+getAvailableInstruments(): Promise<InstrumentDescriptor[]>
+getTrackInstrument(trackId: string): Promise<InstrumentDescriptor | null> // null = default (Surge XT)
+setTrackInstrument(trackId: string, pluginId: string): Promise<void>      // keeps the track's MIDI
+showInstrumentEditor(trackId: string): Promise<void>                      // native editor window
+hideInstrumentEditor(trackId: string): Promise<void>
+```
+
+The track methods are ownership-scoped (**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND`).
+
+**InstrumentDescriptor** (also returned by `getAvailableFx`):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pluginId` | `string` | Stable plugin id (VST3 TUID or AU component id); pass it to `setTrackInstrument` or `loadTrackExternalFx` |
+| `name` | `string` | Display name |
+| `manufacturer` | `string` | Plugin manufacturer |
+| `type` | `'vst3' \| 'au' \| 'vst' \| 'internal'` | Plugin format |
+| `category` | `string` | Category from the scan |
+| `missing` | `boolean` | Optional. `true` when the plugin is no longer installed |
+
+---
+
+## Scene Context
+
+### getGenerationContext(excludeTrackId?, opts?)
+
+Get the full generation context for the active scene, including concurrent track MIDI data. Use `excludeTrackId` to omit the current track's data (common when generating for that track). Pass `opts.pinTrackDbIds` to always include those tracks in full as reference material (e.g. "write a counterpart to these"); other tracks share a note budget and may be trimmed.
+
+```typescript
+getGenerationContext(
+  excludeTrackId?: string,
+  opts?: { pinTrackDbIds?: readonly string[] }
+): Promise<PluginGenerationContext>
 ```
 
 **PluginGenerationContext:**
@@ -640,6 +803,7 @@ getGenerationContext(excludeTrackId?: string): Promise<PluginGenerationContext>
 |-------|------|-------------|
 | `chordProgression` | `object` | Key (`tonic`, `mode`), `chordsWithTiming`, `genre` |
 | `concurrentTracks` | `PluginConcurrentTrackInfo[]` | Other tracks with their MIDI, organized by chord |
+| `truncatedTrackCount` | `number` | Optional. Tracks dropped entirely to fit the note budget; tell the model its context is partial |
 
 ```typescript
 const ctx = await host.getGenerationContext(myTrack.id);
@@ -666,8 +830,9 @@ getMusicalContext(): Promise<MusicalContext>
 | `bpm` | `number` | Beats per minute (20–960) |
 | `bars` | `number` | Scene length in bars |
 | `genre` | `string \| null` | Genre hint: `'Drum & Bass'`, `'Lo-fi Hip Hop'`, etc. |
-| `timeSignature` | `string` | `'4/4'`, `'3/4'`, `'6/8'` |
+| `timeSignature` | `string` | The scene's meter: `'4/4'`, `'3/4'`, `'6/8'` |
 | `chordProgression` | `PluginChordTiming[]` | Chord symbols with quarter-note timing |
+| `contractPrompt` | `string \| null` | The scene's natural-language direction (e.g. `"dark psytrance, driving"`), or `null` if none is set |
 
 ---
 
@@ -814,13 +979,23 @@ getTransportState(): Promise<PluginTransportState>
 
 ---
 
+### onEngineReady(listener)
+
+Subscribe to the engine-ready event, fired when the engine finishes loading tracks (after a scene change or a project load). A good place to re-read your tracks, for example with `adoptSceneTracks()`.
+
+```typescript
+onEngineReady(listener: () => void): UnsubscribeFn
+```
+
+---
+
 ## LLM Access
 
-LLM methods are metered and require authentication. Check availability before use.
+LLM methods are metered and require authentication. Check availability before use. The generation methods also require `"requiresLLM": true` in the manifest's `capabilities` (otherwise they throw `CAPABILITY_DENIED`).
 
 ### generateWithLLM(request)
 
-Generate text or JSON via the host's authenticated LLM service.
+Generate text or JSON via the host's authenticated LLM service. By default the host prefixes your `user` prompt with the scene's musical context (key, BPM, chords, genre, direction).
 
 ```typescript
 generateWithLLM(request: LLMGenerationRequest): Promise<LLMGenerationResult>
@@ -834,6 +1009,8 @@ generateWithLLM(request: LLMGenerationRequest): Promise<LLMGenerationResult>
 | `user` | `string` | - | User prompt (the actual request) |
 | `maxTokens` | `number` | host default | Max tokens for response (host may cap) |
 | `responseFormat` | `string` | `'text'` | `'text'` or `'json'` |
+| `skipContextPrefix` | `boolean` | `false` | Set `true` to send your prompt without the musical-context prefix |
+| `thinkingLevel` | `'LOW' \| 'HIGH'` | host policy (low) | Reasoning depth. Leave unset; use `'HIGH'` only for genuinely hard multi-part problems (much slower) |
 
 **Returns:**
 
@@ -866,6 +1043,82 @@ Check if LLM access is available (user authenticated and gateway reachable).
 ```typescript
 isLLMAvailable(): Promise<boolean>
 ```
+
+---
+
+### generateWithLLMTools(request)
+
+Generate with native tool calling (function calling), for plugins that run an agent loop: the model asks for tool calls, you run them and send the results back on the next turn. The request and response mirror Gemini's `generateContent` shape (`contents`, `systemInstruction`, `tools`, `toolConfig`, `generationConfig`; the response has `candidates` and `usageMetadata`). The host adds credentials; your plugin never sees an API key.
+
+```typescript
+generateWithLLMTools(request: LLMToolUseRequest): Promise<LLMToolUseResponse>
+```
+
+Choose the model with a **role**, not a model id. The host maps each role to its current model, so a model upgrade never needs a plugin change (SDK 3.17.0):
+
+| Role | Use for |
+|------|---------|
+| `LLM_MODEL.BEST` | MIDI and counterpoint generation, agent tool use |
+| `LLM_MODEL.LIGHTWEIGHT` | Cheap, fast work: classification, summaries |
+
+```typescript
+import { LLM_MODEL } from '@signalsandsorcery/plugin-sdk';
+
+const response = await host.generateWithLLMTools({
+  model: LLM_MODEL.BEST,
+  systemInstruction: { parts: [{ text: 'You arrange drum parts.' }] },
+  contents: [{ role: 'user', parts: [{ text: 'Add a fill in bar 4' }] }],
+  tools: [{ functionDeclarations: [/* your tools */] }],
+});
+const parts = response.candidates[0]?.content.parts ?? [];
+```
+
+When you replay a model turn that contains a `functionCall`, send it back unchanged (including `thoughtSignature`), or the request is rejected.
+
+---
+
+## Agent Actions and Skills
+
+Agents (the in-app chat, the `sas` CLI and MCP clients) can use your plugin in two ways.
+
+### getSkills(): actions
+
+An optional `GeneratorPlugin` method that declares **actions**: tools an agent can call. Each is registered as `plugin:<pluginId>:<id>`. `PluginAction` is an alias of the `PluginSkill` type.
+
+```typescript
+getSkills?(): PluginSkill[]
+// PluginSkill = { id: string; description: string; inputSchema: { type: 'object'; properties?; required? }; isReadOnly?: boolean }
+```
+
+The `description` is what the model reads to decide when to call the action, so make it specific.
+
+### getAgentSkills(): knowledge
+
+An optional `GeneratorPlugin` method (SDK 3.20.0) that contributes **agent skills**: markdown know-how that tells an agent how to do a musical task well and which of your actions carry it out. Agents list skills by name and description and load a body only when a request needs it. The current Signals & Sorcery app does not load plugin agent skills yet; hosts that don't support them ignore the method, so it is safe to implement now.
+
+```typescript
+getAgentSkills?(): PluginAgentSkill[]
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | `string` | kebab-case, unique across all skills (prefix it with your domain, e.g. `'bass-voices'`) |
+| `description` | `string` | One line, at most 200 characters |
+| `body` | `string` | Markdown, at most 12,000 characters. Write `{{action:<id>}}` to refer to one of your actions; the host rewrites it to the registered tool name |
+| `whenToUse`, `category`, `tags`, `genres`, `roles` | optional | Help agents find the skill |
+| `relatedActions` | `string[]` | Optional. Ids of your actions the body relies on |
+
+A plugin may contribute up to 8 skills (`AGENT_SKILL_LIMITS`). Check them in a test:
+
+```typescript
+import { validatePluginAgentSkills } from '@signalsandsorcery/plugin-sdk';
+
+expect(validatePluginAgentSkills(plugin.getAgentSkills(), {
+  actionIds: plugin.getSkills().map((a) => a.id),
+})).toEqual([]);
+```
+
+The host side is `host.listAgentSkills()` (metadata of every installed skill) and `host.readAgentSkill(name)` (one skill with its body). Both are optional.
 
 ---
 
@@ -1021,7 +1274,7 @@ getDataDirectory(): string
 
 ## File System
 
-Requires the `fileDialog` capability in the manifest.
+`showOpenDialog` and `showSaveDialog` require the `fileDialog` capability in the manifest. `downloadFile` requires the URL's host in `network.allowedHosts`. `importFile` needs no capability.
 
 ### showOpenDialog(options)
 
@@ -1063,7 +1316,9 @@ Download a file to the plugin's data directory.
 downloadFile(url: string, filename: string, options?: PluginDownloadOptions): Promise<string>
 ```
 
-Returns the absolute path to the downloaded file.
+Returns the absolute path to the downloaded file. `PluginDownloadOptions`: `headers`, `overwrite` (default `false`), `timeoutMs` (default `120000`).
+
+**Errors:** `CAPABILITY_DENIED` (if the host is not in `allowedHosts`)
 
 ---
 
@@ -1166,7 +1421,9 @@ Import audio files into the sample library.
 importSamples(filePaths: string[]): Promise<PluginSampleImportResult>
 ```
 
-**Returns:** `{ imported: number, skipped: number, errors: string[] }`
+**Returns:** `{ imported: number, skipped: number, errors: string[], samples?: PluginImportedSample[] }`
+
+`imported` counts files already in the library too. `samples` (hosts on SDK 3.18.0 or later) lists each imported file in input order as `{ id, sourcePath, duplicate }`, where `duplicate` is `true` if the file was already in the library. Check `result.samples !== undefined` before relying on it.
 
 ---
 
@@ -1214,6 +1471,37 @@ for (const st of sampleTracks) {
 
 ---
 
+### timeStretchSample(sampleId, targetBpm)
+
+Time-stretch a sample to a target BPM. Returns the new sample's info.
+
+```typescript
+timeStretchSample(sampleId: string, targetBpm: number): Promise<PluginSampleInfo>
+```
+
+---
+
+### fitSampleToScene(sampleId)
+
+Fit a sample to the active scene: stretch it to the scene's BPM, then chop or loop it so the clip is exactly the scene's length. Results are cached, so repeat calls are instant. 4/4 scenes only; other meters throw `TIME_SIGNATURE_UNSUPPORTED`.
+
+```typescript
+fitSampleToScene(sampleId: string): Promise<PluginSampleInfo>
+```
+
+---
+
+### previewSample(filePath) / stopPreview()
+
+Audition an audio file without creating a track. A new `previewSample` call replaces the current preview; `stopPreview` is safe to call when nothing is playing.
+
+```typescript
+previewSample(filePath: string): Promise<void>
+stopPreview(): Promise<void>
+```
+
+---
+
 ## Notifications & Progress
 
 ### showToast(type, title, message?)
@@ -1228,19 +1516,17 @@ showToast(type: 'info' | 'success' | 'warning' | 'error', title: string, message
 
 ### setProgress(trackId, progress)
 
-Show a progress indicator on a track. Pass `-1` to hide.
+**Deprecated.** Still callable, but nothing in the app shows it. For a busy indicator use the `onLoading` prop from `PluginUIProps` (a spinner in the accordion header) or render your own progress UI.
 
 ```typescript
 setProgress(trackId: string, progress: number): void
 ```
 
-`progress` range: `0` to `100`, or `-1` to hide.
-
 ---
 
 ### setStatusMessage(message)
 
-Set a status message in the plugin's accordion header. Pass `null` to clear.
+**Deprecated.** Still callable, but nothing in the app shows it. Use `showToast()` or your own status text.
 
 ```typescript
 setStatusMessage(message: string | null): void
@@ -1316,6 +1602,9 @@ class PluginError extends Error {
 | `INCOMPATIBLE` | Plugin requires newer SDK version |
 | `CAPABILITY_DENIED` | Plugin lacks required capability in manifest |
 | `SECRET_NOT_FOUND` | Secret key doesn't exist |
+| `VALIDATION_ERROR` | Inputs failed validation |
+| `AUDIO_CAPTURE_DENIED` | Microphone permission denied or no input device available |
+| `TIME_SIGNATURE_UNSUPPORTED` | The scene's time signature is outside the manifest's `supportedTimeSignatures` |
 
 ```typescript
 import { PluginError } from '@signalsandsorcery/plugin-sdk';

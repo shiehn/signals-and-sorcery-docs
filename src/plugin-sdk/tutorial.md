@@ -31,6 +31,13 @@ cd ~/Library/Application\ Support/signals-and-sorcery/plugins/euclidean-rhythm
 Easier shortcut: open **Settings → Plugins → Open Folder** in the app to
 reveal the correct plugins directory, then `cd` into it.
 
+Install the SDK, its React peer dependencies, and a bundler:
+
+```bash
+npm init -y
+npm install --save-dev @signalsandsorcery/plugin-sdk react react-dom @types/react typescript tsup
+```
+
 ### plugin.json
 
 ```json
@@ -40,8 +47,8 @@ reveal the correct plugins directory, then `cd` into it.
   "version": "1.0.0",
   "description": "Generate polyrhythmic patterns using the Euclidean algorithm",
   "generatorType": "midi",
-  "main": "index.js",
-  "minHostVersion": "1.0.0",
+  "main": "dist/index.js",
+  "minHostVersion": "3.0.0",
   "capabilities": {
     "requiresSurgeXT": true
   },
@@ -207,6 +214,9 @@ export class EuclideanRhythmPlugin implements GeneratorPlugin {
     // Could auto-regenerate here if desired
   }
 }
+
+// The host loads the default export: an instance of the plugin class
+export default new EuclideanRhythmPlugin();
 ```
 
 ## Step 4: React UI Component
@@ -220,7 +230,7 @@ import { euclidean } from '../lib/euclidean';
 import type { PatternConfig, LayerConfig } from '../index';
 import { DEFAULT_CONFIG } from '../index';
 
-export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIProps) {
+export function EuclideanPanel({ host, activeSceneId, isConnected, onLoading }: PluginUIProps) {
   const [config, setConfig] = React.useState<PatternConfig>(DEFAULT_CONFIG);
   const [isGenerating, setIsGenerating] = React.useState(false);
 
@@ -251,7 +261,7 @@ export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIPro
   const handleGenerate = async () => {
     if (!activeSceneId || !isConnected) return;
     setIsGenerating(true);
-    host.setStatusMessage('Generating...');
+    onLoading?.(true); // spinner in the accordion header
 
     try {
       // Get or create our track
@@ -265,8 +275,6 @@ export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIPro
           loadSynth: true,
         });
       }
-
-      host.setProgress(track.id, 30);
 
       // Get musical context
       const context = await host.getMusicalContext();
@@ -294,8 +302,6 @@ export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIPro
         }
       }
 
-      host.setProgress(track.id, 60);
-
       // Post-process for swing and humanization
       const processed = await host.postProcessMidi(allNotes, {
         quantize: false,            // Already on grid from algorithm
@@ -303,8 +309,6 @@ export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIPro
         humanize: config.humanize,
         removeOverlaps: true,
       });
-
-      host.setProgress(track.id, 80);
 
       // Write to track
       const secondsPerBeat = 60 / context.bpm;
@@ -315,15 +319,13 @@ export function EuclideanPanel({ host, activeSceneId, isConnected }: PluginUIPro
         notes: processed,
       });
 
-      host.setProgress(track.id, -1);
-      host.setStatusMessage(null);
       host.showToast('success', 'Pattern Generated',
         `${processed.length} notes across ${config.layers.filter(l => l.enabled).length} layers`
       );
     } catch (err) {
-      host.setStatusMessage(null);
       host.showToast('error', 'Generation Failed', String(err));
     } finally {
+      onLoading?.(false);
       setIsGenerating(false);
     }
   };
@@ -498,10 +500,10 @@ const clipDuration = totalBeats * secondsPerBeat;
 
 ## Step 6: Install and Test
 
-1. Build your TypeScript to JavaScript (the host loads the `main` entry from `plugin.json`):
+1. Bundle your TypeScript into `dist/index.js` (the `main` entry in `plugin.json`), keeping React and the SDK external as the plugin template does:
 
 ```bash
-npx tsc --outDir .
+npx tsup index.ts --format cjs --external react --external react-dom --external @signalsandsorcery/plugin-sdk
 ```
 
 2. Restart Signals & Sorcery
@@ -528,7 +530,7 @@ Ideas for extending this plugin:
 - **MIDI pitch mapping**: let users assign any MIDI note per layer
 - **Preset management**: save/load pattern configurations using `host.savePluginPreset()`
 - **Live preview**: use `host.auditionNote()` to preview patterns before committing
-- **LLM-assisted patterns**: use `host.generateWithLLM()` to suggest interesting step/pulse combinations based on the genre
+- **LLM-assisted patterns**: use `host.generateWithLLM()` to suggest interesting step/pulse combinations based on the genre (declare `"requiresLLM": true` in `capabilities` first)
 - **Transport sync**: use `host.onDeckBoundary()` to regenerate patterns on each loop
 
 See the [API Reference](./api-reference.md) for the complete list of available methods.

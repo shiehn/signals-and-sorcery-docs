@@ -25,10 +25,11 @@ via `suggestedFix`, and the relationship to checkpoints.
 |---|---|
 | Multi-step musical change ("make a beat", "add bass + drums + keys") | Plan loop |
 | One-shot read ("what scenes exist?") | `sas inspect …` directly |
-| One-shot mutation already covered by a composite (`compose_scene`) | Either; composites auto-apply with a checkpoint |
+| One-shot mutation already covered by a composite (`compose_scene`) | Either. The creative shortcuts (`sas make beat`, `revise_track`, `revise_scene`) run the loop for you, checkpoint included; `compose_scene` and the other composites don't checkpoint |
 | Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`) |
 | Anything you might want to undo | Plan loop |
 | State-dependent change ("revise the bass darker") | Plan loop; the validator catches missing preconditions |
+| Arranging scenes into a song ("the chorus twice after the verse") | The [arrangement tools](./for-agents.md#arrangement-tools) directly; they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
 
 The non-loop tools are still there. The loop is a *higher-leverage* path
 for changes the agent expects to think about: it forces a state check,
@@ -206,7 +207,7 @@ even before the engine has assigned IDs.
   "warnings": [
     {
       "path": "$.preconditions.bpm",
-      "code": "bpm_drift",
+      "code": "tempo_drift",
       "message": "Plan asks for 90 BPM; scene is 85 BPM. Will use scene tempo."
     }
   ],
@@ -229,16 +230,24 @@ even before the engine has assigned IDs.
 Errors block `apply`. Warnings don't, but agents should surface them
 to the user.
 
-### Common error codes
+### Error and warning codes
 
 | Code | Meaning | Typical `suggestedFix` |
 |------|---------|------------------------|
-| `missing_precondition` | A required `preconditions.*` flag isn't satisfied | Tool that creates the missing state (`list_projects`, `scene_activate`, …) |
+| `missing_field` | A required Plan field is absent | None; fix the Plan |
+| `unsupported_schema_version` | `metadata.plan_schema_version` isn't one this app reads | Re-create the plan with `sas plan` |
+| `empty_steps` | The Plan has no steps | None; re-plan |
+| `duplicate_step_id` | Two steps share the same id | Regenerate ids; the convention is `${plan.id}.${idx}.${type}` |
 | `unknown_step_type` | Step `type` not registered in ToolRegistry | None; the agent should pick a different action |
 | `unresolved_reference` | `${steps.…}` placeholder references a non-existent step | Reorder steps; verify ids |
-| `duplicate_step_id` | Two steps share the same id | Regenerate ids; the convention is `${plan.id}.${idx}.${type}` |
-| `invalid_chord` | Chord token doesn't parse via `parseChordString` | Use `Root:type` form (`C#:min`, `G:7`, …) |
-| `capacity_exceeded` | Track count exceeds scene capacity (default 12) | Drop tracks or increase capacity |
+| `forward_reference` | A step refers to the output of a later step | Reorder steps |
+| `unknown_output_key` | A `${steps.<id>.outputs.<key>}` names an output that step doesn't produce | Use an output the step returns |
+| `missing_precondition` | A required `preconditions.*` flag isn't satisfied | Tool that creates the missing state (`list_projects`, `scene_activate`, …) |
+| `scene_not_found` / `track_not_found` | The plan names a scene or track that doesn't exist | Inspect first, then use a real name or id |
+
+Warnings (they don't block `apply`): `tempo_drift` (the plan's tempo
+differs from the scene's) and `high_track_count` (the plan creates more
+than 12 tracks).
 
 ## Error recovery via `suggestedFix`
 
@@ -255,7 +264,7 @@ FIX=$(sas validate /tmp/plan.json --json \
   | jq -c '.data.changes.validation.errors[0].suggestedFix // empty')
 if [ -n "$FIX" ]; then
   TOOL=$(echo "$FIX" | jq -r .tool)
-  sas "$TOOL" --json "$(echo "$FIX" | jq .args)"
+  sas run "$TOOL" --json-body "$(echo "$FIX" | jq -c .args)"
   sas validate /tmp/plan.json    # re-check
 fi
 ```
@@ -267,8 +276,8 @@ the engine needs.
 ## Checkpoints: the safety net
 
 Every `apply` call auto-creates a checkpoint named
-`pre-apply-<plan.id>-<timestamp>`. Override the name with
-`--checkpoint <name>`. Disable with `--skip-checkpoint` (rare; use
+`pre-apply-<plan.id>` (plan ids already carry a timestamp). Override the
+name with `--checkpoint <name>`. Disable with `--skip-checkpoint` (rare; use
 when the caller is itself a higher-level reversible flow).
 
 What's captured:
@@ -293,8 +302,10 @@ Restoration is a single SQLite transaction + sequence of engine RPCs.
 Total time target: <2s for typical projects (≤20 tracks). In-flight
 renders are cancelled.
 
-Checkpoints expire after 24h by default. `sas history prune` evicts
-expired ones; eviction also runs at app startup.
+Checkpoints from the CLI and from `apply` expire after 24 h; checkpoints
+made through MCP expire after 1 h, and workflow checkpoints after 6 h.
+`sas history prune` evicts expired ones; eviction also runs at app
+startup.
 
 ## Where each verb fits
 
@@ -326,8 +337,8 @@ sas plan "add a sub bass" --type track_revise --plan-out plan.json
 ### Validate with `validate`
 
 Always validate before `apply`. Validation is fast (no engine RPCs); it
-checks schema, preconditions, idempotency-reference correctness, and
-musical validity (chord tokens, etc.).
+checks the schema, preconditions, step references, and that the scenes
+and tracks a plan names exist.
 
 ### Apply with `apply`
 
@@ -367,9 +378,13 @@ hit the cache.
 
 ## Composite tools: same loop, less typing
 
-`compose_scene`, `add_instrument`, `play_scene`, `render_to_performance`,
-and `create_transition` already follow the same pattern under the hood:
-they emit a plan, validate it, auto-checkpoint, apply, and report.
+The creative shortcuts `make_beat` (`sas make beat`), `revise_track` and
+`revise_scene` follow the same pattern under the hood: they emit a plan,
+validate it, auto-checkpoint, apply, and report. The other composites
+(`compose_scene`, `compose_contract`, `add_instrument`, `play_scene`,
+`render_to_performance`) call the tools directly and don't create a
+checkpoint; save one first with `sas history checkpoint <name>` if you
+may want to go back.
 
 Use composites when the workflow is well-trodden. Drop down to the
 plan loop when:

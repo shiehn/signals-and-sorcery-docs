@@ -1,148 +1,102 @@
 ---
 sidebar: auto
+title: Audio Output
 ---
 
-# Audio Routing Modes
+# Audio Output
 
-Signals & Sorcery supports a performance workflow where the performer can audition and generate privately while the audience hears only approved output. Routing is explicit and predictable on macOS (Core Audio) and Windows (WASAPI), with no paid dependencies required. Where this guide mentions the BlackHole virtual audio device (macOS), the Windows equivalent is [VB-Audio Virtual Cable](https://vb-audio.com/Cable/).
+Signals & Sorcery plays everything on **one stereo output**: the scene you are
+composing, the arrangement and previews. There is nothing to route
+by hand. Any output works, from built-in speakers and headphones to a multi-output
+audio interface, on macOS (Core Audio) and Windows (WASAPI).
 
-## Concepts
+## Where to set it
 
-### Buses
+Open **Settings → Audio In / Out**.
 
-- **Cue Bus**: Private monitoring for the performer (headphones)
-- **Master Bus**: Public output (PA or stream)
-- **Monitor Mix** (optional): What the performer hears when blending Cue + Master
+### Output device
 
-### Channel Pairs
+The panel shows the current output device and how many channels it has.
 
-A "channel pair" is a stereo output pair on your audio interface:
+- **Follow system output device** (on by default): Signals & Sorcery switches
+  automatically when your computer's default output changes, for example when you
+  plug in headphones or an interface.
+- To use a different device, change the system output (the **Change device in
+  System Preferences** link opens the macOS sound settings; on Windows use the
+  Sound settings), or turn the checkbox off to stay on the current device.
+
+### Output channels
+
+If your interface has more than one stereo pair, choose the pair under **Output
+Channels** (for example **Channels 3-4**). Devices with a single pair show
+**Outputs 1-2**.
 
 | Pair | Outputs |
 |------|---------|
-| A    | 1-2     |
-| B    | 3-4     |
-| C    | 5-6     |
+| 1    | 1-2     |
+| 2    | 3-4     |
+| 3    | 5-6     |
 | etc. | ...     |
 
----
+If you pick a pair and later switch to a device that doesn't have it, Signals &
+Sorcery plays on that device's first pair and uses your pair again when a device
+that has it is connected.
 
-## Mode 1: Solo Mode
+### Buffer size
 
-**One output device, one stereo pair**
+**Buffer Size (latency)** sets how much audio the engine prepares ahead, from 128
+to 4096 samples. Larger buffers are safer against clicks and dropouts on busy
+projects; smaller ones feel more immediate. If you hear crackles, raise it. A new
+buffer size takes effect after **Restart engine now**.
 
-### Use Case
+The engine runs at your device's sample rate.
 
-A solo user on a laptop with a single stereo output can listen to the composition deck (Cue) or Master output, but only one at a time.
+### Input
 
-### Minimum Hardware
-
-- Any Mac with a single stereo output (built-in, USB dongle, etc.)
-- Headphones or speakers
-
-### Routing
-
-- SAS uses exactly **one stereo output pair** (e.g., outputs 1-2)
-- Select a **Solo Listen Source**: `Cue` or `Master`
-- SAS routes the selected source to the stereo pair
-- All other sources are muted
-
-### Settings
-
-| Setting | Description |
-|---------|-------------|
-| Output Device | CoreAudio device to use |
-| Output Pair | Channel pair (default 1-2) |
-| Solo Listen Source | Which bus to monitor |
+The same panel sets the input device for recording, a latency calibration, and the
+input gain with a level meter.
 
 ---
 
-## Mode 2: Performance Mode
+## Master FX (monitor only)
 
-**Cue to headphones, Master to PA**
-
-### Use Case
-
-Performer generates and auditions privately in headphones while the audience hears only approved Master output on the PA system.
-
-### Hardware Requirements
-
-Performance Mode requires a CoreAudio device with **two independent stereo outputs**:
-- One for **Cue (headphones)**
-- One for **Master (PA)**
-
-**Recommended:**
-- Multi-output USB audio interface with at least **4 outputs** (two stereo pairs)
-- USB audio interface with built-in headphone output (appears as a CoreAudio device)
-
-### Routing
-
-| Bus | Destination | Example |
-|-----|-------------|---------|
-| Cue | Headphones pair | Outputs 1-2 |
-| Master | PA pair | Outputs 3-4 |
-
-### Device Capability Check
-
-When selecting an output device, SAS detects the number of output channels. If fewer than 4 outputs are available:
-
-::: warning
-Performance Mode requires two independent stereo outputs (Cue + Master). Select a device with at least 4 outputs.
-:::
-
-### Settings
-
-| Setting | Description |
-|---------|-------------|
-| Output Device | CoreAudio device |
-| Cue Output Pair | Channel pair for headphones |
-| Master Output Pair | Channel pair for PA |
-| Headphone Blend | Optional mix of Cue + Master |
-
-### Important
-
-- Cue never leaks to Master output
-- Master never interrupts Cue auditioning
-- Switching scenes does not cause outputs to swap
+The **Master** strip on the right of the transport bar has a **MASTER FX** toggle.
+It opens a chain of monitor-only effects for your listening setup, such as room
+correction or headphone virtualization. These effects are **never printed** to
+renders, freezes or exports, so your files stay clean.
 
 ---
 
-## Mode Comparison
+## Streaming
 
-| Feature | Solo | Performance |
-|---------|------|-------------|
-| Minimum outputs | 2 | 4 |
-| Simultaneous Cue + Master | No | Yes |
-| Best for | Practice, solo production | Live PA performance |
+To send Signals & Sorcery to OBS or a similar app, make a virtual audio device your
+system output ([BlackHole](https://existential.audio/blackhole/) on macOS,
+[VB-Audio Virtual Cable](https://vb-audio.com/Cable/) on Windows) and capture it
+in your streaming app. On macOS, a **Multi-Output Device** (Audio MIDI Setup) that
+combines BlackHole and your headphones lets you hear the stream too.
 
----
-
-## Error Handling
-
-### Device Unplugged
-
-If the selected device is unplugged, SAS will:
-- Fall back to built-in output
-- Switch to Solo Mode
-- Display a warning
-
-### Insufficient Outputs
-
-If the selected device doesn't have enough outputs for the chosen mode:
-- Performance mode will be disabled
-- User must select a device with more outputs or switch to Solo Mode
+Bypass the Master FX while streaming: monitor-only correction is meant for your
+room or headphones, not for your audience.
 
 ---
 
-## Configuration Reference
+## If a device disappears
 
-Audio settings are stored with the following structure:
+If the output device is unplugged, Signals & Sorcery falls back to the built-in
+output and shows a warning.
+
+---
+
+## Configuration reference
+
+Audio settings are stored with the following keys:
 
 | Key | Values | Description |
 |-----|--------|-------------|
-| `mode` | `solo`, `performance` | Current routing mode |
-| `outputDeviceId` | string | Selected CoreAudio device |
-| `soloOutputPair` | number | Channel pair for Solo mode |
-| `cueOutputPair` | number | Channel pair for Cue bus |
-| `masterOutputPair` | number | Channel pair for Master bus |
-| `soloListenSource` | `cue`, `master` | Solo mode source selection |
+| `outputDeviceId` | string | The selected output device |
+| `outputPair` | a channel pair (1-based, e.g. outputs 1-2) | The one stereo pair everything plays on |
+| `followSystemDefault` | boolean | Follow the system's default output device |
+| `inputDeviceId` | string | The input device for recording (empty = none) |
+
+Settings saved by older versions (with separate cue and main outputs) are converted
+automatically when the app starts.

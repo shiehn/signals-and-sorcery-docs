@@ -30,7 +30,7 @@ If you only want to use an existing plugin, skip this page and read
 
 ## Prerequisites
 
-- **Signals & Sorcery** v2.24.0 or later; install the matching SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v2.7.0)
+- **Signals & Sorcery** v4.2.0 or later (plugin SDK contract 3.x); install the SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v3.20.1)
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
@@ -42,11 +42,15 @@ The Plugin SDK is published as an npm package with types, UI components, and hoo
 npm install @signalsandsorcery/plugin-sdk
 ```
 
+`react` and `react-dom` 18+ are peer dependencies. Keep React and the SDK out of your bundle by marking all three as external, as the template's `tsup.config.ts` does.
+
 This gives you:
 - **TypeScript types**: `GeneratorPlugin`, `PluginHost`, `PluginUIProps`, and all supporting types
-- **UI Components**: `TrackRow`, `VolumeSlider`, `PanSlider`, `SorceryProgressBar`, `InstrumentDrawer`
-- **Hooks**: `useSceneState` (scene-keyed state management)
-- **Constants**: `PLUGIN_SDK_VERSION` (the valid track roles are fetched at runtime via `host.getValidRoles()`, not shipped as a static constant)
+- **UI Components**: `TrackRow`, `TrackDrawer`, `VolumeSlider`, `PanSlider`, `SorceryProgressBar`, `PanelMasterStrip`
+- **Hooks**: `useSceneState` (scene-keyed state management), `usePanelBus` (panel mix bus), `useAnySolo`
+- **Constants**: `PLUGIN_SDK_VERSION` and `LLM_MODEL` (model roles). The valid track roles are fetched at runtime via `host.getValidRoles()`, not shipped as a static constant
+
+Host methods added in recent SDK versions are typed as optional on `PluginHost`. Feature-detect them (`typeof host.method === 'function'`) so your plugin still runs on older releases of the app.
 
 ```typescript
 // Import types for your plugin class
@@ -66,7 +70,8 @@ These pre-built components match the host app's visual style (Tailwind CSS class
 | `VolumeSlider` | Compact horizontal volume slider (0-1) with dB tooltip |
 | `PanSlider` | Compact horizontal pan slider (-1 to +1) with double-click to center |
 | `SorceryProgressBar` | Animated progress bar with time-based pacing for long operations |
-| `InstrumentDrawer` | Searchable grid of available VST3/AU instrument plugins |
+| `TrackDrawer` | Per-track drawer with tabs for FX, the instrument picker, sound history, import, MIDI editing and freeze. A tab appears when you pass its callbacks. `InstrumentDrawer` is kept as an alias |
+| `PanelMasterStrip` | The panel's mix bus strip (fader, mute/solo, meter, bus FX). Drive it with the `usePanelBus` hook |
 
 ### useSceneState Hook
 
@@ -75,8 +80,11 @@ Maintains separate state per scene: when the user switches scenes, state is pres
 ```typescript
 import { useSceneState } from '@signalsandsorcery/plugin-sdk';
 
+// Hoist object/array initial values to module level so the setters stay stable
+const EMPTY_PROMPTS: Record<string, string> = {};
+
 // Inside your React component:
-const [prompts, setPrompts, setPromptsForScene] = useSceneState(activeSceneId, {});
+const [prompts, setPrompts, setPromptsForScene] = useSceneState(activeSceneId, EMPTY_PROMPTS);
 // prompts = state for current scene
 // setPrompts(value) = update current scene
 // setPromptsForScene(sceneId, value) = update a specific scene (for async callbacks)
@@ -123,11 +131,11 @@ Every plugin requires a `plugin.json` manifest in its root directory:
   "version": "1.0.0",
   "description": "A short description of what this plugin does",
   "generatorType": "midi",
-  "main": "index.js",
+  "main": "dist/index.js",
   "icon": "assets/icon.svg",
   "author": "Your Name",
   "license": "MIT",
-  "minHostVersion": "1.0.0",
+  "minHostVersion": "3.0.0",
   "capabilities": {}
 }
 ```
@@ -141,7 +149,7 @@ Every plugin requires a `plugin.json` manifest in its root directory:
 | `version` | `string` | Semver version string (e.g., `1.0.0`) |
 | `description` | `string` | Short description for the settings panel |
 | `generatorType` | `string` | One of: `midi`, `audio`, `sample`, `hybrid` |
-| `main` | `string` | Entry point file relative to plugin root |
+| `main` | `string` | Built entry file relative to plugin root (e.g., `dist/index.js`) |
 
 ### Optional Fields
 
@@ -150,9 +158,12 @@ Every plugin requires a `plugin.json` manifest in its root directory:
 | `icon` | `string` | 24x24 icon: data URL or relative path from plugin directory |
 | `author` | `string` | Plugin author name |
 | `license` | `string` | License identifier |
-| `minHostVersion` | `string` | Minimum SDK version required (e.g., `1.0.0`) |
+| `minHostVersion` | `string` | Minimum plugin SDK contract version the host must provide (e.g., `3.0.0`). Compared with the host's SDK version, not the app version |
 | `capabilities` | `object` | Required capabilities (see below) |
-| `settings` | `object` | JSON Schema for auto-rendered settings form |
+| `settings` | `object` | Setting definitions keyed by name (`type`, `label`, `default`, and so on), the same shape as `getSettingsSchema().properties` |
+| `renderer` | `string` | Path to a UMD bundle of your panel UI (e.g., `dist/ui.bundle.js`). The app window loads it to show an installed plugin's panel; the bundle registers its component on `window.SASPlugin_<id>` (the id with `@` dropped, `/` as `__`, other symbols as `_`) as `default` or `Panel` |
+| `repository` | `string` | Source repository URL |
+| `supportedTimeSignatures` | `string[] \| '*'` | Scene meters the plugin can write for: exact meters (`'3/4'`), denominator families (`'*/8'`), or `'*'` for any. Absent means `['4/4']`; in other meters the host disables the panel and refuses content writes with `TIME_SIGNATURE_UNSUPPORTED` |
 | `builtIn` | `boolean` | Reserved for built-in plugins |
 
 ### Generator Types
@@ -184,15 +195,17 @@ Capabilities declare what platform features your plugin needs. The host enforces
 
 | Capability | Default | Description |
 |-----------|---------|-------------|
-| `requiresLLM` | `false` | Plugin needs access to `generateWithLLM()` |
-| `requiresSurgeXT` | `false` | Plugin needs the Surge XT synthesizer |
+| `requiresLLM` | `false` | Plugin needs access to `generateWithLLM()` and `generateWithLLMTools()` |
+| `requiresSurgeXT` | `false` | Plugin needs the Surge XT synthesizer (gates `loadSynthPlugin()`, `setSynthParameters()` and `applySurgeFxpPreset()`) |
 | `requiresNetwork` | `false` | Plugin makes HTTP requests |
-| `network.allowedHosts` | `[]` | Specific hosts the plugin can reach via `httpRequest()` |
+| `network.allowedHosts` | `[]` | Exact hostnames the plugin can reach via `httpRequest()` and `downloadFile()` |
 | `fileDialog` | `false` | Plugin can show native file open/save dialogs |
+| `audioCapture` | `false` | Plugin records from a microphone or line input (`startTrackRecording()` and related methods) |
+| `externalApps` | `[]` | Process names of desktop apps the plugin may drive via `automateExternalApp()` |
 
 ## Implementing GeneratorPlugin
 
-Your entry point module must export a class that implements the `GeneratorPlugin` interface:
+Your entry point module implements the `GeneratorPlugin` interface in a class and exports an instance of it as the default export (a named `plugin` export also works). The host checks that export for `activate()`, `deactivate()` and `getUIComponent()`:
 
 ```typescript
 import type {
@@ -280,18 +293,20 @@ export class MyPlugin implements GeneratorPlugin {
     // Use this to update UI or recalculate patterns
   }
 }
+
+export default new MyPlugin();
 ```
 
 ### Lifecycle
 
 1. **Discovery**: Host scans plugin directories for `plugin.json` manifests
 2. **Registration**: Plugin is registered with its manifest metadata
-3. **Version check**: Host verifies `minHostVersion` compatibility
+3. **Version check**: Host compares `minHostVersion` with its plugin SDK version; a newer requirement marks the plugin incompatible
 4. **Activation**: `activate(host)` is called with the scoped `PluginHost` instance
 5. **Running**: Plugin renders UI, responds to events, creates tracks/MIDI
 6. **Deactivation**: `deactivate()` is called (5-second timeout)
 
-If `activate()` throws, the plugin is marked as **failed** and its accordion section shows an error boundary.
+If `activate()` throws, the plugin is marked as **failed** and is not rendered.
 
 ## Building the UI Component
 
@@ -305,7 +320,7 @@ interface PanelState {
   trackCount: number;
 }
 
-export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: PluginUIProps) {
+export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected, onLoading }: PluginUIProps) {
   const [state, setState] = React.useState<PanelState>({
     isGenerating: false,
     trackCount: 0,
@@ -326,19 +341,19 @@ export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: P
     }
 
     setState(prev => ({ ...prev, isGenerating: true }));
+    onLoading?.(true); // spinner in the accordion header
     try {
       const track = await host.createTrack({ name: 'My Track', role: 'lead' });
-      host.setProgress(track.id, 50);
 
       const context = await host.getMusicalContext();
       // ... generate notes ...
 
       await host.writeMidiClip(track.id, { /* ... */ });
-      host.setProgress(track.id, -1); // hide progress
       host.showToast('success', 'Done', 'Pattern generated');
     } catch (err) {
       host.showToast('error', 'Failed', String(err));
     } finally {
+      onLoading?.(false);
       setState(prev => ({ ...prev, isGenerating: false }));
     }
   };
@@ -369,6 +384,9 @@ export function MyPanel({ host, activeSceneId, isAuthenticated, isConnected }: P
 | `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
 | `onOpenContract` | `(() => void) \| null` | Callback to open the contract/chords section |
 | `onExpandSelf` | `(() => void) \| null` | Callback to expand this plugin's own accordion section |
+| `isExpanded` | `boolean` | Whether this plugin's accordion section is open (the panel stays mounted while collapsed) |
+
+All props except `host`, `activeSceneId`, `isAuthenticated` and `isConnected` are optional; guard callbacks with `?.`.
 
 ### PluginSceneContext
 
@@ -385,6 +403,9 @@ Provides scene-level musical context to the UI without requiring an async call.
 | `bars` | `number` | Scene length in bars |
 | `hasTracks` | `boolean` | Whether any synth tracks exist in this scene |
 | `isBulkGenerating` | `boolean` | Whether bulk generation is currently in progress |
+| `timeSignature` | `string` | Optional. The scene's meter as `"N/D"` (e.g. `'3/4'`); treat absent as `'4/4'` |
+| `chordTiming` | `PluginChordTiming[]` | Optional. Chord segments with quarter-note timing, for drawing harmony against time |
+| `sceneType` | `'scene' \| 'transition'` | Optional. `'transition'` for a scene that bridges two other scenes |
 
 ### BulkAddPlaceholderTrack
 
@@ -460,6 +481,7 @@ const unsub = host.settings.onChange((key, value) => {
 | `TRACK_LIMIT_EXCEEDED` | Created more than 16 tracks in one scene | Delete unused tracks or increase limit |
 | `CAPABILITY_DENIED` | Called a gated method without the manifest capability | Add the required capability to `plugin.json` |
 | `INCOMPATIBLE` | Plugin's `minHostVersion` is newer than the host | Update Signals & Sorcery or lower the version requirement |
+| `TIME_SIGNATURE_UNSUPPORTED` | Wrote content in a scene whose meter the manifest does not declare | Add the meter to `supportedTimeSignatures` once your plugin handles it |
 
 ### Tips
 

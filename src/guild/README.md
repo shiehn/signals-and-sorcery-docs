@@ -8,7 +8,7 @@ sidebar: auto
 
 ## What is Signals & Sorcery?
 
-Signals & Sorcery is a **Generative Audio Workstation (GAW)**, a new category of music tool built around contract-based composing. Define musical contracts (key, chords, tempo, bars), then generate MIDI with **Gemini** and audio with **Stable Audio** and **Lyria**. All generators run on an extensible **Plugin SDK**, with hardware-level headphone/main output routing for live performance.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)**, a new category of music tool built around contract-based composing. Define musical contracts (key, chords, tempo, bars), then generate MIDI with **Gemini** and audio with **Stable Audio** and **Lyria**. All generators run on an extensible **Plugin SDK**, and an Arrange mode turns your scenes into full songs.
 
 ## The Vision
 
@@ -46,7 +46,7 @@ Forever grateful for any feedback:
 - macOS (Apple Silicon) or Windows 10/11 (64-bit)
 - 4GB RAM minimum (8GB recommended)
 - Internet connection for generative features
-- Audio interface with 4+ outputs (recommended for performance with headphone/main separation)
+- Any stereo audio output (built-in audio, headphones or an interface)
 
 ## Support
 
@@ -63,7 +63,7 @@ Forever grateful for any feedback:
 A: Yes, you just need a Google account and Surge XT (free synthesizer, auto-installed).
 
 **Q: What audio interfaces work best?**
-A: Any interface with 4+ outputs works for the full dual-deck experience. Built-in audio works for Solo Mode.
+A: Any Core Audio (macOS) or WASAPI (Windows) device works, and built-in audio is fine. On a multi-output interface you can pick which stereo pair Signals & Sorcery plays on.
 
 **Q: Can I use it offline?**
 A: No, the app requires an internet connection for music generation.

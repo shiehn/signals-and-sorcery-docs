@@ -14,33 +14,49 @@ Define a musical contract and generate within those constraints:
 - **Lyria** generates audio for texture and atmosphere
 - All tracks in a scene share the same contract for coherent compositions
 
-### 🎛️ Dual-Deck Performance Workflow
-Built around the core concept of private preview and public performance:
+### 🎼 Arrange Mode
+Lay your scenes out as a full song, by hand, without leaving the app:
 
-- **Composition Deck** - Generate and preview clips in headphones
-- **Performance Deck** - Play approved clips for your audience
+- **Compose on top, arrange at the bottom**: drop scenes onto a horizontal timeline, repeat them, and reorder them
+- **Copies and linked copies**: edit one chorus and every linked chorus follows
+- **Paint layers bar by bar**, including layers borrowed from other scenes, which keep their own scene's bus
+- **Your real mix**: faders, pan and panel bus effects stay live while the song plays; only sound changes re-render
+
+[Arrange Mode guide →](/arrange/)
 
 ### 🧩 Extensible Plugin SDK
-All built-in generators and tools run on the Plugin SDK:
+All built-in panels run on the Plugin SDK. These are on by default:
 
-- **Synth Generator** - MIDI generation with Gemini, played through Surge XT or any VST3/AU instrument
-- **Drum Generator** - Drum-pattern MIDI generation with a built-in sample-based drum sampler
-- **Instrument Generator** - MIDI generation for pitched, polyphonic sample-based instruments
-- **Loops** - Sample / loop library browser with FX chains and time-stretching
-- **Stems** - Audio-from-text generation with Lyria, with optional stem splitting
-- **Chat** - Conversational assistant that builds and edits your scene from natural-language prompts
-- **Recorder** - Loop-aware microphone recording (opt-in)
+- **Drums** - Drum-pattern MIDI with a built-in sample-based drum sampler
+- **Instruments** - Pitched, polyphonic sample-based instruments
+- **Synths** - MIDI generation played through Surge XT or any VST3/AU instrument
+- **Bass** - One monophonic bassline from your description
+- **Ensemble** - Two to six voices written together, for Strings, Horns or Winds
+- **Arpeggiator** - A repeating arp pattern designed from your description
+- **Pads** - The scene's chords voiced as sustained pads that rotate across Surge XT patches
+- **Loops** - Audio loop and sample browser with time-stretching and effects
+
+Turn these on in the plugins panel when you want them:
+
+- **Stems** - Audio from text prompts, with optional stem splitting
+- **Chat** - An assistant that builds and edits your scene from plain-language requests
+- **Recorder** - Loop-aware microphone recording
+- **Animate** - Movement over time: pumper, autopan, tremolo, trance gate, filter sweeps, risers, ducking and more
+- **Mix Assets** - A palette of hits, risers and shots
+- **Text2Voice** - Paste some text and hear it sung over your scene
+- **Freesound** - Sounds from freesound.org that match the scene's key and BPM
+- **Synth V** - Vocal lines sung through Synthesizer V Studio 2 Pro (needs Synth V and an installed voice)
 
 Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
 
-### 🎧 Audio Routing Modes
+### 🎧 Audio Output
 
-Hardware-level support for headphone/main output separation:
+- **One stereo output** for everything: built-in audio, headphones or any interface
+- Follows your system output device, or stays on the one you choose
+- Pick the channel pair on multi-output interfaces, and set the buffer size
+- **Master FX** for your monitoring (room correction, headphone virtualization), never printed to exports
 
-- **Solo Mode** - Single output for practice and production
-- **Performance Mode** - Separate Cue (headphones) and Master (PA/speakers) outputs
-
-[View Audio Routing Documentation →](./audio-routing.md)
+[Audio Output guide →](./audio-routing.md)
 
 ### 🎹 Instrument Support
 
@@ -63,7 +79,7 @@ Hardware-level support for headphone/main output separation:
 
 ### 🔄 Scene-Based Composition
 
-Organize your performance into scenes:
-- Group tracks into logical units
-- Clone scenes between decks
-- Build setlists for live performance
+Organize your music into scenes:
+- Group tracks into logical units that share a contract
+- Duplicate scenes to try variations
+- Arrange scenes into a full song in [Arrange mode](/arrange/)

@@ -66,6 +66,7 @@ Built-in plugins that ship with Signals & Sorcery. Source is open for study or f
 | Synth Plugin | [github.com/shiehn/sas-synth-plugin](https://github.com/shiehn/sas-synth-plugin) |
 | Loops Plugin | [github.com/shiehn/sas-loops-plugin](https://github.com/shiehn/sas-loops-plugin) |
 | Stems Plugin | [github.com/shiehn/sas-stems-plugin](https://github.com/shiehn/sas-stems-plugin) |
+| Chat Plugin | [github.com/shiehn/sas-chat-plugin](https://github.com/shiehn/sas-chat-plugin) |
 
 ### Additional Plugins
 
@@ -74,7 +75,6 @@ Installable via **Settings → Plugins → Add Plugin** (paste the GitHub URL).
 | Plugin | Link |
 |--------|------|
 | Texture Plugin | [github.com/shiehn/sas-texture-plugin](https://github.com/shiehn/sas-texture-plugin) |
-| Chat Plugin | [github.com/shiehn/sas-chat-plugin](https://github.com/shiehn/sas-chat-plugin) |
 
 ---
 
@@ -90,6 +90,8 @@ Every plugin implements the `GeneratorPlugin` interface. The host calls these me
 | `getSettingsSchema` | `() => PluginSettingsSchema \| null` | Return a JSON schema for auto-rendered settings, or `null` for no settings UI. |
 | `onSceneChanged` | `(sceneId: string \| null) => Promise<void>` | **Optional.** Called when the active scene changes. Reload scene-specific state here. |
 | `onContextChanged` | `(context: MusicalContext) => void` | **Optional.** Called when musical context changes (BPM, key, chords). Update UI or recalculate patterns. |
+| `getSkills` | `() => PluginSkill[]` | **Optional.** Declare actions agents can call. Each is registered as a tool named `plugin:<pluginId>:<id>`. `PluginAction` is an alias of `PluginSkill`. |
+| `getAgentSkills` | `() => PluginAgentSkill[]` | **Optional (SDK 3.20.0).** Contribute agent skills: markdown know-how telling agents when and how to use your actions. Called at activation; hosts without plugin skill support ignore it. See [Agent Actions and Skills](./api-reference.md#agent-actions-and-skills). |
 
 ---
 
@@ -110,18 +112,19 @@ Props passed to your plugin's React component by the host.
 | `onSelectScene` | `(() => void) \| null` | Callback to open the scene selector. Null if not applicable |
 | `onOpenContract` | `(() => void) \| null` | Callback to open the contract/chords section |
 | `onExpandSelf` | `(() => void) \| null` | Callback to expand this plugin's own accordion section |
+| `isExpanded` | `boolean` | Whether this plugin's accordion section is open. The panel stays mounted while collapsed, so watch this prop (not mount/unmount) to know the user is looking at it |
 
 ---
 
 ## PluginHost API: Complete Method Reference
 
-All methods below are available on the `host` object your plugin receives in `activate()` and via `PluginUIProps.host`. Methods marked with **ownership** require the track to be owned by the calling plugin.
+All methods below are available on the `host` object your plugin receives in `activate()` and via `PluginUIProps.host`. Methods marked with **ownership** require the track to be owned by the calling plugin. Methods marked **Optional** can be missing on older hosts: check `typeof host.method === 'function'` before calling them.
 
 ### Track Management
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `createTrack` | `(options: CreateTrackOptions) => Promise<PluginTrackHandle>` | Create a new track in the active scene. Options: `name`, `role`, `loadSynth`, `synthName`, `metadata`. |
+| `createTrack` | `(options: CreateTrackOptions) => Promise<PluginTrackHandle>` | Create a new track in the active scene. Options: `name`, `role`, `loadSynth`, `synthName`, `instrumentPluginId`, `metadata`. |
 | `deleteTrack` | `(trackId: string) => Promise<void>` | Delete an owned track. **Ownership.** |
 | `getPluginTracks` | `() => Promise<PluginTrackHandle[]>` | Get all tracks this plugin owns in the active scene. |
 | `getTrackInfo` | `(trackId: string) => Promise<PluginTrackInfo>` | Get detailed info (name, muted, volume, pan, plugins) for an owned track. **Ownership.** |
@@ -131,8 +134,11 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `setTrackVolume` | `(trackId: string, volume: number) => Promise<void>` | Set track volume (0.0 silent – 1.0 full). **Ownership.** |
 | `setTrackPan` | `(trackId: string, pan: number) => Promise<void>` | Set track pan (-1.0 left – 1.0 right). **Ownership.** |
 | `setTrackName` | `(trackId: string, name: string) => Promise<void>` | Rename a track. **Ownership.** |
-| `shufflePreset` | `(trackId: string) => Promise<ShufflePresetResult>` | Randomly change the Surge XT preset based on MIDI pitch analysis. Returns `{ presetName, presetCategory }`. **Ownership.** |
-| `duplicateTrack` | `(trackId: string) => Promise<PluginTrackHandle>` | Clone an owned track: copies MIDI data, role, and loads Surge XT on the new track. **Ownership.** |
+| `setTrackRole` | `(trackId: string, role: string) => Promise<void>` | Persist a track's musical role (e.g. `'bass'`, `'kicks'`). **Ownership.** |
+| `getValidRoles` | `() => readonly string[]` | The host's canonical role tokens. Use it instead of a hard-coded list when building prompts or validating roles. |
+| `reorderTracks` | `(orderedTrackIds: readonly string[]) => Promise<void>` | Persist this plugin's row order for the active scene (pass track `dbId`s). `getPluginTracks()` returns tracks in this order. |
+| `shufflePreset` | `(trackId: string, excludeNames?: readonly string[], options?: ShufflePresetOptions) => Promise<ShufflePresetResult>` | Change the Surge XT preset, picked from a category matched to the track's MIDI pitch range. `excludeNames` removes presets from the pool; `options.description` enables description-based matching where the host supports it. Returns `{ presetName, presetCategory }`. **Ownership.** |
+| `duplicateTrack` | `(trackId: string) => Promise<PluginTrackHandle>` | Clone an owned track: copies MIDI data and role. A Surge XT copy gets a different preset; a custom instrument copy keeps the source's state. **Ownership.** |
 
 ### MIDI Operations
 
@@ -140,6 +146,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 |--------|-----------|-------------|
 | `writeMidiClip` | `(trackId: string, clip: MidiClipData) => Promise<MidiWriteResult>` | Write MIDI notes to a track (replaces existing MIDI). Clip has `startTime`, `endTime`, `tempo`, `notes`. **Ownership.** |
 | `clearMidi` | `(trackId: string) => Promise<void>` | Clear all MIDI from a track. **Ownership.** |
+| `readMidiNotes` | `(trackId: string) => Promise<ReadMidiResult>` | **Optional.** Read a track's current MIDI as `{ clips: [{ startTime, endTime, notes }] }` for in-place editing. **Ownership.** |
 | `postProcessMidi` | `(notes: PluginMidiNote[], options: PostProcessOptions) => Promise<PluginMidiNote[]>` | Run the host's MIDI pipeline: quantize, swing, scale enforcement, register clamping, overlap removal, humanization. |
 | `auditionNote` | `(trackId: string, pitch: number, velocity: number, durationMs: number) => Promise<void>` | Play a single note for preview. Fire-and-forget. **Ownership.** |
 
@@ -148,7 +155,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `writeAudioClip` | `(trackId: string, filePath: string, position?: number) => Promise<void>` | Place an audio file (`.wav`, `.aiff`, `.mp3`, `.flac`, `.ogg`) on a track. **Ownership.** |
-| `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds }`. |
+| `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds, cuePoints }`. |
 
 ### Plugin/Synth Operations
 
@@ -157,6 +164,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `loadSynthPlugin` | `(trackId: string, pluginName: string) => Promise<number>` | Load a VST3/AU plugin onto a track. Returns plugin index. **Ownership.** |
 | `setPluginState` | `(trackId: string, pluginIndex: number, stateBase64: string) => Promise<void>` | Set plugin state from base64-encoded preset data. **Ownership.** |
 | `getPluginState` | `(trackId: string, pluginIndex: number) => Promise<string>` | Get current plugin state as base64. **Ownership.** |
+| `setRawPluginState` / `getRawPluginState` | `(trackId, pluginIndex, stateBase64) => Promise<void>` / `(trackId, pluginIndex) => Promise<string>` | Same as the two above, in the plugin's own VST3/AU state format. Use for third-party instruments whose patches the default format does not preserve. **Ownership.** |
 | `getTrackPlugins` | `(trackId: string) => Promise<PluginSynthInfo[]>` | List all plugins loaded on a track. Returns `{ index, name, type, enabled }[]`. **Ownership.** |
 | `removePlugin` | `(trackId: string, pluginIndex: number) => Promise<void>` | Remove a plugin from a track. **Ownership.** |
 | `isPluginAvailable` | `(pluginName: string) => Promise<boolean>` | Check if a VST3/AU plugin is installed on the system. |
@@ -168,6 +176,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `getAvailableInstruments` | `() => Promise<InstrumentDescriptor[]>` | Get available instrument plugins (VST3/AU synths) scanned by the engine. |
 | `getTrackInstrument` | `(trackId: string) => Promise<InstrumentDescriptor \| null>` | Get the instrument currently loaded on a track. Null = default (Surge XT). **Ownership.** |
 | `setTrackInstrument` | `(trackId: string, pluginId: string) => Promise<void>` | Change the instrument plugin on a track. Preserves MIDI data. **Ownership.** |
+| `showInstrumentEditor` / `hideInstrumentEditor` | `(trackId: string) => Promise<void>` | Open or close the instrument's native editor window. **Ownership.** |
 
 ### FX Operations
 
@@ -175,6 +184,7 @@ Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed b
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
+| `getAvailableFx` | `() => Promise<InstrumentDescriptor[]>` | Scanned FX (non-instrument) plugins on this machine, for an FX picker. |
 | `getTrackExternalFx` | `(trackId: string) => Promise<TrackExternalFxEntry[]>` | List the track's FX inserts. Returns `{ index, pluginId, name, enabled }[]`. **Ownership.** |
 | `loadTrackExternalFx` | `(trackId: string, pluginId: string) => Promise<TrackExternalFxEntry>` | Add an FX plugin by scanned `pluginId` (from `getAvailableFx`). Instruments are rejected. **Ownership.** |
 | `removeTrackExternalFx` | `(trackId: string, fxIndex: number) => Promise<void>` | Remove an insert by its `TrackExternalFxEntry.index`. **Ownership.** |
@@ -183,12 +193,23 @@ Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed b
 | `showTrackExternalFxEditor` | `(trackId: string, fxIndex: number) => Promise<void>` | Open the plugin's native editor window. **Ownership.** |
 | `copyTrackFxFrom` | `(destTrackId: string, sourceTrackDbId: string) => Promise<TrackFxCopyResult>` | Copy a source track's whole FX chain onto an owned track. Partial success is normal: plugins missing from this machine land in `externalMissing`. **Ownership (dest only).** |
 
+### Panel Mix Bus
+
+Each plugin can have one mix bus per scene: volume, mute, solo and an FX chain on the sum of its tracks. All methods are **Optional** and scoped to this plugin. Most panels use the `usePanelBus(host, activeSceneId)` hook with the `PanelMasterStrip` component instead of calling them directly; see [Panel Mix Bus](./api-reference.md#panel-mix-bus).
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `getPanelBusState` | `(sceneId: string) => Promise<PanelBusState>` | `{ engaged, volume, muted, soloed, fx }`. When the bus is engaged, reading also routes the panel's not-yet-routed tracks into it. |
+| `setPanelBusVolume` / `setPanelBusMute` / `setPanelBusSolo` | `(sceneId, value) => Promise<void>` | Bus fader (dB), mute and solo. |
+| `loadPanelBusFx` / `removePanelBusFx` / `setPanelBusFxEnabled` / `movePanelBusFx` / `showPanelBusFxEditor` | `(sceneId, ...)` | Manage the bus FX chain, same idioms as the track FX methods. |
+| `disengagePanelBus` | `(sceneId: string) => Promise<void>` | Remove the bus and return the panel's tracks to flat routing. |
+
 ### Scene Context
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `getGenerationContext` | `(excludeTrackId?: string) => Promise<PluginGenerationContext>` | Full context with chord progression and concurrent track MIDI data. Use `excludeTrackId` to omit the current track. |
-| `getMusicalContext` | `() => Promise<MusicalContext>` | Lightweight context: `key`, `mode`, `bpm`, `bars`, `genre`, `timeSignature`, `chordProgression`. No concurrent MIDI. |
+| `getGenerationContext` | `(excludeTrackId?: string, opts?: PluginGenerationContextOptions) => Promise<PluginGenerationContext>` | Full context with chord progression and concurrent track MIDI data. Use `excludeTrackId` to omit the current track; `opts.pinTrackDbIds` always includes those reference tracks in full. |
+| `getMusicalContext` | `() => Promise<MusicalContext>` | Lightweight context: `key`, `mode`, `bpm`, `bars`, `genre`, `timeSignature`, `chordProgression`, `contractPrompt`. No concurrent MIDI. |
 | `getActiveSceneId` | `() => string \| null` | Get the currently active scene ID. Synchronous. Returns `null` if no scene is selected. |
 | `getSceneList` | `() => Promise<PluginSceneInfo[]>` | Get all scenes in the project. Returns `{ id, name, isMuted }[]`. |
 
@@ -206,11 +227,12 @@ All event methods return an `UnsubscribeFn`; call it to stop receiving events.
 
 ### LLM Access
 
-Metered and requires authentication. Check availability before use.
+Metered and requires authentication. Check availability before use. Both generation methods require the `requiresLLM` capability.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
-| `generateWithLLM` | `(request: LLMGenerationRequest) => Promise<LLMGenerationResult>` | Generate text or JSON. Request: `system`, `user`, optional `maxTokens`, `responseFormat`. Returns `{ content, tokensUsed, model }`. |
+| `generateWithLLM` | `(request: LLMGenerationRequest) => Promise<LLMGenerationResult>` | Generate text or JSON. Request: `system`, `user`, optional `maxTokens`, `responseFormat`, `skipContextPrefix`, `thinkingLevel`. Returns `{ content, tokensUsed, model }`. |
+| `generateWithLLMTools` | `(request: LLMToolUseRequest) => Promise<LLMToolUseResponse>` | Generate with native tool calling, for agent loops. Pass a model role, `LLM_MODEL.BEST` or `LLM_MODEL.LIGHTWEIGHT`, as `model`; the host maps it to the current model. |
 | `isLLMAvailable` | `() => Promise<boolean>` | Check if LLM service is available (user authenticated, gateway reachable). |
 
 ### Synth Preset System
@@ -275,7 +297,7 @@ Persists across projects via `host.settings`:
 
 ### File System
 
-Requires the `fileDialog` capability in the manifest.
+The two dialog methods require the `fileDialog` capability in the manifest. `downloadFile` requires the download's host to be listed in `network.allowedHosts`.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
@@ -308,11 +330,13 @@ Secrets are encrypted via the OS keychain and scoped per plugin. Plugin A cannot
 |--------|-----------|-------------|
 | `getSamples` | `(filter?: PluginSampleFilter) => Promise<PluginSampleInfo[]>` | Query the sample library. Filter by `bpm`, `key`, `category`, `searchQuery`. |
 | `getSampleById` | `(id: string) => Promise<PluginSampleInfo \| null>` | Get a specific sample by ID. |
-| `importSamples` | `(filePaths: string[]) => Promise<PluginSampleImportResult>` | Import audio files. Returns `{ imported, skipped, errors }`. |
+| `importSamples` | `(filePaths: string[]) => Promise<PluginSampleImportResult>` | Import audio files. Returns `{ imported, skipped, errors, samples? }`; `samples` (SDK 3.18.0 hosts) lists each file's library `id` and a `duplicate` flag. |
 | `createSampleTrack` | `(sampleId: string, options?) => Promise<PluginTrackHandle>` | Create a sample track in the active scene. |
 | `deleteSampleTrack` | `(trackId: string) => Promise<void>` | Delete a sample track. |
 | `getPluginSampleTracks` | `() => Promise<PluginSampleTrackInfo[]>` | Get all sample tracks in the scene. Re-establishes ownership. Returns `{ track, sample, volume, pan }[]`. |
 | `timeStretchSample` | `(sampleId: string, targetBpm: number) => Promise<PluginSampleInfo>` | Time-stretch a sample to a target BPM. Returns the new sample info. |
+| `fitSampleToScene` | `(sampleId: string) => Promise<PluginSampleInfo>` | Stretch to the scene's BPM, then chop or loop to exactly the scene's length. 4/4 scenes only. |
+| `previewSample` / `stopPreview` | `(filePath: string) => Promise<void>` / `() => Promise<void>` | Audition a file without creating a track, and stop the audition. |
 
 ### Scene Composition
 
@@ -327,8 +351,8 @@ Secrets are encrypted via the OS keychain and scoped per plugin. Plugin A cannot
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `showToast` | `(type, title, message?) => void` | Show a toast notification. Type: `'info'`, `'success'`, `'warning'`, `'error'`. |
-| `setProgress` | `(trackId: string, progress: number) => void` | Show progress on a track (0–100). Pass `-1` to hide. |
-| `setStatusMessage` | `(message: string \| null) => void` | Set a status message in the accordion header. Pass `null` to clear. |
+| `setProgress` | `(trackId: string, progress: number) => void` | **Deprecated.** Not shown anywhere in the UI. Use `PluginUIProps.onLoading` or your own progress UI. |
+| `setStatusMessage` | `(message: string \| null) => void` | **Deprecated.** Not shown anywhere in the UI. Use `showToast()` or your own status text. |
 | `confirmAction` | `(title: string, message: string) => Promise<boolean>` | Show a confirmation dialog. Returns `true` if confirmed. |
 
 ### Performance / Logging
@@ -363,6 +387,9 @@ All errors thrown by the host are `PluginError` instances with a typed `code` pr
 | `INCOMPATIBLE` | Plugin requires newer SDK version |
 | `CAPABILITY_DENIED` | Plugin lacks required capability in manifest |
 | `SECRET_NOT_FOUND` | Secret key doesn't exist |
+| `VALIDATION_ERROR` | Inputs failed validation |
+| `AUDIO_CAPTURE_DENIED` | Microphone permission denied or no input device available |
+| `TIME_SIGNATURE_UNSUPPORTED` | The scene's time signature is outside the plugin's `supportedTimeSignatures` |
 
 ---
 
@@ -375,6 +402,9 @@ These ship with Signals & Sorcery and serve as reference implementations:
 | `@signalsandsorcery/synth-generator` | midi | Generative MIDI with Surge XT presets |
 | `@signalsandsorcery/loops` | sample | Audio loop / sample library browser with time-stretching |
 | `@signalsandsorcery/stems` | audio | Audio-from-text via Lyria 3, with stem splitting |
+| `@signalsandsorcery/drum-generator` | midi | Drum-pattern MIDI played through a built-in sample-based drum sampler |
+| `@signalsandsorcery/instrument-generator` | midi | Pitched, polyphonic sample-based instruments |
+| `@signalsandsorcery/chat-panel` | hybrid | Scene-scoped chat agent that works through the app's tools (off by default) |
 
 ## Security Model
 

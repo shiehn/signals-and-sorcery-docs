@@ -19,21 +19,19 @@ set -e
 sas compose_scene \
   --description "chill lo-fi hip hop beat at 85 bpm, A minor" \
   --scene-name "Verse" \
-  --json '{
-    "tracks": [
-      {"name": "Bass",  "role": "bass",  "prompt": "deep, slow, jazz-inflected"},
-      {"name": "Drums", "role": "drums", "prompt": "laid-back, swung 16ths"},
-      {"name": "Keys",  "role": "chords","prompt": "sparse jazzy Rhodes"},
-      {"name": "Pad",   "role": "pad",   "prompt": "soft, wide, background"}
-    ]
-  }' --pretty
+  --tracks '[
+    {"name": "Bass",  "role": "bass",  "prompt": "deep, slow, jazz-inflected"},
+    {"name": "Drums", "role": "drums", "prompt": "laid-back, swung 16ths"},
+    {"name": "Keys",  "role": "chords","prompt": "sparse jazzy Rhodes"},
+    {"name": "Pad",   "role": "pad",   "prompt": "soft, wide, background"}
+  ]'
 
 sas play_scene --scene-name "Verse"
 ```
 
 ## 2. Build a verse + chorus + transition
 
-Compose two scenes, then a transition that bridges them.
+Compose two scenes, then a transition scene that bridges them.
 
 ```bash
 #!/bin/bash
@@ -43,32 +41,36 @@ set -e
 sas compose_scene \
   --description "mellow verse groove" \
   --scene-name "Verse" \
-  --json '{"tracks":[
+  --tracks '[
     {"name":"Bass","role":"bass","prompt":"sub bass, sparse"},
     {"name":"Drums","role":"drums","prompt":"minimal kick+hat"},
     {"name":"Keys","role":"chords","prompt":"ambient pad chords"}
-  ]}'
+  ]'
 
 # Chorus: energetic, same key
 sas compose_scene \
   --description "energetic chorus, same key, bigger sound" \
   --scene-name "Chorus" \
-  --json '{"tracks":[
+  --tracks '[
     {"name":"Bass","role":"bass","prompt":"driving moving line"},
     {"name":"Drums","role":"drums","prompt":"full kit, punchy"},
     {"name":"Keys","role":"chords","prompt":"piano stabs"},
     {"name":"Lead","role":"lead","prompt":"catchy hook melody"}
-  ]}'
+  ]'
 
-# Transition
-sas create_transition --from-scene "Verse" --to-scene "Chorus" --bars 2
+# Transition: a 2-bar bridge scene in the chorus's key. It starts empty
+# (contract only) and becomes the active scene, so give it a part.
+sas create_transition_scene --from-scene "Verse" --to-scene "Chorus" --bar-length 2
+sas add_instrument --name "Swell" --role "pads" --prompt "rising swell into the chorus"
 
-# Play them in order: verse → transition → chorus
+# Audition them one after another
 sas scene_activate --scene-id Verse
 sas dsl_play
 sleep 16 # let verse breathe
 sas scene_activate --scene-id Chorus
 sas dsl_play
+
+# To lay them out as a song, use Arrange mode (example 15).
 ```
 
 ## 3. Add one instrument to the current scene
@@ -153,7 +155,7 @@ Watch what the agent is doing in real time from another terminal.
 
 ```bash
 # Terminal A (an agent is running some workflow)
-sas compose_scene --scene-name "Verse" --description "lo-fi" --json '{...}'
+sas compose_scene --scene-name "Verse" --description "lo-fi" --tracks '[...]'
 
 # Terminal B (human watching)
 sas events stream | jq -r '
@@ -181,10 +183,10 @@ KEY="compose-$(date +%s)"
 
 for attempt in 1 2 3; do
   if sas compose_scene \
-      --idempotency-key "$KEY" \
+      --idempotencyKey "$KEY" \
       --description "lo-fi" \
       --scene-name "Verse" \
-      --json '{"tracks":[...]}' 2>/dev/null; then
+      --tracks '[...]' 2>/dev/null; then
     break
   fi
   echo "attempt $attempt failed, retrying..."
@@ -192,9 +194,10 @@ for attempt in 1 2 3; do
 done
 ```
 
-Same `idempotency-key` means the first successful response is cached
-(60s, per-project); subsequent attempts during that window return the
-cached success without re-executing.
+Same `idempotencyKey` (spelled in camelCase) means the first successful
+response is cached (60 s, per project); subsequent attempts with the same
+parameters during that window return the cached success without
+re-executing.
 
 ## 9. Discover a deferred tool and use it
 
@@ -220,19 +223,19 @@ set -e
 sas compose_scene \
   --description "dark trap banger" \
   --scene-name "Drop" \
-  --json '{"tracks":[
+  --tracks '[
     {"name":"808","role":"bass","prompt":"deep dark 808 with slides"},
     {"name":"Hats","role":"drums","prompt":"fast triplet hats"},
     {"name":"Kick","role":"drums","prompt":"trap kick pattern"},
     {"name":"Lead","role":"lead","prompt":"ominous brass stabs"}
-  ]}'
+  ]'
 
 # 2. Tweak the mix — FX are 3rd-party inserts; plugin ids come from your scan
 sas fx_add_plugin --track "808" --plugin-id "VST3/TDR Kotelnikov"          # compressor
 sas fx_add_plugin --track "Lead" --plugin-id "VST3/ValhallaSupermassive"   # reverb
 sas dsl_fx_set_param --track "Lead" --fx reverb --param-name wet --value 0.2
 
-# 3. Send to main output
+# 3. Render it offline and play the baked loop
 sas render_to_performance --scene-name "Drop"
 
 # 4. Optionally export
@@ -241,7 +244,7 @@ sas export_audio --output "~/Desktop/drop.wav" --scene-name "Drop"
 
 That's a multi-step composition → mix → perform → archive pipeline. Every
 line is one `sas` call. An agent would write this same script when asked
-to "make a trap drop and send it to the main speakers, then save it."
+to "make a trap drop, play it, then save it."
 
 ## 11. Plan-as-artifact loop with undo
 
@@ -273,7 +276,7 @@ sas validate "$PLAN" || {
     | jq -c '.data.changes.validation.errors[0].suggestedFix // empty')
   if [ -n "$FIX" ]; then
     TOOL=$(echo "$FIX" | jq -r .tool)
-    sas "$TOOL" --json "$(echo "$FIX" | jq .args)"
+    sas run "$TOOL" --json-body "$(echo "$FIX" | jq -c .args)"
     sas validate "$PLAN"
   fi
 }
@@ -358,3 +361,138 @@ sas validate /tmp/p.json && sas apply /tmp/p.json
 
 `apply` and `validate` both treat `-` as stdin, so plans never need to
 hit disk if the agent doesn't want them to.
+
+## 15. Arrange a song from your scenes
+
+The user says: *"Put the chorus twice after the verse, and mute the kick
+in the second chorus."*
+
+This drives [Arrange mode](/arrange/) through the
+[arrangement tools](./for-agents.md#arrangement-tools). The two choruses
+must be **independent** copies: the second one differs (no kick), and a
+linked copy would change both.
+
+```bash
+#!/bin/bash
+set -e
+
+# 0. Build the project's arrangement. The first time, it is created with
+#    every scene once, in scene order, all layers on. Async: wait for it.
+JOB=$(sas arrangement start --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 600
+
+# 1. Where is the verse, and what follows it?
+sas arrangement get --json > /tmp/arr.json
+VERSE=$(jq '[.data.changes.instances[] | select(.sceneName == "Verse")][0].index' /tmp/arr.json)
+NEXT=$(jq -r --argjson i $((VERSE + 1)) \
+  '.data.changes.instances[] | select(.index == $i) | .sceneName' /tmp/arr.json)
+
+# 2. A chorus right after the verse (unless one is already there; a fresh
+#    drop plays every layer), then an independent copy right after it.
+if [ "$NEXT" != "Chorus" ]; then
+  sas arrangement insert --scene "Chorus" --index $((VERSE + 1))
+fi
+sas arrangement duplicate --index $((VERSE + 1))
+
+# 3. Mute the kick in the second chorus. Sections and layers take names.
+sas arrangement layer --instance "the second chorus" --track "Kick" --play off
+
+# 4. Listen.
+sas arrangement play
+```
+
+Every edit returns the new timeline, for example:
+
+```text
+#0 Verse (8 bars)
+#1 Chorus (1) (8 bars)
+#2 Chorus (2) (8 bars)
+#3 Bridge (4 bars)
+```
+
+Every step is undoable, one at a time, with `sas arrangement undo` or ⌘Z in
+the app. To hear only the new part, loop it:
+`sas arrangement loop --instance "Chorus (2)"`.
+
+**Without a shell** (an MCP client), the same steps are `sas_run` calls:
+`arrangement_start` → `sas_wait_for_job {jobId}` → `arrangement_get` →
+`arrangement_insert_instance {scene: "Chorus", index}` →
+`arrangement_duplicate_instance {index}` →
+`arrangement_set_layer {instance: "the second chorus", track: "Kick", play: "off"}` →
+`arrangement_play`.
+
+If the `sas arrangement` group is missing, run `sas refresh` once (the
+group is generated from the app's tool list). `sas run arrangement_get`
+works either way.
+
+## 16. Add an effect to one bar
+
+The user says: *"Add a reverse on the bass in bar 4 of the second chorus."*
+
+```bash
+sas arrangement treatment --instance "the second chorus" --track "Bass" \
+  --type reverse_bar --bar 4
+```
+
+The result carries the new `treatmentId`. The effect plays once its render
+is ready (the app renders placed effects and caches them). To take it out
+again:
+
+```bash
+sas arrangement untreat --instance "the second chorus" --track "Bass" --bar 4
+```
+
+Effects with settings take a `params` object, which needs the `sas run`
+form (see [Passing JSON](./cli-reference.md#passing-json-arrays-and-objects)).
+A four-bar high-pass sweep on the drums leading out of the last chorus:
+
+```bash
+sas run arrangement_place_treatment -p 'instance=the last chorus' -p track=Drums \
+  -p type=hp_sweep -p bar=5 -p bars=4 -p 'params={"end_hz": 2000}'
+```
+
+`sas help arrangement_place_treatment` lists every effect type with its
+settings, ranges and defaults.
+
+## 17. Copy a part from one section to another
+
+The user says: *"Copy the kick in the first chorus to the second chorus."*
+
+The clipboard tools take objects, so use the `sas run` form:
+
+```bash
+# Copy the kick's bars in the first chorus...
+sas run arrangement_copy -p 'region={"instance": "the first chorus", "track": "Kick"}'
+
+# ...and paste them at bar 1 of the second chorus.
+sas run arrangement_paste -p 'at={"instance": "the second chorus", "bar": 1}'
+```
+
+The pasted bars land on the **Kick** lane (tracks never leave their lane)
+and **replace** what the kick played there, with the same loop bars, fades,
+gain and effects as the original. If the second chorus belongs to another
+scene, the kick plays there as a guest through its own scene's bus.
+
+To copy one clip instead of the whole section's worth of bars, pass
+`clip`: `-p 'clip={"track": "Kick", "instance": "the first chorus"}'`. To
+silence bars without shortening the song, use `arrangement_delete_region`
+(`sas arrangement clear`).
+
+## 18. Export the song
+
+Render the arrangement offline: the Mix, a streaming Master at 44.1 kHz,
+one stem per panel, and an Ableton hand-off.
+
+```bash
+JOB=$(sas arrangement export --stems --ableton --preset streaming \
+  --sample-rate 44100 --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 900
+```
+
+The files land in a new dated folder under `~/Music/Signals & Sorcery
+Exports` (pass `--path` for another place). The finished job lists every
+file, the loudness report (integrated loudness, loudness range, true peak,
+gain reduction) for the Mix and the Master, the stems null test, and any
+warnings. `sas arrangement export-cancel` stops a running export and
+removes its folder. See [Exporting your song](/arrange/#exporting-your-song)
+for what each file is.

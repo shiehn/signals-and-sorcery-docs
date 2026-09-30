@@ -16,12 +16,12 @@ Python, or any language the agent can write. Each action is a single
 `sas <command>` invocation, and every call prints JSON on stdout.
 
 ```bash
-# Create a scene with bass, drums, keys, and pad roles.
+# Create a scene with bass, kick, keys, and pad parts.
 SCENE=$(sas scene_create --name "Verse" --json | jq -r '.data.changes.sceneId')
-for ROLE in bass drums keys pad; do
+for ROLE in bass kicks keys pads; do
   sas add_instrument --name "$ROLE" --role "$ROLE" --prompt "chill lo-fi"
 done
-sas play_scene --deck main
+sas play_scene
 ```
 
 Each step is a separate CLI call, so the script can be run end-to-end or
@@ -90,12 +90,17 @@ CLI and the MCP server wrap.
   Every mutation begins life as a typed JSON Plan the agent can read,
   edit, and validate before touching the engine. Mutations are reversible
   via auto-saved checkpoints.
-- **~70 typed tools**: scene/track CRUD, FX, MIDI generation, transport,
-  composition, rendering, samples, export. Every tool has a 4-section
-  description (`WHEN TO USE` / `WHEN NOT TO USE` / `INPUTS` / `OUTPUTS`)
-  the agent reads to pick the right one.
-- **5 composite tools** that wrap multi-step flows: `compose_scene`,
-  `add_instrument`, `play_scene`, `render_to_performance`, `create_transition`.
+- **~280 typed tools**: scene/track CRUD, FX, MIDI generation, transport,
+  composition, arrangement, rendering, samples, export. Every tool has a
+  4-section description (`WHEN TO USE` / `WHEN NOT TO USE` / `INPUTS` /
+  `OUTPUTS`) the agent reads to pick the right one.
+- **Composite tools** that wrap multi-step flows: `compose_scene`,
+  `compose_contract`, `add_instrument`, `generate_track`, `play_scene`,
+  `render_to_performance`.
+- **[Arrangement tools](./for-agents.md#arrangement-tools)**: 26
+  `arrangement_*` tools that lay your scenes out as a song, edit it, add
+  effects, play it and export it, the same things you do in
+  [Arrange mode](/arrange/).
 - **[Async-by-default execution](./status-and-jobs.md)**: every
   state-mutating tool returns a `jobId` immediately and finishes in the
   background. Agents call `wait_for_job` (MCP) or `sas job wait` (CLI)
@@ -107,11 +112,11 @@ CLI and the MCP server wrap.
   `scene:created` and `track:fx-changed`.
 - **Idempotency keys** so retrying a failed call is safe: no duplicate
   tracks, no corrupted state.
-- **Progressive disclosure**: a curated core tool set (~24 scene-scoped
-  verbs) is always visible; everything else is discoverable via
-  `sas tool_search`. The CLI and the in-app chat-plugin agent share a
-  single discovery filter, so adding a tool exposes it on both surfaces
-  atomically.
+- **Progressive disclosure**: about 100 tools are always visible (about
+  70 of them scene-scoped, the in-app assistant's starting view); the rest
+  are deferred and discoverable via `sas tool_search`. The CLI and the
+  in-app chat-plugin agent share a single discovery filter, so adding a
+  tool exposes it on both surfaces atomically.
 
 ## Quick start
 
@@ -126,7 +131,6 @@ CLI and the MCP server wrap.
 
 # 3. Verify health
 sas health                    # is the API server reachable?
-sas status                    # is every subsystem (engine, db, auth) ok?
 
 # 4. See what you can do
 sas list-actions
@@ -165,7 +169,7 @@ Then either:
   (`inspect → plan → validate → apply → preview → undo`), Plan schema,
   and checkpoint contract. **Start here if you're an agent.**
 - **[Status & async jobs](./status-and-jobs.md)**: the universal async
-  job contract: `sas health` / `sas status`, the `/api/v1/jobs*`
+  job contract: `sas health`, the `/api/v1/jobs*`
   endpoints, SSE `jobProgress`/`jobComplete`/`jobFailed` events, the
   `wait_for_job` MCP tool, and the list of async-wrapped tools. **Read
   this if you're writing scripts or agents that mutate state.**

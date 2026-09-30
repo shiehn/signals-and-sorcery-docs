@@ -51,6 +51,10 @@ export default {
                         link: '/api-server/',
                     },
                     {
+                        text: 'Arrange Mode',
+                        link: '/arrange/',
+                    },
+                    {
                         text: 'Custom Sounds',
                         link: '/custom-sounds/',
                     },
@@ -106,13 +110,13 @@ export default {
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true }],
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Baloo+2&family=Rye&display=swap' }],
         // SEO meta tags
-        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, generative music, live performance, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, music layers, prompt to layer, Ableton, Ableton Live, Ableton integration, export to Ableton' }],
+        ['meta', { name: 'keywords', content: 'generative audio workstation, GAW, generative music, song arrangement, music generation, MIDI generation, Gemini, Lyria, Stable Audio, contract-based composing, plugin SDK, electronic music, Tracktion Engine, creative control, music layers, prompt to layer, Ableton, Ableton Live, Ableton integration, export to Ableton' }],
         ['meta', { property: 'og:title', content: 'Signals & Sorcery - Generative Audio Workstation' }],
-        ['meta', { property: 'og:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
+        ['meta', { property: 'og:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: compose scenes, arrange them into a song, export or send to Ableton.' }],
         ['meta', { property: 'og:type', content: 'website' }],
         ['meta', { property: 'og:url', content: 'https://signalsandsorcery.com' }],
         ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
         ['meta', { name: 'twitter:title', content: 'Signals & Sorcery - Generative Audio Workstation' }],
-        ['meta', { name: 'twitter:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: preview in headphones, perform to audience.' }],
+        ['meta', { name: 'twitter:description', content: 'You compose; it generates infinite MIDI and audio layers within your contract. Stay in the creative process: compose scenes, arrange them into a song, export or send to Ableton.' }],
     ],
 }

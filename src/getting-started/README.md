@@ -14,7 +14,7 @@ sidebar: auto
 - **Surge XT** synthesizer plugin (auto-installed by setup wizard)
 - **Internet connection** for generation features
 - **A free account** (email or Google sign-in)
-- **Solo and Performance modes** (Audio interface with 4+ outputs required for performance with headphone/main separation)
+- **Any stereo audio output**: built-in speakers, headphones or an audio interface
 - **Optional [Ableton Live](/ableton/) integration:** Ableton Live 12 Suite (beta build 12.4.5+) to export scenes straight into Live's Session view
 
 ### Installation
@@ -49,15 +49,15 @@ macOS shows a one-time confirmation prompt the first time you open Signals & Sor
 
 ![runes_cli](/sas_runes_cli_2.png)
 
-### The Performance Workflow
+### The Workflow
 
-Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contract-based composing. Define a musical contract, generate content, preview privately, and perform to your audience.
+Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contract-based composing. Define a musical contract, generate layers, preview them, and arrange your scenes into a song.
 
 #### Core Concepts
 
 - **Musical Contract** - Key, chords, BPM, and bars that define the compositional framework
-- **Loop A (Composition Deck)** - Generate and preview clips in your headphones
-- **Loop B (Performance Deck)** - Play approved clips for your audience
+- **Composer (top row)** - Build scenes: generate, preview and refine their layers
+- **Arranger (bottom row)** - Lay your scenes out as a song in [Arrange mode](/arrange/), then export it
 
 #### Basic Workflow
 
@@ -67,30 +67,21 @@ Signals & Sorcery is a **Generative Audio Workstation (GAW)** built around contr
    - **Gemini** generates MIDI for synth tracks
    - **Lyria** generates audio for texture tracks
 
-3. **Preview** - Generated clips play in your headphones (cue output)
+3. **Preview** - Press Play to hear the scene
 
-4. **Approve** - Push clips you like to the performance deck
+4. **Arrange** - Drop your scenes onto the timeline at the bottom and shape them into a song (see [Arrange mode](/arrange/))
 
-5. **Perform** - Audience hears only the performance deck (main output)
+5. **Export** - Render a mix, a master or stems, or send the song to Ableton Live
 
-### Audio Routing Modes
+### Audio Output
 
-#### Solo Mode (Single Output)
-For practicing or single-speaker setups. Listen to one source at a time.
+Everything plays on one stereo output. Set it up in **Settings → Audio In / Out**:
 
-#### Performance Mode (Recommended)
-Requires a 4+ channel audio interface:
-- **Cue Output** (channels 1-2) → Headphones for private preview
-- **Main Output** (channels 3-4) → Speakers/PA for audience
+- **Output device**: Signals & Sorcery follows your system output by default (turn off **Follow system output device** to stay on one device)
+- **Output Channels**: pick the channel pair if your interface has more than one
+- **Buffer Size**: raise it if you hear dropouts
 
-This is the core workflow: compose in headphones, push to audience.
-
-#### Stream Mode
-For Twitch/YouTube streaming:
-- **Cue Output** → Your headphones
-- **Main Output** → Stream audio (via a virtual audio device — BlackHole on macOS, VB-Audio Virtual Cable on Windows)
-
-See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructions.
+See [Audio Output](/api-server/audio-routing.html) for details, including a tip for streaming.
 
 ### Troubleshooting
 
@@ -122,10 +113,10 @@ See [Audio Routing](/api-server/audio-routing.html) for detailed setup instructi
 
 - Watch the [Video Tutorials](/tutorials/) to see each feature in action
 - Experiment with different sound descriptions and musical contracts
-- Set up Performance Mode for dual-deck workflow
+- [Arrange your scenes into a song](/arrange/) at the bottom of the workstation, then export it
 - [Bring your own sounds](/custom-sounds/): import your own sample libraries or load your own VST3/AU instruments
 - [Export to Ableton Live](/ableton/): send any scene into Live's Session view as audio + MIDI
-- Explore the [Audio Routing](/api-server/audio-routing.html) options for your setup
+- Set up your [audio output](/api-server/audio-routing.html)
 - Check the [Features](/api-server/) section for advanced capabilities
 - Read the [Plugin SDK](/plugin-sdk/) documentation to build custom generators
 

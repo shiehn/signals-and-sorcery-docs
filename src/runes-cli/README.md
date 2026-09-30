@@ -72,7 +72,7 @@ The audio engine is a native C++ process built on Tracktion Engine, communicatin
 
 ### Key Concepts
 
-- **Decks**: FolderTracks that act as mix buses (Composition Deck, Performance Deck)
+- **Decks**: `loop-a` (the composer's live scene deck) and `loop-b` (the rendered-loop player used by `render_to_performance`); both share one output and never play together
 - **Scenes**: FolderTracks that group audio tracks together
 - **Tracks**: AudioTracks containing clips and plugins
 

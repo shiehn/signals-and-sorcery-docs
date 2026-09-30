@@ -64,8 +64,8 @@ sas job list --status running
 
 ## CLI surface
 
-The `sas` CLI has two relevant command families: one-shot health
-(`sas health`, `sas status`) and the `sas job` family for async jobs.
+The `sas` CLI has two relevant command families: a one-shot health check
+(`sas health`) and the `sas job` family for async jobs.
 
 ### `sas health`: is the API up?
 
@@ -81,24 +81,6 @@ If `sas health` fails with *"Connection refused — is the Signals & Sorcery
 app running?"*, launch the app and retry. The CLI is a thin HTTP client; it
 needs the in-app API server (`localhost:7655`) to be listening.
 
-### `sas status`: layered service health
-
-```bash
-sas status
-#   ✓ api          version=v1
-#   ✓ engine       reachable=true, bpm=120
-#   ✓ database     migrations=ok, project_bound=true
-#   ✓ auth         token=present
-```
-
-A multi-service health check (API, engine, database, auth). Exits `0` if
-every service reports `ok: true`, `2` otherwise, `3` on connection refused.
-
-Use `--json` to get the raw envelope for scripting:
-
-```bash
-sas status --json | jq '.data.engine.bpm'
-```
 
 ### `sas job …`: manage running jobs
 
@@ -188,8 +170,9 @@ curl -s "http://localhost:7655/api/v1/jobs/$JOB/wait?timeout=60000"
 ```
 
 Blocks server-side until the job reaches `completed` / `failed` /
-`cancelled`, then returns its final state. If `timeout` elapses first, the
-server returns HTTP `408` with the in-progress snapshot. Default timeout:
+`cancelled`, then returns its final state. If `timeout` elapses first (or the
+job id is unknown), the server returns HTTP `408` with an error message;
+read the job's current state with `GET /api/v1/jobs/:id`. Default timeout:
 300 000 ms (5 min).
 
 ### `POST /api/v1/jobs/:id/cancel`: cancel
@@ -287,11 +270,14 @@ until every dependency reaches `completed`. If a dependency `fails` or is
 how composite tools (e.g. `generate_scene_midi_bulk`) coordinate per-track
 generation without exposing the orchestration to callers.
 
-## MCP: `wait_for_job` and the async tools
+## MCP: `sas_wait_for_job` and the async tools
 
-MCP clients see the same async contract via a registered tool named
-**`wait_for_job`** (reachable through the meta-tool `sas_run`, since it's
-not one of the six top-level MCP primitives):
+MCP clients have a top-level tool for this, **`sas_wait_for_job`**: pass
+the `jobId` (and optionally `timeoutMs`, default 5 minutes). It returns the
+finished job, or the job's current state if it hasn't finished yet.
+
+The registered tool **`wait_for_job`** works too, through the meta-tool
+`sas_run`:
 
 ```jsonc
 // MCP tool call
@@ -325,7 +311,8 @@ Wrap status (May 2026):
 | **MIDI generation** | `dsl_generate_midi`, `dsl_generate_drums`, `generate_scene_midi_bulk` |
 | **Revision** | `revise_track`, `revise_scene` |
 | **FX** | `dsl_load_fx_chain`, `dsl_shuffle_preset` |
-| **Rendering & export** | `render_to_performance`, `export_audio` |
+| **Rendering & export** | `render_to_performance`, `export_audio`, `arrangement_export` |
+| **Arrangement** | `arrangement_start` |
 | **Audio analysis** | `sas_analyze_audio`, `sas_split_stems` |
 | **Sample library** | `scan_audio_directory`, `import_samples_by_criteria` |
 | **Planning** | `sas_apply_plan` |
@@ -385,10 +372,10 @@ SCENE=$(sas compose_scene \
   --description "moody dub techno" \
   --scene-name "Intro" \
   --bar-length 8 \
-  --json '{"tracks":[
+  --tracks '[
     {"name":"Bass","role":"bass","prompt":"deep sub"},
     {"name":"Drums","role":"drums","prompt":"laid back 90 BPM"}
-  ]}' \
+  ]' \
   --json)
 
 # compose_scene returns a jobId; block before downstream calls.

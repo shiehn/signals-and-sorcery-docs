@@ -78,8 +78,6 @@ MCP paths instead; they work uniformly.
 
 ## Verify
 
-Two health checks ship with the CLI. Pick the right one for the job.
-
 ```bash
 # Reachability: is the API server responding?
 sas health
@@ -87,37 +85,21 @@ sas health
 ```
 
 `sas health` hits `GET /api/v1/health` and returns immediately. Use it
-in CI smoke tests and `set -e` preludes.
+in CI smoke tests and `set -e` preludes; it exits `3` when the app can't
+be reached.
 
-```bash
-# Layered service health: API, audio engine, database, auth
-sas status
-#   ✓ api          version=v1
-#   ✓ engine       reachable=true, bpm=120
-#   ✓ database     migrations=ok, project_bound=true
-#   ✓ auth         token=present
-```
-
-`sas status` reports each subsystem's `ok` flag plus a short detail line.
-Exits `0` when every service is `ok: true`, `2` otherwise, `3` on
-connection refused. Pair with `--json` for scripting:
-
-```bash
-sas status --json | jq '.data.engine'
-```
-
-If either command fails with *"Connection refused — is the Signals &
-Sorcery app running?"*, launch the app and retry. The CLI is a thin HTTP
-client; it needs the in-app API server on `http://localhost:7655`.
+If it fails with *"Connection refused: is the Signals & Sorcery app
+running?"*, launch the app and retry. The CLI is a thin HTTP client; it
+needs the in-app API server on `http://localhost:7655`.
 
 ## Usage shape
 
 ```
 sas <action> [--key value]...        Run a tool action by name
-sas list-actions                     List every registered tool
-sas help [action]                    Show top-level help, or per-action help
+sas run <action> [key=value]... [-p key=value] [--json-body '{…}']
+sas list-actions [--core-only]       List every registered tool (--core-only: the always-visible set)
+sas help <action>                    Per-action help (sas --help for the top level)
 sas health                           Reachability check (GET /health)
-sas status                           Layered service health (API / engine / db / auth)
 sas events stream [--filter <e>]     SSE stream of typed domain + job events
 sas refresh                          Re-fetch the /actions manifest cache
 
@@ -152,44 +134,68 @@ sas history prune                    Drop expired checkpoints
 
 ## Global flags
 
-Parsed before the subcommand. All commands honour them.
+Accepted anywhere after the command name, e.g. `sas arrangement get --json`.
+Put them **after** a tool name you call directly (`sas compose_scene … --json`,
+not `sas --json compose_scene …`); in front of it they stop the tool name from
+being recognised.
 
 | Flag | Effect |
 |---|---|
-| `--json` | Emit raw JSON envelopes (default is a human-friendly summary) |
+| `--json` | Emit raw JSON envelopes (default is a human-friendly summary). This is an output switch; it does not take tool inputs (see [Passing JSON](#passing-json-arrays-and-objects)) |
 | `--host <host>` | Override API server host (default `localhost`) |
 | `--port <port>` | Override API server port (default `7655`) |
 | `--token <token>` | Bearer token (also read from `~/.sas/token`) |
-| `--verbose` | More chatty logs |
+| `--verbose` | Accepted; currently adds no extra output |
 | `--no-color` | Disable ANSI colour (also honours `NO_COLOR=1`) |
-| `-h`, `--help` | Top-level help, or per-action help if passed after an action name |
+| `-h`, `--help` | Top-level help, or per-command help if passed after a command |
+
+`--host`, `--port` and `--token` apply to tool calls and most commands; the
+`sas job` commands currently always use the defaults.
 
 Environment variables: `SAS_TIMEOUT_MS` overrides the default 300 s HTTP
 timeout (composite tools like `make_beat` routinely run 30–120 s, so the
 default is intentionally generous). `NO_COLOR=1` disables colour output.
+`SAS_AUTO_REFRESH=1` refreshes the cached tool list automatically when the
+app's tools change (otherwise the CLI prints a one-line hint to run
+`sas refresh`).
 Config persists in `~/.sas/config.json`; the bearer token in
 `~/.sas/token` (mode `600`).
 
 ## Argument conventions
 
-- **Kebab-case flags → camelCase params:** `--scene-id abc` maps to
-  `sceneId: "abc"` in the underlying tool call.
-- **Booleans:** `--enabled` (true), `--no-enabled` or `--enabled=false`
-  (false).
-- **Numbers:** `--bpm 90` is coerced from the tool's input schema; non-numeric
-  values error out early with exit 2.
-- **Arrays:** repeat the flag: `--paths a.wav --paths b.wav`.
-- **Nested objects (escape hatch):** `--json '{"key":"value"}'`.
+There are two ways to call a tool, and they parse flags slightly
+differently:
+
+- **By tool name** (`sas compose_scene --scene-name Verse …`, the same as
+  `sas run compose_scene scene-name=Verse …`): every `--flag value` becomes
+  a `flag=value` input.
+- **By group and verb** (`sas scene compose --scene-name Verse …`,
+  `sas arrangement insert …`): commands generated from the app's tool list
+  (run `sas refresh` after updating the app). Each input is a declared
+  flag, and `sas <group> <verb> --help` lists them.
+
+Conventions:
+
+- **Kebab-case flags → camelCase inputs:** `--scene-id abc` becomes
+  `sceneId: "abc"` in both forms.
+- **Booleans:** `--enabled` means true in both forms. To pass false, call
+  the tool by name with `--enabled=false` (the group-and-verb form has no
+  way to pass false; leave the flag out).
+- **Numbers:** `--bpm 90` is coerced from the tool's input schema.
+- **Arrays and objects:** pass JSON as the value:
+  `--paths '["a.wav","b.wav"]'`, `--tracks '[{"name":"Bass","role":"bass"}]'`.
+  Repeating a flag does not build an array (the last value wins).
+- **The whole input as JSON:** `sas run <tool> --json-body '{"key":"value"}'`.
 
 ## Exit codes
 
 | Code | Meaning |
 |---|---|
-| `0` | Success |
-| `1` | Plan validation failed (`sas validate` only) |
-| `2` | Argument parsing, tool failure, or generic non-zero |
+| `0` | Success (including a job that ended `cancelled`) |
+| `1` | Plan validation failed (`sas validate`), or a CLI usage error (unknown option, missing argument, unknown action) |
+| `2` | Tool failure, or a bad input caught before sending |
 | `3` | Connection refused (the app isn't running on `http://localhost:7655`) |
-| `4` | Timeout (typically `sas job wait` hit its `--timeout` before terminal) |
+| `4` | Timeout; also any `sas job wait` that could not wait (unknown job, app unreachable) |
 | `5` | Job terminated with `status: 'failed'` (`sas job wait` only) |
 
 This means `set -e` works in shell scripts: a failing tool stops the
@@ -225,10 +231,13 @@ enforced to have:
 
 ## Progressive disclosure
 
-By default `list-actions` returns the curated core tool set (~24 scene-scoped
-verbs covering create, mix, transport, scene navigation, plus the plan-loop
-verbs). Less-common tools (samples, export, advanced scene plumbing, etc.)
-are *deferred*; agents discover them via `tool_search`:
+About 100 tools are always visible (the curated core: create, mix,
+transport, scene navigation, the plan-loop verbs); about 70 of those are
+scene-scoped. Less-common tools (samples, export, arrangement, advanced
+scene plumbing, etc.) are *deferred*: they don't show in an agent's
+default tool list, and agents discover them via `tool_search`.
+`sas list-actions` shows every tool, deferred ones included; add
+`--core-only` for just the always-visible set.
 
 ```bash
 # Agent: I need something to export audio. Let me search.
@@ -279,7 +288,8 @@ sas events stream | jq -r 'select(.event == "domainEvent") | .data'
 
 Event types include: `scene:created`, `scene:activated`, `track:created`,
 `track:midi-written`, `track:fx-changed`, `bpm:changed`,
-`deck:state-changed`, `sample:imported`, `transition:created`, and more.
+`deck:state-changed`, `sample:imported`, `arrangement:edited`,
+`arrangement:transport`, and more.
 
 ## Async jobs (every state-mutating tool returns a `jobId`)
 
@@ -295,7 +305,7 @@ work continues in the background.
 ```bash
 # 1. Kick off the job. The call returns in < 1 s.
 JOB=$(sas compose_scene --description "chill lo-fi" --scene-name "Verse" \
-  --json '{"tracks":[{"name":"Bass","role":"bass","prompt":"deep slow"}]}' \
+  --tracks '[{"name":"Bass","role":"bass","prompt":"deep slow"}]' --json \
   | jq -r '.data.changes.jobId')
 
 # 2. Block until the workflow reaches terminal state.
@@ -331,35 +341,48 @@ worked examples, and troubleshooting.
 
 ## Idempotency keys
 
-All mutating tools accept a top-level `--idempotency-key`:
+Mutating tools accept an `idempotencyKey` input. Spell it in camelCase
+(`--idempotencyKey`, or `-p idempotencyKey=…` with `sas run`):
 
 ```bash
-# Same key + same params = same result (cached within 60s, per project)
-sas dsl_track_create --idempotency-key "retry-abc-1" --name "Bass" --role bass
-sas dsl_track_create --idempotency-key "retry-abc-1" --name "Bass" --role bass
+# Same key + same tool + same params = same result (cached 60 s, per project)
+sas dsl_track_create --idempotencyKey "retry-abc-1" --name "Bass" --role bass
+sas dsl_track_create --idempotencyKey "retry-abc-1" --name "Bass" --role bass
 # ↑ second call returns the first's result, no duplicate track
 ```
 
-Safe to retry on transient errors without corrupting state. See the
-[orchestration design doc][design] § 8 for the full spec.
+Only successful results are cached, so a retry after a failure runs
+again. Safe to retry on transient errors without corrupting state. See
+the [orchestration design doc][design] § 8 for the full spec.
 
-## The `--json` escape hatch
+## Passing JSON: arrays and objects
 
-For tools with complex nested inputs (like `compose_scene` which takes a
-`tracks` array), pass them as JSON directly:
+For tools with nested inputs (like `compose_scene`, which takes a
+`tracks` array), pass the JSON as the flag's value:
 
 ```bash
 sas compose_scene \
   --description "chill lo-fi" \
   --scene-name "Verse" \
-  --json '{
-    "tracks": [
-      {"name": "Bass",  "role": "bass",  "prompt": "deep, slow lo-fi"},
-      {"name": "Drums", "role": "drums", "prompt": "laid-back swung"},
-      {"name": "Keys",  "role": "chords","prompt": "jazzy extensions"}
-    ]
-  }'
+  --tracks '[
+    {"name": "Bass",  "role": "bass",  "prompt": "deep, slow lo-fi"},
+    {"name": "Drums", "role": "drums", "prompt": "laid-back swung"},
+    {"name": "Keys",  "role": "chords","prompt": "jazzy extensions"}
+  ]'
 ```
+
+Or send the whole input as one JSON object with `sas run`:
+
+```bash
+sas run compose_scene --json-body '{
+  "description": "chill lo-fi",
+  "sceneName": "Verse",
+  "tracks": [{"name": "Bass", "role": "bass", "prompt": "deep, slow lo-fi"}]
+}'
+```
+
+`--json` on its own only switches the output to JSON; it never carries
+tool inputs.
 
 ## Scene loop length: `--bar-length`
 
@@ -380,11 +403,11 @@ sas compose_scene \
   --description "ambient 16-bar intro in F minor" \
   --scene-name "Intro" \
   --bar-length 16 \
-  --json '{"tracks":[
+  --tracks '[
     {"name":"Pad","role":"pads","prompt":"slow swell"},
     {"name":"Bass","role":"bass","prompt":"sub drone"},
     {"name":"Lead","role":"lead","prompt":"sparse melodic line"}
-  ]}'
+  ]'
 ```
 
 Passing an invalid `--bar-length` returns a structured remediation
@@ -432,6 +455,94 @@ Failure envelopes follow the standard remediation taxonomy:
 selector matches multiple tracks), `unsupported_value` (track has no
 role, or no presets installed for the category), `engine_unreachable`
 (Surge XT couldn't be loaded or applied).
+
+## Arrange a song: `sas arrangement`
+
+The [Arrange mode](/arrange/) tools are grouped under `sas arrangement`.
+The group is generated from the app's tool list, so run `sas refresh` once
+after updating the app if `sas arrangement --help` doesn't list it. Flags
+are the kebab-case form of each tool's inputs (`--instance`, `--track`,
+`--length-bars`, …); boolean flags are true when present (`--linked`,
+`--unlink`, `--clear`, `--stems`, `--ableton`, `--leave-arrange-mode`, …).
+Every command works on the project's one arrangement.
+
+| Command | Tool | Does |
+|---|---|---|
+| `sas arrangement status` | `arrangement_status` | Arrange mode, stems, owner, playhead (read-only) |
+| `sas arrangement start` | `arrangement_start` | Enter arrange mode, render changed layers, build (**async**: returns a `jobId`) |
+| `sas arrangement play [--from-seconds N]` | `arrangement_play` | Play |
+| `sas arrangement stop [--return-to-start] [--leave-arrange-mode]` | `arrangement_stop` | Stop |
+| `sas arrangement seek --seconds N` | `arrangement_seek` | Move the playhead |
+| `sas arrangement loop --instance X` / `--clear` | `arrangement_loop_instance` | Loop one section |
+| `sas arrangement get` | `arrangement_get` | Sections, layers, clips, effects, scenes (read-only) |
+| `sas arrangement insert --scene X [--index N] [--length-bars N]` | `arrangement_insert_instance` | Insert a scene |
+| `sas arrangement move --instance X --to-index N` | `arrangement_move_instance` | Move a section |
+| `sas arrangement duplicate --instance X [--linked]` | `arrangement_duplicate_instance` | Copy or linked copy of a section |
+| `sas arrangement remove --instance X` | `arrangement_delete_instance` | Remove a section (the song gets shorter) |
+| `sas arrangement resize --instance X --length-bars N [--unlink]` | `arrangement_resize_instance` | Resize (whole bars) |
+| `sas arrangement fade-section --instance X --edge in\|out --bars N` | `arrangement_fade_section` | Fade a whole section in or out |
+| `sas arrangement layer --instance X --track Y …` | `arrangement_set_layer` | One layer in one section |
+| `sas arrangement clear --instance X --track Y --from-bar A --to-bar B` | `arrangement_delete_region` | Silence bars (the song keeps its length) |
+| `sas arrangement split --track Y --bar N [--instance X]` | `arrangement_split` | Split a clip |
+| `sas arrangement join --track Y [--instance X] [--from-bar A --to-bar B]` | `arrangement_join` | Join clips |
+| `sas arrangement treatment --instance X --track Y --type T --bar N` | `arrangement_place_treatment` | Place an effect |
+| `sas arrangement untreat --instance X --track Y --bar N` | `arrangement_remove_treatment` | Remove an effect |
+| `sas run arrangement_copy …` | `arrangement_copy` | Copy to the shared clipboard (takes an object, see below) |
+| `sas run arrangement_paste …` | `arrangement_paste` | Paste (takes an object) |
+| `sas run arrangement_duplicate …` | `arrangement_duplicate` | Duplicate sections, bars or a clip (takes an object or a list) |
+| `sas arrangement undo` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history |
+| `sas arrangement export [--stems] [--ableton] [--preset P] …` | `arrangement_export` | Export (**async**: returns a `jobId`) |
+| `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
+
+`--instance` takes a section's label (`"Chorus (2)"`), its scene
+(`"the verse"`) or its position (`"the second chorus"`, `"the last verse"`);
+`--track` takes a layer's name. `--index` (0-based) and `--instance-id` work
+too.
+
+::: warning Objects, lists and "false" need `sas run`
+The generated `sas arrangement …` commands pass every value as plain text, so
+inputs that are objects or lists (`region`, `run`, `clip`, `sections`, `at`,
+`tracks`, `bars`, `outputs`, `params`) and booleans set to false
+(`--render-stale=false`) don't work there. Use the tool name with `sas run`
+and JSON values instead:
+
+```bash
+sas run arrangement_copy -p 'region={"instance": "the first chorus", "track": "Kick"}'
+sas run arrangement_paste -p 'at={"instance": "the second chorus", "bar": 1}'
+sas run arrangement_duplicate -p 'sections=["Chorus (2)"]'
+sas run arrangement_export -p 'outputs=["mix","stems"]' -p renderStale=false
+```
+:::
+
+```bash
+# Where are we?
+sas arrangement status
+
+# Build it (renders any layer whose sound changed), then play from 0:30
+JOB=$(sas arrangement start --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 600
+sas arrangement play --from-seconds 30
+
+# Read the timeline
+sas arrangement get --json | jq '.data.changes.instances[] | {index, label, lengthBars}'
+
+# Edit
+sas arrangement duplicate --instance "Chorus" --linked                # a linked chorus
+sas arrangement resize --instance "Chorus (2)" --length-bars 16 --unlink
+sas arrangement layer --instance "the last chorus" --track Bass --from-bar 5   # enters at bar 5
+sas arrangement layer --instance "the last chorus" --track Pad --fade-in-beats 8 --gain-db -3
+sas arrangement fade-section --instance "the last chorus" --edge out --bars 4
+sas arrangement treatment --instance "the second chorus" --track Bass --type reverse_bar --bar 4
+sas arrangement undo
+
+# Export the Mix, a Master and stems, then go back to composing
+sas arrangement export --stems
+sas arrangement stop --leave-arrange-mode
+```
+
+See [Arrangement tools](./for-agents.md#arrangement-tools) for how the tools
+behave and the worked examples
+[15 to 18](./examples.md#_15-arrange-a-song-from-your-scenes).
 
 ## Plan-as-artifact surface
 
@@ -573,7 +684,8 @@ sas plan "make me a beat" --json | jq '.data.changes.plan' | sas apply -
 Default behavior:
 
 1. Validate the plan. If invalid, exit `1` with the error list.
-2. **Auto-create a checkpoint** named `pre-apply-<plan.id>-<ts>` capturing
+2. **Auto-create a checkpoint** named `pre-apply-<plan.id>` (the plan id
+   carries its own timestamp) capturing
    DB rows + engine surface state (mute/solo/volume/pan/plugin state).
 3. Execute steps sequentially. Each step's `outputs` resolve `${steps.<id>.outputs.<key>}`
    references in later step `inputs`.
@@ -631,7 +743,7 @@ sas history checkpoint pre-experiment             # manual save point
 sas history checkpoint pre-experiment --notes "before mix tweaks"
 sas history undo pre-experiment                   # restore
 sas history delete pre-experiment                 # drop one
-sas history prune                                 # drop expired (default TTL 24h)
+sas history prune                                 # drop expired (CLI checkpoints last 24 h)
 ```
 
 `undo` runs in a single SQLite transaction + sequence of engine RPCs.

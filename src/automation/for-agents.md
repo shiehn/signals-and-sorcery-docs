@@ -20,7 +20,7 @@ sas inspect → sas plan → sas validate → sas apply → sas preview → sas 
 It's six typed verbs, every mutation is reversible via auto-saved
 checkpoints, and the validator's `suggestedFix` tells the agent exactly
 how to recover from a missing precondition. Direct tool calls (the
-~70-tool catalog further down) still work, but the loop is the
+catalog further down) still work, but the loop is the
 recommended path for any change you might want to undo or iterate on.
 
 > **Async-by-default.** Every state-mutating tool now returns
@@ -59,9 +59,9 @@ that depends on the result.
 Direct tools work too; discover with `sas list-actions` / `sas help
 <action>`. Every action returns JSON; pipe through `jq`.
 
-Exit codes: 0 success; 1 plan-validation failure; 2 bad args / tool
-failure; 3 connection refused (app not running); 4 `sas job wait`
-timeout; 5 job ended in failed state.
+Exit codes: 0 success; 1 plan-validation failure or a CLI usage error;
+2 tool failure; 3 connection refused (app not running); 4 `sas job wait`
+did not finish (timeout); 5 job ended in failed state.
 ```
 
 That's it. The agent reads tools on demand and writes shell scripts
@@ -89,11 +89,11 @@ compose-lofi() {
   sas compose_scene \
     --description "chill lo-fi beat, $1 BPM" \
     --scene-name "$2" \
-    --json '{"tracks":[
+    --tracks '[
       {"name":"Bass","role":"bass","prompt":"deep lo-fi"},
       {"name":"Drums","role":"drums","prompt":"laid-back swung"},
       {"name":"Keys","role":"chords","prompt":"jazzy Rhodes"}
-    ]}'
+    ]'
 }
 
 # Usage: compose-lofi 85 Verse
@@ -110,8 +110,8 @@ inside the Electron main process while the app is open:
 - **Discovery file:** `~/.signals-and-sorcery/mcp.json` (written by S&S at
   startup; contains the active port and auth token if applicable)
 
-The MCP server exposes **8 tools** following the Anthropic six-primitive
-ceiling plus two meta-tools for progressive disclosure. All eight funnel
+The MCP server exposes **9 tools**: the six plan-loop primitives, a job
+waiter, and two meta-tools for progressive disclosure. All nine funnel
 through the same `ToolRegistry.execute()` chokepoint as the CLI and HTTP
 paths, so behaviour and remediation envelopes are identical across
 surfaces.
@@ -124,6 +124,7 @@ surfaces.
 | `sas_apply_plan` | Execute Plan reversibly (auto-checkpoint) | **Yes, returns `jobId`** |
 | `sas_render_preview` | Content-addressed audio preview | No (cache-aware) |
 | `sas_undo_checkpoint` | Restore to a named checkpoint | No |
+| `sas_wait_for_job` | Block until an async job finishes (`jobId`, optional `timeoutMs`) | No (long-poll) |
 | `tool_search` | Find a tool by keyword in the granular catalog | No |
 | `sas_run` | Invoke any registered action by name (post-discovery) | Depends on action |
 
@@ -132,15 +133,15 @@ The flow for an MCP-only agent:
 1. `sas_inspect` to read state.
 2. `sas_create_plan` → `sas_validate_plan` → `sas_apply_plan`.
 3. Because `sas_apply_plan` is async-wrapped, it returns
-   `changes.jobId`. Call `sas_run` with `action: "wait_for_job"` and the
-   `jobId` to block until the work is done.
+   `changes.jobId`. Call `sas_wait_for_job` with that `jobId` to block
+   until the work is done.
 4. `sas_render_preview` to hear the result.
 5. `sas_undo_checkpoint` if the result missed.
 
 Granular tools (`scene_create`, `dsl_track_create`, `make_beat`, etc.)
 are discoverable via `tool_search` and invokable via `sas_run`. Each
 async wrapped tool returns the same `{ jobId, status, operation }`
-envelope; the agent always reaches for `wait_for_job` afterwards. See
+envelope; the agent always reaches for `sas_wait_for_job` afterwards. See
 [Status & async jobs](./status-and-jobs.md) for the full list.
 
 ### Cursor Agent
@@ -197,8 +198,9 @@ MCP-only agents aren't stuck chaining 10+ tool calls:
   the user wants to nail the contract before committing to instruments.
 - `add_instrument` instead of `dsl_track_create` + `dsl_generate_midi`
 - `play_scene` instead of `scene_activate` + `dsl_play`
-- `render_to_performance` for main-output playback
-- `create_transition` for bridges between scenes
+- `render_to_performance` to render a scene offline and play the baked loop (it stops the live scene; there is one shared output)
+- `create_transition_scene` for a bridge scene between two scenes (it
+  starts empty: add parts with `add_instrument`)
 
 ### Scene loop length: pass `barLength` (2, 4, 8, or 16)
 
@@ -212,7 +214,7 @@ sas compose_contract --name "Disco" --description "2-bar disco beat" --bar-lengt
 
 # "A long 16-bar intro": pass barLength=16
 sas compose_scene --description "ambient 16-bar intro" --scene-name "Intro" --bar-length 16 \
-  --json '{"tracks":[{"name":"Pad","role":"pads","prompt":"slow swell"}]}'
+  --tracks '[{"name":"Pad","role":"pads","prompt":"slow swell"}]'
 ```
 
 Don't confuse `barLength` (scene loop length) with the per-track `bars`
@@ -269,36 +271,183 @@ curl 'http://localhost:7655/api/v1/actions?scope=scene'
 curl 'http://localhost:7655/api/v1/actions?include_deferred=true'
 ```
 
-The CLI (`sas list-actions`) and the in-app chat-plugin agent both read
-from the same registry with the same default filter; Errantry's CLI tests
+`/api/v1/actions` and the in-app chat-plugin agent read from the same
+registry with the same default filter (`sas list-actions` shows deferred
+tools too; `--core-only` gives the default set); Errantry's CLI tests
 therefore exercise the chat-plugin's surface too. **Whatever's reachable
 via `sas` is reachable from the chat agent**, and vice versa.
 
 ## Tool surface summary
 
-The default curated set (`?scope=scene` or chat-plugin default) covers
-the natural verbs an agent reaches for during music production. Tools
-marked **deferred** require `tool_search` to discover.
+The default set (`/api/v1/actions` with no filter) covers the natural
+verbs an agent reaches for during music production; `?scope=scene`
+narrows it to the scene-scoped tools the in-app chat assistant starts
+with. Tools marked **deferred** require `tool_search` to discover.
 
 | Category | Tools (default surface unless noted) |
 |---|---|
-| **MCP primitives** (always visible to MCP clients) | `sas_inspect`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_undo_checkpoint`, `tool_search`, `sas_run`. See [MCP-capable agents](#mcp-capable-agents) for routing details |
+| **MCP primitives** (always visible to MCP clients) | `sas_inspect`, `sas_create_plan`, `sas_validate_plan`, `sas_apply_plan`, `sas_render_preview`, `sas_undo_checkpoint`, `sas_wait_for_job`, `tool_search`, `sas_run`. See [MCP-capable agents](#mcp-capable-agents) for routing details |
 | **Plan loop** (CLI surface) | `sas inspect project\|scene\|track\|history`, `sas plan`, `sas validate`, `sas apply` (async), `sas preview`, `sas history list\|checkpoint\|undo\|delete\|prune` |
 | **Async job control** | `sas job list\|status\|wait\|cancel` (CLI) · `wait_for_job` (via `sas_run` for MCP). See [Status & async jobs](./status-and-jobs.md) |
 | **Project** | `project_get_status`, `list_projects` |
-| **Scene navigation** | `scene_get_all`, `scene_activate`, `scene_duplicate`, `scene_delete`, `scene_find_by_name` |
+| **Scene navigation** | `scene_get_all`, `scene_activate`, `scene_duplicate`, `scene_delete`, `create_transition_scene` (deferred: `scene_find_by_name`) |
 | **Scene plumbing** *(deferred)* | `scene_create`, `scene_get_tracks`, `scene_set_mute`, `scene_add_track`, `scene_move_track`, `scene_queue`, `scene_set_collapsed` |
 | **Tracks** | `dsl_track_create`, `dsl_list_tracks`, `dsl_track_delete`, `dsl_track_mute`, `dsl_track_solo`, `dsl_track_volume`, `dsl_track_pan`, `dsl_track_rename` |
 | **Transport** | `dsl_play`, `dsl_stop`, `dsl_set_tempo` (deferred: `dsl_get_tempo_info`) |
 | **MIDI generation** | `dsl_generate_midi` (deferred: `dsl_generate_drums`) |
 | **FX** (3rd-party VST3/AU inserts) | `dsl_fx_remove`, `dsl_fx_set_bypass`, `dsl_fx_set_param`, `dsl_sweep` (deferred: `fx_list_plugins`, `fx_add_plugin`, `fx_remove_plugin`, `fx_move_plugin`, `fx_set_bypass`, `fx_set_param`, `dsl_load_fx_chain`, `rack_apply_random_fx`) |
-| **Musical context** | `get_musical_context`, `set_musical_context` |
+| **Musical context** *(deferred)* | `get_musical_context`, `set_musical_context` |
 | **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
 | **Export** *(deferred)* | `export_audio` |
-| **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `play_scene`, `render_to_performance`, `create_transition` |
+| **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `generate_track`, `play_scene`, `render_to_performance` |
 | **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
 | **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
 | **Discovery** | `tool_search` (always visible; finds any registered tool, deferred or not) |
+| **Arrangement** *(deferred)* | 26 `arrangement_*` tools that build, edit, play and export a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
+
+## Arrangement tools
+
+[Arrange mode](/arrange/) is fully scriptable. Twenty-six `arrangement_*`
+tools cover what the arranger does: build and play the song, place and copy
+sections, switch layers on and off, copy and paste bars, split clips, fade,
+add effects, undo, and export. They are deferred, so find them with
+`tool_search` (query `arrangement`), or call them by name. In the CLI they
+are the [`sas arrangement` group](./cli-reference.md#arrange-a-song-sas-arrangement).
+The in-app chat assistant uses the same tools.
+
+How they behave:
+
+- **One arrangement per project.** Every tool acts on the project's
+  arrangement; there is no id to pass. `arrangement_start` creates it the
+  first time (every scene once, in scene order, all layers on).
+- **Direct, not the plan loop.** Arrangement edits don't create
+  checkpoints. Each edit is one labelled step in the arrangement's own undo
+  history, the same history the editor in the app uses, so
+  `arrangement_undo` undoes a drag in the timeline and ⌘Z undoes an agent's
+  edit.
+- **Names work.** Name a section with `instance`: its label (`"Chorus"`,
+  `"Chorus (2)"`), its scene (`"the verse"`) or its position
+  (`"the second chorus"`, `"the last verse"`). `instanceId` or `index`
+  (0-based) work too. Name a scene with `scene` and a layer with `track`
+  (add `scene` to pick a layer from one scene). An ambiguous name returns a
+  clarification listing the choices; a name that doesn't exist returns
+  what does.
+- **Read first.** `arrangement_get` returns the timeline: `instances[]`
+  (`index`, `instanceId`, `label`, `sceneName`, `lengthBars`, `meter`,
+  `startBar`, `linkedWith`), `variants[]` with each layer's state (`name`,
+  `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades, gain,
+  `splits`, `treatments`), and `scenes[]`.
+- **Linked copies share one arrangement.** Edits to a linked section change
+  every linked copy, and the result lists them in `alsoAffects`. Use an
+  independent copy, or `unlink: true` on resize, when only one should
+  change.
+- **Tracks never leave their lane.** Any layer can play in any section (a
+  "guest" from another scene keeps its own fader, pan and its own scene's
+  panel bus), but always on its own lane. Pasted bars land on the lanes they
+  came from.
+- **Results.** Every edit returns `timeline` (compact lines like
+  `#0 Verse (8 bars)`), `canUndo` / `canRedo`, and `dropped` or `notes` for
+  anything that could not apply as asked. A change that changes nothing
+  returns `no_change`. Edits emit `arrangement:edited`; transport calls emit
+  `arrangement:transport`.
+- **Playback.** `arrangement_start` is an async job (wait on its `jobId`):
+  it enters arrange mode and renders any layer whose sound changed. The
+  first start renders every layer and can take minutes. Then
+  `arrangement_play`. The composition and the arrangement never play at the
+  same time: starting one stops the other.
+
+### Build and play
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_start` | `sas arrangement start` | Enter arrange mode, create the arrangement if needed, render changed layers, build it. **Async** | `dependsOn` |
+| `arrangement_play` | `sas arrangement play` | Play from the playhead | `fromSeconds` |
+| `arrangement_stop` | `sas arrangement stop` | Stop (tails ring out). `leaveArrangeMode` hands playback back to the composition | `returnToStart`, `leaveArrangeMode` |
+| `arrangement_status` | `sas arrangement status` | Read-only: arrange mode, the arrangement, stem freshness, who owns the output, the playhead (seconds, bar, beat, section) | none |
+| `arrangement_seek` | `sas arrangement seek` | Move the playhead | `seconds` |
+| `arrangement_loop_instance` | `sas arrangement loop` | Loop one section, or `clear` | `instance`, `clear` |
+| `arrangement_get` | `sas arrangement get` | Read-only: sections, layers, clips, effects, scenes | none |
+
+### Sections
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_insert_instance` | `sas arrangement insert` | Insert a scene (a fresh drop plays every layer), or a linked copy of a variant | `scene` (or `variantId`), `index`, `lengthBars`, `label` |
+| `arrangement_move_instance` | `sas arrangement move` | Move a section | `instance`, `toIndex` |
+| `arrangement_duplicate_instance` | `sas arrangement duplicate` | Independent copy, or `linked` | `instance`, `linked`, `toIndex` |
+| `arrangement_delete_instance` | `sas arrangement remove` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
+| `arrangement_resize_instance` | `sas arrangement resize` | Whole bars; longer loops the scene in phase | `instance`, `lengthBars`, `unlink` |
+| `arrangement_fade_section` | `sas arrangement fade-section` | Fade every layer in or out at a section's edge (equal-power); layers that carry on across the edge are skipped | `instance`, `edge` (`in` or `out`), `bars` or `beats` (0 removes) |
+
+### Layers, bars and clips
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_set_layer` | `sas arrangement layer` | One layer in one section: on or off, enter or leave at a bar, fades, gain | `instance`; `track` (+ `scene`); `play` (`on`, `off`, `default`, or a 0/1 bar mask); `fromBar` / `toBar`; `fadeInBeats` / `fadeOutBeats`; `gainDb` (±24) |
+| `arrangement_copy` | `sas arrangement copy` | Copy to the shared clipboard: a `region` of bars, a layer's whole `run`, one `clip`, or `sections` | one of `region`, `run`, `clip`, `sections` |
+| `arrangement_paste` | `sas arrangement paste` | Paste bars onto their own lanes from a bar, or sections after a section; pasted bars **replace** what was there | `at` (`{instance, bar}` or `{bar}`) or `afterSection`; `linked` |
+| `arrangement_delete_region` | `sas arrangement clear` | Silence bars (the song does **not** get shorter; to remove a section use `arrangement_delete_instance`) | `instance`, `track` or `tracks`, `fromBar`, `toBar`; or `clip` |
+| `arrangement_duplicate` | `sas arrangement dup` | Duplicate sections, a region or a clip right after itself (like ⌘D) | one of `sections`, `region`, `clip` |
+| `arrangement_split` | `sas arrangement split` | Split a layer's clip at a bar (no change in sound) | `track` or `tracks`, `bar` or `bars`, `instance` |
+| `arrangement_join` | `sas arrangement join` | Remove the splits inside a region (section starts always stay clip edges) | `instance`, `track` or `tracks`, `fromBar`, `toBar` |
+
+The clipboard is shared with the editor's ⌘C / ⌘X / ⌘V / ⌘D for the rest of
+the app session, one per project; the app shows what an agent copied.
+
+### Effects (treatments)
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_place_treatment` | `sas arrangement treatment` | Place an effect on a layer at a bar; returns `treatmentId`; linked copies get it too | `instance`; `track` or `asset`; `type`; `bar`; `bars`; `params` |
+| `arrangement_remove_treatment` | `sas arrangement untreat` | Remove one | `instance`; `track` or `asset`; `treatmentId`, or `bar` (+ `type`) |
+
+Treatment types (the tool description lists every parameter with its range
+and default):
+
+- **Replace the layer's audio for those bars:** `fill_roll8` (Roll ⅛),
+  `fill_roll16` (Roll 1/16), `fill_accel` (Accelerating roll), `stutter`
+  (`repeats`), `reverse_bar` (Reverse), `gap` (`beats` of silent tail),
+  `hp_sweep` / `lp_sweep` (filter sweeps: `bars`, `start_hz`, `end_hz`,
+  `curve`), `tape_stop` (`beats`), `loop` (Bar loop: `bars`,
+  `window_bars`, `src_bar`). Replacing effects on one lane can't overlap.
+- **Play on top:** `crash_wash` and `impact_hit` (hit length, echo taps,
+  spacing and decay, room size, damping, wet).
+- **Mix Assets** (pass `asset`, the Mix Assets layer's name; the type
+  follows from it): hits and shots on a bar, risers that land at the end of
+  their bar (`hit_beats` or `beats`, `gain_db`).
+
+### Undo and export
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_undo` | `sas arrangement undo` | Undo the last edit (the arrangement's own history) | none |
+| `arrangement_redo` | `sas arrangement redo` | Redo | none |
+| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `renderStale` |
+| `arrangement_export_cancel` | `sas arrangement export-cancel` | Cancel the running export (nothing is written) | `jobId` |
+
+`arrangement_export` writes a new dated folder (default
+`~/Music/Signals & Sorcery Exports`) and returns a `jobId`; the finished job
+lists the files, the loudness report, the stems null test and any warnings.
+Only one export runs at a time. See
+[Exporting your song](/arrange/#exporting-your-song) for what each output is.
+
+::: tip Coming soon
+The `arrangement_sync`, `arrangement_sync_status`, `arrangement_share` and
+`arrangement_import_proposal` tools belong to cloud sync, sharing and the web
+companion, which are not available yet. Today they report that cloud sync is
+unavailable; your arrangement stays on your computer.
+:::
+
+::: warning A similar name
+The `arranger_*` tools (`arranger_push`, `arranger_status`, …) drive the
+separate cloud arranger (the arranger pane's **Cloud** tab), not Arrange
+mode.
+:::
+
+See the worked examples [15](./examples.md#_15-arrange-a-song-from-your-scenes),
+[16](./examples.md#_16-add-an-effect-to-one-bar),
+[17](./examples.md#_17-copy-a-part-from-one-section-to-another) and
+[18](./examples.md#_18-export-the-song).
 
 ## Pattern: observe → reason → act
 
@@ -331,8 +480,10 @@ Every failure response has:
 
 - `error`: the reason, short
 - `message`: human-readable one-liner
-- `suggestion`: *what the agent should do next* (concrete: tool name,
-  often with example params)
+- *what the agent should do next*: a `remediation` block (newer tools:
+  the reason, the fix, and the exact CLI and MCP call to make) or a
+  `suggestion` string (older tools), concrete: a tool name, often with
+  example params
 - `changes.availableX`: when a referenced entity (track, scene,
   project) doesn't resolve, the response lists what DOES exist
 
