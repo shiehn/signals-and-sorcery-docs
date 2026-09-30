@@ -67,6 +67,17 @@ Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and *
 
 [How to load your own VST3/AU instruments →](/custom-sounds/#load-your-own-instrument-plugins-vst3-au)
 
+### ❄ Freeze
+
+Free up CPU by turning a track's instrument and effects into audio:
+
+- **The track ❄** on a track row renders that track to a stem and plays it instead of the live instrument. Your mixer (volume, pan, mute, solo) stays live. Click it again to unfreeze.
+- **The scene ❄** in the scene list freezes every track in that scene, and **Freeze ALL** (the ❄ in the Scenes title bar) freezes the whole project. While a batch runs, their counts tick up one track at a time (0/7, 1/7 … 7/7).
+- Tracks with an instrument (MIDI tracks) can freeze; audio tracks such as loops and stems can't.
+- Change a frozen track's sound and it unfreezes itself so you hear the edit; a note tells you why. Unfreezing brings back the instrument and effects exactly as they were, including each plugin's Dry/Wet setting.
+- Changed an instrument inside its own plugin window? The app can't see that, so use **↻ Force re-render stem** in the track's drawer.
+- Playback stops while a stem renders.
+
 ### 🗂️ Bring Your Own Sounds
 
 - **Import your own sample libraries** — drop your WAV drum kits and instrument
