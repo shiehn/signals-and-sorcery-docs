@@ -64,8 +64,8 @@ sas job list --status running
 
 ## CLI surface
 
-The `sas` CLI has two relevant command families: a one-shot health check
-(`sas health`) and the `sas job` family for async jobs.
+The `sas` CLI has two relevant command families: one-shot health
+(`sas health`, `sas status`) and the `sas job` family for async jobs.
 
 ### `sas health`: is the API up?
 
@@ -81,6 +81,27 @@ If `sas health` fails with *"Connection refused — is the Signals & Sorcery
 app running?"*, launch the app and retry. The CLI is a thin HTTP client; it
 needs the in-app API server (`localhost:7655`) to be listening.
 
+
+### `sas status`: service by service
+
+```bash
+sas status
+#   ✓ api
+#   ✓ engine       connected=true
+#   ✓ database
+#   ✓ auth         signedIn=true
+#   ✓ project      name=My Song, id=…
+```
+
+Hits `GET /api/v1/status`: the API, the audio engine, the database, sign-in
+and the open project, each with a ✓ or ✗ and a short detail. Being signed
+out is normal (everything works locally). Exits `0` whenever the app
+answers, `3` on connection refused; read each service's mark (or
+`--json`) for its health:
+
+```bash
+sas status --json | jq '.data.engine.connected'
+```
 
 ### `sas job …`: manage running jobs
 
@@ -144,6 +165,19 @@ curl -s http://localhost:7655/api/v1/health
 
 The simplest "is the server up?" probe. Returns immediately, no engine
 RPC.
+
+### `GET /api/v1/status`: service by service
+
+```bash
+curl -s http://localhost:7655/api/v1/status
+# { "success": true, "data": { "api": {"ok": true}, "engine": {"ok": true, "connected": true},
+#   "database": {"ok": true}, "auth": {"ok": true, "signedIn": false},
+#   "project": {"ok": true, "name": "My Song", "id": "…"} } }
+```
+
+Every check is a quick look (the engine is never started by it), and one
+failing check never hides the others. With no project open, `project` reads
+`{"ok": false, "bound": "none"}`.
 
 ### `GET /api/v1/jobs`: list jobs
 
@@ -374,7 +408,7 @@ SCENE=$(sas compose_scene \
   --bar-length 8 \
   --tracks '[
     {"name":"Bass","role":"bass","prompt":"deep sub"},
-    {"name":"Drums","role":"drums","prompt":"laid back 90 BPM"}
+    {"name":"Kick","role":"kicks","prompt":"laid back 90 BPM"}
   ]' \
   --json)
 

@@ -88,7 +88,26 @@ sas health
 in CI smoke tests and `set -e` preludes; it exits `3` when the app can't
 be reached.
 
-If it fails with *"Connection refused: is the Signals & Sorcery app
+```bash
+# Service by service: API, audio engine, database, sign-in, open project
+sas status
+#   ✓ api
+#   ✓ engine       connected=true
+#   ✓ database
+#   ✓ auth         signedIn=true
+#   ✓ project      name=My Song, id=…
+```
+
+`sas status` hits `GET /api/v1/status`. Each service gets a ✓ or ✗ and a
+short detail; being signed out is normal (everything works locally). It
+exits `0` whenever the app answers (read the marks, or `--json`, for each
+service), `3` if the app isn't running:
+
+```bash
+sas status --json | jq '.data.engine.connected'
+```
+
+If either command fails with *"Connection refused: is the Signals & Sorcery app
 running?"*, launch the app and retry. The CLI is a thin HTTP client; it
 needs the in-app API server on `http://localhost:7655`.
 
@@ -100,6 +119,7 @@ sas run <action> [key=value]... [-p key=value] [--json-body '{…}']
 sas list-actions [--core-only]       List every registered tool (--core-only: the always-visible set)
 sas help <action>                    Per-action help (sas --help for the top level)
 sas health                           Reachability check (GET /health)
+sas status                           Service by service: API, engine, database, auth, project
 sas events stream [--filter <e>]     SSE stream of typed domain + job events
 sas refresh                          Re-fetch the /actions manifest cache
 
@@ -150,7 +170,7 @@ being recognised.
 | `-h`, `--help` | Top-level help, or per-command help if passed after a command |
 
 `--host`, `--port` and `--token` apply to tool calls and most commands; the
-`sas job` commands currently always use the defaults.
+`sas job` and `sas status` commands currently always use the defaults.
 
 Environment variables: `SAS_TIMEOUT_MS` overrides the default 300 s HTTP
 timeout (composite tools like `make_beat` routinely run 30–120 s, so the
@@ -178,13 +198,15 @@ Conventions:
 
 - **Kebab-case flags → camelCase inputs:** `--scene-id abc` becomes
   `sceneId: "abc"` in both forms.
-- **Booleans:** `--enabled` means true in both forms. To pass false, call
-  the tool by name with `--enabled=false` (the group-and-verb form has no
-  way to pass false; leave the flag out).
+- **Booleans:** `--enabled` means true. For false, use `--enabled false`,
+  or `--no-enabled` in the group-and-verb form (`--enabled=false` by tool
+  name).
 - **Numbers:** `--bpm 90` is coerced from the tool's input schema.
 - **Arrays and objects:** pass JSON as the value:
   `--paths '["a.wav","b.wav"]'`, `--tracks '[{"name":"Bass","role":"bass"}]'`.
-  Repeating a flag does not build an array (the last value wins).
+  In the group-and-verb form a list of plain values can also be a comma
+  list: `--tracks kick,bass`. Repeating a flag does not build an array (the
+  last value wins).
 - **The whole input as JSON:** `sas run <tool> --json-body '{"key":"value"}'`.
 
 ## Exit codes
@@ -341,13 +363,13 @@ worked examples, and troubleshooting.
 
 ## Idempotency keys
 
-Mutating tools accept an `idempotencyKey` input. Spell it in camelCase
-(`--idempotencyKey`, or `-p idempotencyKey=…` with `sas run`):
+Every command takes `--idempotency-key` (or `-p idempotencyKey=…` with
+`sas run`):
 
 ```bash
 # Same key + same tool + same params = same result (cached 60 s, per project)
-sas dsl_track_create --idempotencyKey "retry-abc-1" --name "Bass" --role bass
-sas dsl_track_create --idempotencyKey "retry-abc-1" --name "Bass" --role bass
+sas dsl_track_create --idempotency-key "retry-abc-1" --name "Bass" --role bass
+sas dsl_track_create --idempotency-key "retry-abc-1" --name "Bass" --role bass
 # ↑ second call returns the first's result, no duplicate track
 ```
 
@@ -366,8 +388,8 @@ sas compose_scene \
   --scene-name "Verse" \
   --tracks '[
     {"name": "Bass",  "role": "bass",  "prompt": "deep, slow lo-fi"},
-    {"name": "Drums", "role": "drums", "prompt": "laid-back swung"},
-    {"name": "Keys",  "role": "chords","prompt": "jazzy extensions"}
+    {"name": "Kick",  "role": "kicks", "prompt": "laid-back swung"},
+    {"name": "Keys",  "role": "keys","prompt": "jazzy extensions"}
   ]'
 ```
 
@@ -477,19 +499,19 @@ Every command works on the project's one arrangement.
 | `sas arrangement get` | `arrangement_get` | Sections, layers, clips, effects, scenes (read-only) |
 | `sas arrangement insert --scene X [--index N] [--length-bars N]` | `arrangement_insert_instance` | Insert a scene |
 | `sas arrangement move --instance X --to-index N` | `arrangement_move_instance` | Move a section |
-| `sas arrangement duplicate --instance X [--linked]` | `arrangement_duplicate_instance` | Copy or linked copy of a section |
-| `sas arrangement remove --instance X` | `arrangement_delete_instance` | Remove a section (the song gets shorter) |
+| `sas arrangement duplicate-section --instance X [--linked]` | `arrangement_duplicate_instance` | Copy or linked copy of a section |
+| `sas arrangement remove-section --instance X` | `arrangement_delete_instance` | Remove a section (the song gets shorter) |
 | `sas arrangement resize --instance X --length-bars N [--unlink]` | `arrangement_resize_instance` | Resize (whole bars) |
 | `sas arrangement fade-section --instance X --edge in\|out --bars N` | `arrangement_fade_section` | Fade a whole section in or out |
 | `sas arrangement layer --instance X --track Y …` | `arrangement_set_layer` | One layer in one section |
-| `sas arrangement clear --instance X --track Y --from-bar A --to-bar B` | `arrangement_delete_region` | Silence bars (the song keeps its length) |
+| `sas arrangement silence --instance X --track Y --from-bar A --to-bar B` | `arrangement_delete_region` | Silence bars (the song keeps its length) |
 | `sas arrangement split --track Y --bar N [--instance X]` | `arrangement_split` | Split a clip |
 | `sas arrangement join --track Y [--instance X] [--from-bar A --to-bar B]` | `arrangement_join` | Join clips |
 | `sas arrangement treatment --instance X --track Y --type T --bar N` | `arrangement_place_treatment` | Place an effect |
 | `sas arrangement untreat --instance X --track Y --bar N` | `arrangement_remove_treatment` | Remove an effect |
-| `sas run arrangement_copy …` | `arrangement_copy` | Copy to the shared clipboard (takes an object, see below) |
-| `sas run arrangement_paste …` | `arrangement_paste` | Paste (takes an object) |
-| `sas run arrangement_duplicate …` | `arrangement_duplicate` | Duplicate sections, bars or a clip (takes an object or a list) |
+| `sas arrangement copy --region '{…}'` (or `--run`, `--clip`, `--sections`) | `arrangement_copy` | Copy to the shared clipboard |
+| `sas arrangement paste --at '{…}'` (or `--after-section X`) | `arrangement_paste` | Paste |
+| `sas arrangement duplicate-selection --sections X` (or `--region`, `--clip`) | `arrangement_duplicate` | Duplicate sections, bars or a clip |
 | `sas arrangement undo` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history |
 | `sas arrangement export [--stems] [--ableton] [--preset P] …` | `arrangement_export` | Export (**async**: returns a `jobId`) |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
@@ -497,22 +519,17 @@ Every command works on the project's one arrangement.
 `--instance` takes a section's label (`"Chorus (2)"`), its scene
 (`"the verse"`) or its position (`"the second chorus"`, `"the last verse"`);
 `--track` takes a layer's name. `--index` (0-based) and `--instance-id` work
-too.
-
-::: warning Objects, lists and "false" need `sas run`
-The generated `sas arrangement …` commands pass every value as plain text, so
-inputs that are objects or lists (`region`, `run`, `clip`, `sections`, `at`,
-`tracks`, `bars`, `outputs`, `params`) and booleans set to false
-(`--render-stale=false`) don't work there. Use the tool name with `sas run`
-and JSON values instead:
+too. Inputs that are objects take JSON, and lists take JSON or a comma list:
 
 ```bash
-sas run arrangement_copy -p 'region={"instance": "the first chorus", "track": "Kick"}'
-sas run arrangement_paste -p 'at={"instance": "the second chorus", "bar": 1}'
-sas run arrangement_duplicate -p 'sections=["Chorus (2)"]'
-sas run arrangement_export -p 'outputs=["mix","stems"]' -p renderStale=false
+sas arrangement copy --region '{"instance": "the first chorus", "track": "Kick"}'
+sas arrangement paste --at '{"instance": "the second chorus", "bar": 1}'
+sas arrangement duplicate-selection --sections "Chorus (2)"
+sas arrangement export --outputs mix,stems --render-stale false
 ```
-:::
+
+The older verbs `duplicate`, `remove`, `clear` and `dup` still work for now
+and print their new names.
 
 ```bash
 # Where are we?
@@ -527,7 +544,7 @@ sas arrangement play --from-seconds 30
 sas arrangement get --json | jq '.data.changes.instances[] | {index, label, lengthBars}'
 
 # Edit
-sas arrangement duplicate --instance "Chorus" --linked                # a linked chorus
+sas arrangement duplicate-section --instance "Chorus" --linked        # a linked chorus
 sas arrangement resize --instance "Chorus (2)" --length-bars 16 --unlink
 sas arrangement layer --instance "the last chorus" --track Bass --from-bar 5   # enters at bar 5
 sas arrangement layer --instance "the last chorus" --track Pad --fade-in-beats 8 --gain-db -3
@@ -535,7 +552,8 @@ sas arrangement fade-section --instance "the last chorus" --edge out --bars 4
 sas arrangement treatment --instance "the second chorus" --track Bass --type reverse_bar --bar 4
 sas arrangement undo
 
-# Export the Mix, a Master and stems, then go back to composing
+# Export the Mix, a Master and stems (the app asks you to approve it),
+# then go back to composing
 sas arrangement export --stems
 sas arrangement stop --leave-arrange-mode
 ```

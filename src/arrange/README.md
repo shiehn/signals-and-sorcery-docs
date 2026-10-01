@@ -599,6 +599,6 @@ Everything on this page is also available to agents and scripts, through the
 `arrangement_*` tools and the `sas arrangement` commands. They take plain names ("the
 second chorus", "Kick"), and an agent's edit and a gesture in the timeline land in the
 same history, so you can undo either from either side. What an agent copies shows on
-the clipboard in the header. See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
+the clipboard in the header, and an agent's export asks for your approval first. See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
 for the tool list, [`sas arrangement`](/automation/cli-reference.html#arrange-a-song-sas-arrangement)
 for the commands, and [the worked examples](/automation/examples.html#_15-arrange-a-song-from-your-scenes).

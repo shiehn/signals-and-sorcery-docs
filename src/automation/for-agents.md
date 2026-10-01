@@ -91,8 +91,8 @@ compose-lofi() {
     --scene-name "$2" \
     --tracks '[
       {"name":"Bass","role":"bass","prompt":"deep lo-fi"},
-      {"name":"Drums","role":"drums","prompt":"laid-back swung"},
-      {"name":"Keys","role":"chords","prompt":"jazzy Rhodes"}
+      {"name":"Kick","role":"kicks","prompt":"laid-back swung"},
+      {"name":"Keys","role":"keys","prompt":"jazzy Rhodes"}
     ]'
 }
 
@@ -248,7 +248,7 @@ execute("compose_scene",
         sceneName="Verse",
         tracks=[
             {"name": "Bass",  "role": "bass",  "prompt": "deep slow"},
-            {"name": "Drums", "role": "drums", "prompt": "laid-back"},
+            {"name": "Kick",  "role": "kicks", "prompt": "laid-back"},
         ])
 
 # Stream events
@@ -335,8 +335,9 @@ How they behave:
 - **Read first.** `arrangement_get` returns the timeline: `instances[]`
   (`index`, `instanceId`, `label`, `sceneName`, `lengthBars`, `meter`,
   `startBar`, `linkedWith`), `variants[]` with each layer's state (`name`,
-  `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades, gain,
-  `splits`, `treatments`), and `scenes[]`.
+  `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades and
+  their curves, gain, `gainEnvelope`, `splits`, `treatments`), and
+  `scenes[]`.
 - **Linked copies share one arrangement.** Edits to a linked section change
   every linked copy, and the result lists them in `alsoAffects`. Use an
   independent copy, or `unlink: true` on resize, when only one should
@@ -374,8 +375,8 @@ How they behave:
 |---|---|---|---|
 | `arrangement_insert_instance` | `sas arrangement insert` | Insert a scene (a fresh drop plays every layer), or a linked copy of a variant | `scene` (or `variantId`), `index`, `lengthBars`, `label` |
 | `arrangement_move_instance` | `sas arrangement move` | Move a section | `instance`, `toIndex` |
-| `arrangement_duplicate_instance` | `sas arrangement duplicate` | Independent copy, or `linked` | `instance`, `linked`, `toIndex` |
-| `arrangement_delete_instance` | `sas arrangement remove` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
+| `arrangement_duplicate_instance` | `sas arrangement duplicate-section` | Independent copy, or `linked` | `instance`, `linked`, `toIndex` |
+| `arrangement_delete_instance` | `sas arrangement remove-section` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
 | `arrangement_resize_instance` | `sas arrangement resize` | Whole bars; longer loops the scene in phase | `instance`, `lengthBars`, `unlink` |
 | `arrangement_fade_section` | `sas arrangement fade-section` | Fade every layer in or out at a section's edge (equal-power); layers that carry on across the edge are skipped | `instance`, `edge` (`in` or `out`), `bars` or `beats` (0 removes) |
 
@@ -383,16 +384,23 @@ How they behave:
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
-| `arrangement_set_layer` | `sas arrangement layer` | One layer in one section: on or off, enter or leave at a bar, fades, gain | `instance`; `track` (+ `scene`); `play` (`on`, `off`, `default`, or a 0/1 bar mask); `fromBar` / `toBar`; `fadeInBeats` / `fadeOutBeats`; `gainDb` (±24) |
+| `arrangement_set_layer` | `sas arrangement layer` | One layer in one section: on or off, enter or leave at a bar, fades and their shape, gain, a gain envelope | `instance`; `track` (+ `scene`); `play` (`on`, `off`, `default`, or a 0/1 bar mask); `fromBar` / `toBar`; `fadeInBeats` / `fadeOutBeats`; `fadeInCurve` / `fadeOutCurve` (`equalPower`, `linear`, `exponential`, `sCurve`, or `default`); `gainDb` (±24); `gainEnvelope` (a list of `{beat, db}` points, see below) |
 | `arrangement_copy` | `sas arrangement copy` | Copy to the shared clipboard: a `region` of bars, a layer's whole `run`, one `clip`, or `sections` | one of `region`, `run`, `clip`, `sections` |
 | `arrangement_paste` | `sas arrangement paste` | Paste bars onto their own lanes from a bar, or sections after a section; pasted bars **replace** what was there | `at` (`{instance, bar}` or `{bar}`) or `afterSection`; `linked` |
-| `arrangement_delete_region` | `sas arrangement clear` | Silence bars (the song does **not** get shorter; to remove a section use `arrangement_delete_instance`) | `instance`, `track` or `tracks`, `fromBar`, `toBar`; or `clip` |
-| `arrangement_duplicate` | `sas arrangement dup` | Duplicate sections, a region or a clip right after itself (like ⌘D) | one of `sections`, `region`, `clip` |
+| `arrangement_delete_region` | `sas arrangement silence` | Silence bars (the song does **not** get shorter; to remove a section use `arrangement_delete_instance`) | `instance`, `track` or `tracks`, `fromBar`, `toBar`; or `clip` |
+| `arrangement_duplicate` | `sas arrangement duplicate-selection` | Duplicate sections, a region or a clip right after itself (like ⌘D) | one of `sections`, `region`, `clip` |
 | `arrangement_split` | `sas arrangement split` | Split a layer's clip at a bar (no change in sound) | `track` or `tracks`, `bar` or `bars`, `instance` |
 | `arrangement_join` | `sas arrangement join` | Remove the splits inside a region (section starts always stay clip edges) | `instance`, `track` or `tracks`, `fromBar`, `toBar` |
 
 The clipboard is shared with the editor's ⌘C / ⌘X / ⌘V / ⌘D for the rest of
 the app session, one per project; the app shows what an agent copied.
+
+A **gain envelope** is the wave editor's gain line: points in quarter notes
+from the section's start, in dB on top of `gainDb` (±24), straight lines in
+dB between points, held flat beyond the first and last (at most 256 points;
+`[]` clears it). For example
+`[{"beat": 0, "db": 0}, {"beat": 16, "db": -12}]` brings a layer down by
+12 dB over its first four bars (in 4/4) and holds it there.
 
 ### Effects (treatments)
 
@@ -428,7 +436,11 @@ and default):
 `arrangement_export` writes a new dated folder (default
 `~/Music/Signals & Sorcery Exports`) and returns a `jobId`; the finished job
 lists the files, the loudness report, the stems null test and any warnings.
-Only one export runs at a time. See
+Only one export runs at a time. Because it writes files that no undo can
+take back, **an agent's export needs your approval**: the app asks before it
+starts (the chat assistant asks in the chat). If you decline, the call fails
+with `approval_denied` and the agent should not retry. Exports you start from
+the app's own Export dialog don't ask twice. See
 [Exporting your song](/arrange/#exporting-your-song) for what each output is.
 
 ::: tip Coming soon

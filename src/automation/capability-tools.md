@@ -124,7 +124,9 @@ sas run shell_exec --json-body '{"command":"brew","args":["install","ffmpeg"]}'
 ```
 
 `args` is an array, so pass the whole input as JSON with `--json-body`
-(the global `--json` flag only switches the output to JSON).
+(the global `--json` flag only switches the output to JSON), or give the
+array as JSON to the generated command:
+`sas shell exec --command ffmpeg --args '["-version"]'`.
 
 | Input | Notes |
 |---|---|

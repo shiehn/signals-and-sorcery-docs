@@ -21,9 +21,9 @@ sas compose_scene \
   --scene-name "Verse" \
   --tracks '[
     {"name": "Bass",  "role": "bass",  "prompt": "deep, slow, jazz-inflected"},
-    {"name": "Drums", "role": "drums", "prompt": "laid-back, swung 16ths"},
-    {"name": "Keys",  "role": "chords","prompt": "sparse jazzy Rhodes"},
-    {"name": "Pad",   "role": "pad",   "prompt": "soft, wide, background"}
+    {"name": "Kick",  "role": "kicks", "prompt": "laid-back, swung 16ths"},
+    {"name": "Keys",  "role": "keys","prompt": "sparse jazzy Rhodes"},
+    {"name": "Pad",   "role": "pads",   "prompt": "soft, wide, background"}
   ]'
 
 sas play_scene --scene-name "Verse"
@@ -43,8 +43,8 @@ sas compose_scene \
   --scene-name "Verse" \
   --tracks '[
     {"name":"Bass","role":"bass","prompt":"sub bass, sparse"},
-    {"name":"Drums","role":"drums","prompt":"minimal kick+hat"},
-    {"name":"Keys","role":"chords","prompt":"ambient pad chords"}
+    {"name":"Kick","role":"kicks","prompt":"minimal, steady"},
+    {"name":"Keys","role":"keys","prompt":"ambient pad chords"}
   ]'
 
 # Chorus: energetic, same key
@@ -53,8 +53,8 @@ sas compose_scene \
   --scene-name "Chorus" \
   --tracks '[
     {"name":"Bass","role":"bass","prompt":"driving moving line"},
-    {"name":"Drums","role":"drums","prompt":"full kit, punchy"},
-    {"name":"Keys","role":"chords","prompt":"piano stabs"},
+    {"name":"Kick","role":"kicks","prompt":"punchy four-on-the-floor"},
+    {"name":"Keys","role":"keys","prompt":"piano stabs"},
     {"name":"Lead","role":"lead","prompt":"catchy hook melody"}
   ]'
 
@@ -171,7 +171,7 @@ Typical output:
 scene:created: {"sceneId":"abc","name":"Verse"}
 track:created: {"sceneId":"abc","trackId":"t1","displayName":"Bass","role":"bass","kind":"synth"}
 track:midi-written: {"trackId":"t1","noteCount":16}
-track:created: {"sceneId":"abc","trackId":"t2","displayName":"Drums","role":"drums","kind":"synth"}
+track:created: {"sceneId":"abc","trackId":"t2","displayName":"Kick","role":"kicks","kind":"synth"}
 track:midi-written: {"trackId":"t2","noteCount":32}
 ...
 ```
@@ -183,7 +183,7 @@ KEY="compose-$(date +%s)"
 
 for attempt in 1 2 3; do
   if sas compose_scene \
-      --idempotencyKey "$KEY" \
+      --idempotency-key "$KEY" \
       --description "lo-fi" \
       --scene-name "Verse" \
       --tracks '[...]' 2>/dev/null; then
@@ -194,7 +194,7 @@ for attempt in 1 2 3; do
 done
 ```
 
-Same `idempotencyKey` (spelled in camelCase) means the first successful
+Same `--idempotency-key` means the first successful
 response is cached (60 s, per project); subsequent attempts with the same
 parameters during that window return the cached success without
 re-executing.
@@ -225,8 +225,8 @@ sas compose_scene \
   --scene-name "Drop" \
   --tracks '[
     {"name":"808","role":"bass","prompt":"deep dark 808 with slides"},
-    {"name":"Hats","role":"drums","prompt":"fast triplet hats"},
-    {"name":"Kick","role":"drums","prompt":"trap kick pattern"},
+    {"name":"Hats","role":"hats","prompt":"fast triplet hats"},
+    {"name":"Kick","role":"kicks","prompt":"trap kick pattern"},
     {"name":"Lead","role":"lead","prompt":"ominous brass stabs"}
   ]'
 
@@ -392,7 +392,7 @@ NEXT=$(jq -r --argjson i $((VERSE + 1)) \
 if [ "$NEXT" != "Chorus" ]; then
   sas arrangement insert --scene "Chorus" --index $((VERSE + 1))
 fi
-sas arrangement duplicate --index $((VERSE + 1))
+sas arrangement duplicate-section --index $((VERSE + 1))
 
 # 3. Mute the kick in the second chorus. Sections and layers take names.
 sas arrangement layer --instance "the second chorus" --track "Kick" --play off
@@ -442,13 +442,12 @@ again:
 sas arrangement untreat --instance "the second chorus" --track "Bass" --bar 4
 ```
 
-Effects with settings take a `params` object, which needs the `sas run`
-form (see [Passing JSON](./cli-reference.md#passing-json-arrays-and-objects)).
-A four-bar high-pass sweep on the drums leading out of the last chorus:
+Effects with settings take a `params` object as JSON. A four-bar high-pass
+sweep on the drums leading out of the last chorus:
 
 ```bash
-sas run arrangement_place_treatment -p 'instance=the last chorus' -p track=Drums \
-  -p type=hp_sweep -p bar=5 -p bars=4 -p 'params={"end_hz": 2000}'
+sas arrangement treatment --instance "the last chorus" --track Drums \
+  --type hp_sweep --bar 5 --bars 4 --params '{"end_hz": 2000}'
 ```
 
 `sas help arrangement_place_treatment` lists every effect type with its
@@ -458,14 +457,14 @@ settings, ranges and defaults.
 
 The user says: *"Copy the kick in the first chorus to the second chorus."*
 
-The clipboard tools take objects, so use the `sas run` form:
+The clipboard tools take objects as JSON:
 
 ```bash
 # Copy the kick's bars in the first chorus...
-sas run arrangement_copy -p 'region={"instance": "the first chorus", "track": "Kick"}'
+sas arrangement copy --region '{"instance": "the first chorus", "track": "Kick"}'
 
 # ...and paste them at bar 1 of the second chorus.
-sas run arrangement_paste -p 'at={"instance": "the second chorus", "bar": 1}'
+sas arrangement paste --at '{"instance": "the second chorus", "bar": 1}'
 ```
 
 The pasted bars land on the **Kick** lane (tracks never leave their lane)
@@ -474,9 +473,9 @@ gain and effects as the original. If the second chorus belongs to another
 scene, the kick plays there as a guest through its own scene's bus.
 
 To copy one clip instead of the whole section's worth of bars, pass
-`clip`: `-p 'clip={"track": "Kick", "instance": "the first chorus"}'`. To
-silence bars without shortening the song, use `arrangement_delete_region`
-(`sas arrangement clear`).
+`--clip '{"track": "Kick", "instance": "the first chorus"}'`. To silence
+bars without shortening the song, use `sas arrangement silence`
+(`arrangement_delete_region`).
 
 ## 18. Export the song
 
@@ -488,6 +487,10 @@ JOB=$(sas arrangement export --stems --ableton --preset streaming \
   --sample-rate 44100 --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 900
 ```
+
+Exporting writes files that no undo can take back, so the app asks you to
+**approve** it before it starts. If you decline, the call fails with
+`approval_denied`.
 
 The files land in a new dated folder under `~/Music/Signals & Sorcery
 Exports` (pass `--path` for another place). The finished job lists every

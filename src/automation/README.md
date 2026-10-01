@@ -131,6 +131,7 @@ CLI and the MCP server wrap.
 
 # 3. Verify health
 sas health                    # is the API server reachable?
+sas status                    # engine, database, sign-in, open project
 
 # 4. See what you can do
 sas list-actions
@@ -169,7 +170,7 @@ Then either:
   (`inspect → plan → validate → apply → preview → undo`), Plan schema,
   and checkpoint contract. **Start here if you're an agent.**
 - **[Status & async jobs](./status-and-jobs.md)**: the universal async
-  job contract: `sas health`, the `/api/v1/jobs*`
+  job contract: `sas health` / `sas status`, the `/api/v1/jobs*`
   endpoints, SSE `jobProgress`/`jobComplete`/`jobFailed` events, the
   `wait_for_job` MCP tool, and the list of async-wrapped tools. **Read
   this if you're writing scripts or agents that mutate state.**
