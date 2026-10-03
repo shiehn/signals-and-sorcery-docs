@@ -94,12 +94,14 @@ From left to right:
 - **Export…** (see [Exporting your song](#exporting-your-song));
 - the fold chevron.
 
+Notes and errors appear in a bar under the header, each with a **Copy** button.
+
 ### Inside the arranger
 
 - **The palette** (top): one chip per scene, your saved sections (marked ◆), and the effects palette.
-- **The ruler and section strip:** bar numbers, then one block per section. Click the ruler to move the playhead.
-- **The lanes:** one row per layer, grouped by scene, with each stem's **waveform** drawn in it. The gutter on the left shows the layer's name, a small status dot for its audio, and a level meter while the song plays.
-- **The tool button** in the corner: **Select** or **Draw** (see [Select and Draw](#select-and-draw)).
+- **The ruler and section strip:** bar numbers, then one block per section, each with its time range (for example "Chorus · 0:30–1:00"). Hover the ruler for the exact position, like "17.3 · 0:42.6" (bar 17, beat 3, at 42.6 seconds); while the song plays, the same readout follows the playhead. Click the ruler to move the playhead, or drag across it to set a loop (see [Looping](#looping)).
+- **The lanes:** one row per layer, grouped by scene, with each stem's **waveform** drawn in it. The gutter on the left shows the layer's name, its **M** and **S** buttons (see [Mute and solo](#mute-and-solo)), a small status dot for its audio, and a level meter while the song plays.
+- **The corner** above the gutter: the tool button, **Select** or **Draw** (see [Select and Draw](#select-and-draw)), and the **⟲ Loop** switch.
 
 Zoom with **⌘ + mouse wheel** (Ctrl on Windows) over the lanes.
 
@@ -165,8 +167,9 @@ empty name goes back to the default. **Double-click anywhere else on the section
 edit its scene in the composer.
 
 **Right-click a section** for its menu: **Rename**, **Edit this scene**, **Loop this
-instance**, **Make unique** (linked sections), **Fade in section** and **Fade out
-section** (see [Fades](#fades-gain-and-the-wave-editor)), and **Delete**.
+section**, **Make unique** (linked sections), **Fade in section** and **Fade out
+section** (see [Fades](#fades-gain-and-the-wave-editor)), **Copy section name**,
+**Copy section ID**, and **Delete**.
 
 ---
 
@@ -253,12 +256,32 @@ chorus pad into the last verse.
 
 A track you add to a scene **plays in every section of that scene**, because a fresh
 drop plays all of its scene's layers. It is highlighted in the gutter with a **new**
-badge and two buttons:
+badge and two small buttons (both also in the track's right-click menu):
 
-- **Turn off in arranged sections** switches it off in the sections you have already arranged, so it doesn't barge into parts you finished (fresh drops keep it);
-- **✓** marks it reviewed and hides the badge.
+- **Turn off in arranged sections** (the crossed-circle button) switches it off in the sections you have already arranged, so it doesn't barge into parts you finished (fresh drops keep it);
+- **✓ Mark reviewed** hides the badge.
 
 Tracks from the **Stems** panel, recordings and voice tracks appear as lanes too.
+
+### Mute and solo
+
+Each track has **M** and **S** buttons beside its name. They work across the whole
+arrangement: everywhere the track plays, in its own sections and as a guest.
+
+- **M** mutes the track.
+- **S** solos it: while any track is soloed, only soloed tracks sound (and a muted track stays muted). To solo that track **alone**, unsoloing the others in one step, **Alt- or ⌘-click S** on macOS (**Alt- or Ctrl-click** on Windows). On macOS, Ctrl-click opens the menu instead.
+- Silenced tracks are drawn dimmed. Changes are instant, with no rendering.
+- The arranger's mute and solo are separate from the composer's. A track muted in the composer stays silent here too, and its row says **muted in Compose** (its M stays unlit).
+- M and S are saved with the arrangement, and each click is one undo step.
+- [Exports](#exporting-your-song) follow what you hear.
+
+### The track menu: restore, copy
+
+**Right-click a track's name** for its menu:
+
+- **Copy track ID** and **Copy track name**. Hovering a name also shows its ID, with a copy button. IDs are handy when you work with an agent or the `sas` CLI.
+- **Restore** (it shows the track's name, for example **Restore Kick**) clears every arranger edit to that track (bars switched off, clips and splits, gain, fades, gain envelopes, effects, phase), so it plays again in every section of its scene. Mute, solo and your sections are left as they are, and sections you deleted don't come back. It is one undo step, and it is greyed out when there is nothing to restore.
+- For a new track: **Turn off in arranged sections** and **Mark reviewed**.
 
 ---
 
@@ -366,7 +389,7 @@ project: they are picked up when you enter arrange mode, press Play, or export.
 
 ### The header indicators
 
-- **Preparing n/m…** (also "Preparing edges", "Preparing effects" or "Building") means the arranger is rendering what the arrangement needs in the background. It never blocks you: playback and edits carry on, and background preparation steps aside when you press Play. If something the song needs is still on its way, the header says it plays when ready.
+- **Preparing n/m…** (also "Preparing edges", "Preparing effects" or "Building") means the arranger is rendering what the arrangement needs in the background. It never blocks you: playback and edits carry on, and background preparation steps aside when you press Play. If you press Play while the arrangement is still preparing its audio, playback **starts by itself** when it is ready; a note under the header says so.
 - **Render stale (N)**: N layers' sounds changed since their last render. Until they re-render, those layers **keep playing their previous render**, so playback never stops for them. Stale layers refresh on their own when you enter arrange mode and whenever the app is idle and stopped; press the button to do it right away.
 - **Render pending (N)**: the exact starts and stops of layers that come in or leave mid-loop, and your placed effects, are waiting to render. Until then those edges are close approximations and placed effects are silent.
 - **● arrangement up to date**: everything matches.
@@ -434,12 +457,19 @@ layers play in that section. Press **Arrange** to come back.
 There is one output, and one of them has it at a time. **Starting the arrangement
 stops the composition, and starting a scene in the composer stops the arrangement.**
 
-### Loop one section
+## Looping
 
-To work on one section, press **⟲** on it (or select it and press **L**, or right-click
-**Loop this instance**). Playback repeats that section until you press **⟲** again,
-and the loop stays on while you edit. If the looped section is removed, looping stops
-and a note says so.
+By default the **whole arrangement loops**. The loop markers on the ruler show where
+the loop starts and ends.
+
+- **Turn looping on or off:** the **⟲ Loop** switch in the corner above the gutter, or **L**.
+- **Loop part of the song:** drag across the ruler, or drag the loop markers (they snap to bars).
+- **Loop a section:** double-click it on the ruler, press **⟲** on it, or right-click it and choose **Loop this section**. **⇧L** loops the selected sections.
+- **Back to the whole song:** press **⟲** on the looped section again (or right-click it and choose **Loop the whole arrangement**).
+
+Setting a loop turns looping on. The loop stays put while you edit, and it is saved
+with the arrangement on this computer; it isn't part of undo, and it never affects
+exports. With looping off, playback stops at the end of the song.
 
 ---
 
@@ -462,6 +492,11 @@ Tick any of:
 | **Ableton hand-off** | Stems ready to open in Ableton Live's Arrangement view |
 
 The **Mix** and the **Master** are ticked to start with.
+
+The export **follows what you hear**: tracks muted (or left out by soloing others) in
+the arranger or in the composer are not in the Mix and get no stems. The dialog lists
+them under **Left out**, so nothing goes missing by surprise. In an Ableton hand-off,
+the arranger's muted tracks arrive as muted tracks.
 
 Every file is the song **plus its tail**: bus reverbs and delays ring out for up to
 10 seconds after the last bar, trimmed where the sound ends. All files have the same
@@ -586,7 +621,11 @@ listening on the go are on the way. Until then, the sync badge in the header rea
 | Zoom | ⌘ + mouse wheel |
 | Play / stop | Space, or the Play button |
 | Jump | Click the ruler |
-| Loop a section | ⟲ on the section, or L |
+| Loop on or off | L, or **⟲ Loop** in the corner |
+| Set a loop | Drag across the ruler, or drag the loop markers |
+| Loop a section | Double-click it on the ruler, or ⟲ on the section; ⇧L for the selected sections |
+| Mute / solo a track | **M** / **S** beside its name; ⌥- or ⌘-click S to solo it alone (Alt- or Ctrl-click on Windows) |
+| Track menu (copy ID, restore) | Right-click the track's name |
 | Undo / redo | ⌘Z / ⇧⌘Z, or ↶ ↷ |
 | Clear the selection | Escape |
 | Collapse a scene's lanes | Click its group header |

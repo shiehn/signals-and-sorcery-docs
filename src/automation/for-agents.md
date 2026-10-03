@@ -303,14 +303,14 @@ with. Tools marked **deferred** require `tool_search` to discover.
 | **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
 | **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
 | **Discovery** | `tool_search` (always visible; finds any registered tool, deferred or not) |
-| **Arrangement** *(deferred)* | 26 `arrangement_*` tools that build, edit, play and export a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
+| **Arrangement** *(deferred)* | 31 `arrangement_*` tools that build, edit, play and export a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
 
 ## Arrangement tools
 
-[Arrange mode](/arrange/) is fully scriptable. Twenty-six `arrangement_*`
-tools cover what the arranger does: build and play the song, place and copy
-sections, switch layers on and off, copy and paste bars, split clips, fade,
-add effects, undo, and export. They are deferred, so find them with
+[Arrange mode](/arrange/) is fully scriptable. Thirty-one `arrangement_*`
+tools cover what the arranger does: build and play the song, loop part of it,
+place and copy sections, mute and solo tracks, switch layers on and off, copy
+and paste bars, split clips, fade, add effects, undo, and export. They are deferred, so find them with
 `tool_search` (query `arrangement`), or call them by name. In the CLI they
 are the [`sas arrangement` group](./cli-reference.md#arrange-a-song-sas-arrangement).
 The in-app chat assistant uses the same tools.
@@ -334,10 +334,11 @@ How they behave:
   what does.
 - **Read first.** `arrangement_get` returns the timeline: `instances[]`
   (`index`, `instanceId`, `label`, `sceneName`, `lengthBars`, `meter`,
-  `startBar`, `linkedWith`), `variants[]` with each layer's state (`name`,
-  `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades and
-  their curves, gain, `gainEnvelope`, `splits`, `treatments`), and
-  `scenes[]`.
+  `startBar`, `startQn`, `linkedWith`), `variants[]` with each layer's state
+  (`name`, `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades
+  and their curves, gain, `gainEnvelope`, `splits`, `treatments`),
+  `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
+  the tracks they silence (`silentRows[]`).
 - **Linked copies share one arrangement.** Edits to a linked section change
   every linked copy, and the result lists them in `alsoAffects`. Use an
   independent copy, or `unlink: true` on resize, when only one should
@@ -349,24 +350,34 @@ How they behave:
 - **Results.** Every edit returns `timeline` (compact lines like
   `#0 Verse (8 bars)`), `canUndo` / `canRedo`, and `dropped` or `notes` for
   anything that could not apply as asked. A change that changes nothing
-  returns `no_change`. Edits emit `arrangement:edited`; transport calls emit
+  returns `no_change` (mute, solo and restore instead succeed with
+  `unchanged: true`). Edits emit `arrangement:edited`; transport calls emit
   `arrangement:transport`.
 - **Playback.** `arrangement_start` is an async job (wait on its `jobId`):
   it enters arrange mode and renders any layer whose sound changed. The
   first start renders every layer and can take minutes. Then
-  `arrangement_play`. The composition and the arrangement never play at the
-  same time: starting one stops the other.
+  `arrangement_play`. If the arrangement is still preparing its audio, Play
+  returns `changes.pending: true` and playback **starts by itself** when it
+  is ready (`arrangement_stop` cancels the wait). By default the whole
+  arrangement **loops**; `arrangement_set_loop` changes that. The
+  composition and the arrangement never play at the same time: starting one
+  stops the other.
+- **Mute and solo** are per track for the whole arrangement (the arranger's
+  M and S), separate from the composer's own mute and solo, which also
+  apply. They are saved with the arrangement and undoable.
 
 ### Build and play
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
 | `arrangement_start` | `sas arrangement start` | Enter arrange mode, create the arrangement if needed, render changed layers, build it. **Async** | `dependsOn` |
-| `arrangement_play` | `sas arrangement play` | Play from the playhead | `fromSeconds` |
+| `arrangement_play` | `sas arrangement play` | Play from the playhead; while the arrangement is still preparing, returns `pending: true` and starts by itself | `fromSeconds` |
 | `arrangement_stop` | `sas arrangement stop` | Stop (tails ring out). `leaveArrangeMode` hands playback back to the composition | `returnToStart`, `leaveArrangeMode` |
 | `arrangement_status` | `sas arrangement status` | Read-only: arrange mode, the arrangement, stem freshness, who owns the output, the playhead (seconds, bar, beat, section) | none |
 | `arrangement_seek` | `sas arrangement seek` | Move the playhead | `seconds` |
-| `arrangement_loop_instance` | `sas arrangement loop` | Loop one section, or `clear` | `instance`, `clear` |
+| `arrangement_get_loop` | `sas arrangement loop-get` | The ruler loop: its range in beats, on or off, whether it covers the whole arrangement | none |
+| `arrangement_set_loop` | `sas arrangement loop-set` | Set the ruler loop: a beat range, a section, or the whole arrangement; turn it on or off. Saved per arrangement on this computer (not part of undo) | `startBeat` + `endBeat`, or `instance`, or `whole`; `enabled` |
+| `arrangement_loop_instance` | `sas arrangement loop` | Loop one section (replaces the ruler loop until cleared), or `clear` | `instance`, `clear` |
 | `arrangement_get` | `sas arrangement get` | Read-only: sections, layers, clips, effects, scenes | none |
 
 ### Sections
@@ -379,6 +390,14 @@ How they behave:
 | `arrangement_delete_instance` | `sas arrangement remove-section` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
 | `arrangement_resize_instance` | `sas arrangement resize` | Whole bars; longer loops the scene in phase | `instance`, `lengthBars`, `unlink` |
 | `arrangement_fade_section` | `sas arrangement fade-section` | Fade every layer in or out at a section's edge (equal-power); layers that carry on across the edge are skipped | `instance`, `edge` (`in` or `out`), `bars` or `beats` (0 removes) |
+
+### Tracks
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_set_track_mute` | `sas arrangement mute` | Mute or unmute a track for the whole arrangement (the arranger's **M**) | `track` (+ `scene`) or `trackId`; `muted` |
+| `arrangement_set_track_solo` | `sas arrangement solo` | Solo or unsolo a track (the arranger's **S**); `alone` unsolos every other track in the same step. While any track is soloed, only soloed tracks sound, and mute wins | `track` or `trackId`; `soloed`; `alone` |
+| `arrangement_restore_track` | `sas arrangement restore-track` | Put a track back to its default everywhere: clears its arranger edits (bars switched off, clips and splits, gain, fades, gain envelope, effects, phase). Mute, solo and sections stay as they are | `track` (+ `scene`) or `trackId` |
 
 ### Layers, bars and clips
 
@@ -436,7 +455,9 @@ and default):
 `arrangement_export` writes a new dated folder (default
 `~/Music/Signals & Sorcery Exports`) and returns a `jobId`; the finished job
 lists the files, the loudness report, the stems null test and any warnings.
-Only one export runs at a time. Because it writes files that no undo can
+Only one export runs at a time. The export follows what you hear: tracks
+the arranger's mute or solo silences get no stem (the Ableton hand-off
+brings them in as muted tracks). Because it writes files that no undo can
 take back, **an agent's export needs your approval**: the app asks before it
 starts (the chat assistant asks in the chat). If you decline, the call fails
 with `approval_denied` and the agent should not retry. Exports you start from
@@ -519,6 +540,14 @@ Example:
 
 Agents read the `suggestion`, adjust, and retry. No guesswork, no
 round-trips to `get_status`.
+
+**Some calls wait for playback to stop.** Opening the editor of an instrument
+on a frozen track while music plays (`instrument_open_editor`) returns
+`deferred_until_stop` with remediation `deck_busy`: loading the plugin then
+would interrupt the music. Stop playback and call it again; by then it opens
+at once. Pick the stop that matches what is playing: `arrangement_stop` for
+the arrangement, `dsl_stop` for the composer's transport. `deck_stop` stops
+only the one deck you name.
 
 ## Further reading
 

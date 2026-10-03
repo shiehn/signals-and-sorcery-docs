@@ -495,7 +495,9 @@ Every command works on the project's one arrangement.
 | `sas arrangement play [--from-seconds N]` | `arrangement_play` | Play |
 | `sas arrangement stop [--return-to-start] [--leave-arrange-mode]` | `arrangement_stop` | Stop |
 | `sas arrangement seek --seconds N` | `arrangement_seek` | Move the playhead |
-| `sas arrangement loop --instance X` / `--clear` | `arrangement_loop_instance` | Loop one section |
+| `sas arrangement loop-get` | `arrangement_get_loop` | The ruler loop (read-only) |
+| `sas arrangement loop-set --instance X` / `--whole` / `--start-beat A --end-beat B` / `--no-enabled` | `arrangement_set_loop` | Set or turn off the ruler loop (by default the whole arrangement loops) |
+| `sas arrangement loop --instance X` / `--clear` | `arrangement_loop_instance` | Loop one section (replaces the ruler loop until cleared) |
 | `sas arrangement get` | `arrangement_get` | Sections, layers, clips, effects, scenes (read-only) |
 | `sas arrangement insert --scene X [--index N] [--length-bars N]` | `arrangement_insert_instance` | Insert a scene |
 | `sas arrangement move --instance X --to-index N` | `arrangement_move_instance` | Move a section |
@@ -503,6 +505,9 @@ Every command works on the project's one arrangement.
 | `sas arrangement remove-section --instance X` | `arrangement_delete_instance` | Remove a section (the song gets shorter) |
 | `sas arrangement resize --instance X --length-bars N [--unlink]` | `arrangement_resize_instance` | Resize (whole bars) |
 | `sas arrangement fade-section --instance X --edge in\|out --bars N` | `arrangement_fade_section` | Fade a whole section in or out |
+| `sas arrangement mute --track Y --muted` (or `--no-muted`) | `arrangement_set_track_mute` | Mute or unmute a track for the whole arrangement |
+| `sas arrangement solo --track Y --soloed [--alone]` (or `--no-soloed`) | `arrangement_set_track_solo` | Solo or unsolo a track (`--alone` unsolos the others) |
+| `sas arrangement restore-track --track Y` | `arrangement_restore_track` | Put a track back to its default (mute, solo and sections stay) |
 | `sas arrangement layer --instance X --track Y …` | `arrangement_set_layer` | One layer in one section |
 | `sas arrangement silence --instance X --track Y --from-bar A --to-bar B` | `arrangement_delete_region` | Silence bars (the song keeps its length) |
 | `sas arrangement split --track Y --bar N [--instance X]` | `arrangement_split` | Split a clip |
@@ -538,7 +543,12 @@ sas arrangement status
 # Build it (renders any layer whose sound changed), then play from 0:30
 JOB=$(sas arrangement start --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 600
-sas arrangement play --from-seconds 30
+sas arrangement play --from-seconds 30   # if still preparing: pending, starts by itself
+
+# Loop just the last chorus (by default the whole song loops); mute a track
+sas arrangement loop-set --instance "the last chorus"
+sas arrangement mute --track Pad --muted
+sas arrangement solo --track Bass --soloed --alone
 
 # Read the timeline
 sas arrangement get --json | jq '.data.changes.instances[] | {index, label, lengthBars}'

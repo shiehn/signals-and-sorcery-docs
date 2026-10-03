@@ -411,8 +411,11 @@ Every edit returns the new timeline, for example:
 ```
 
 Every step is undoable, one at a time, with `sas arrangement undo` or ⌘Z in
-the app. To hear only the new part, loop it:
-`sas arrangement loop --instance "Chorus (2)"`.
+the app. By default the whole song loops; to hear only the new part, set the
+loop to it: `sas arrangement loop-set --instance "Chorus (2)"`
+(`sas arrangement loop-set --whole` goes back). To silence the kick for the
+whole song instead of one section, mute its track:
+`sas arrangement mute --track Kick --muted`.
 
 **Without a shell** (an MCP client), the same steps are `sas_run` calls:
 `arrangement_start` → `sas_wait_for_job {jobId}` → `arrangement_get` →
@@ -493,7 +496,9 @@ Exporting writes files that no undo can take back, so the app asks you to
 `approval_denied`.
 
 The files land in a new dated folder under `~/Music/Signals & Sorcery
-Exports` (pass `--path` for another place). The finished job lists every
+Exports` (pass `--path` for another place). The export follows what you
+hear: a track you muted (or left out by soloing others) in the arranger gets
+no stem, and the Ableton hand-off brings it in as a muted track. The finished job lists every
 file, the loudness report (integrated loudness, loudness range, true peak,
 gain reduction) for the Mix and the Master, the stems null test, and any
 warnings. `sas arrangement export-cancel` stops a running export and
