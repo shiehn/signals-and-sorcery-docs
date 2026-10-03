@@ -428,7 +428,8 @@ action is one step with a name: hover **↶** or **↷** to see what it will und
 
 With the arranger focused, **⌘Z** undoes and **⇧⌘Z** redoes (Ctrl on Windows); the
 **Edit** menu does the same. Undo in the arrangement never touches your scenes or
-tracks.
+tracks, and with cloud sync on it undoes only the edits made on this computer (see
+[Cloud sync and your phone](#cloud-sync-and-your-phone)).
 
 ---
 
@@ -591,7 +592,14 @@ out), **Sync off**, or **Needs attention** with the reason. Click it for:
 - **Open on web ↗**, and a **QR code** to scan with your phone: both open this arrangement on the web.
 - **From the cloud (not applied)**: versions saved elsewhere that couldn't be merged automatically. **Use this version** applies one, as a single undoable step.
 
-Edits from the web arrive on their own; a note says how many, with **Undo**.
+Changes from another device arrive on their own, with a quiet note such as
+**3 changes from your iPhone · Undo these 3**. Undo on each device undoes that
+device's own edits: ⌘Z here takes back what you did on this computer, and the note's
+button takes back the other device's changes.
+
+If the two copies ever drift too far apart to merge, Signals & Sorcery saves your desktop
+version in **History**, switches to the cloud version, and re-applies the edits that
+hadn't synced yet. You never get stuck, and nothing is lost.
 
 ### For the web
 
@@ -600,7 +608,8 @@ web** on (it is, by default, while sync is on), Signals & Sorcery prepares every
 audio in the background: one scene at a time, smallest first, only after you have been
 away for a couple of minutes and never while anything plays. It stays within your plan's
 storage and waits if your disk is nearly full. The badge shows the progress, like
-"For the web: 3 of 12 scenes ready"; **Pause until restart** stops it for now.
+"For the web: 3 of 12 scenes ready". **Pause until restart** pauses it until you restart
+Signals & Sorcery (the badge says **Paused**); **Resume** carries on.
 
 ### On your phone
 

@@ -517,7 +517,7 @@ Every command works on the project's one arrangement.
 | `sas arrangement copy --region '{…}'` (or `--run`, `--clip`, `--sections`) | `arrangement_copy` | Copy to the shared clipboard |
 | `sas arrangement paste --at '{…}'` (or `--after-section X`) | `arrangement_paste` | Paste |
 | `sas arrangement duplicate-selection --sections X` (or `--region`, `--clip`) | `arrangement_duplicate` | Duplicate sections, bars or a clip |
-| `sas arrangement undo` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history |
+| `sas arrangement undo [--from-other-device]` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history (this computer's edits; `--from-other-device` reverts the latest changes from another device) |
 | `sas arrangement export [--stems] [--ableton] [--preset P] …` | `arrangement_export` | Export (**async**: returns a `jobId`) |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
 | `sas arrangement sync-status` | `arrangement_sync_status` | Cloud sync state, notes, the web link, "for the web" progress (read-only) |

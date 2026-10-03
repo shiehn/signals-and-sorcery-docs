@@ -452,7 +452,7 @@ and default):
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
-| `arrangement_undo` | `sas arrangement undo` | Undo the last edit (the arrangement's own history) | none |
+| `arrangement_undo` | `sas arrangement undo` | Undo the last edit made on this computer (the arrangement's own history; changes synced in from another device are not undo steps, and a field another device changed later is kept, counted in `keptRemote`). `fromOtherDevice` reverts the latest batch of changes from another device instead (the note's "Undo these N"), as a new, undoable edit | `fromOtherDevice` |
 | `arrangement_redo` | `sas arrangement redo` | Redo | none |
 | `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `renderStale` |
 | `arrangement_export_cancel` | `sas arrangement export-cancel` | Cancel the running export (nothing is written) | `jobId` |
@@ -473,7 +473,7 @@ the app's own Export dialog don't ask twice. See
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
-| `arrangement_sync_status` | `sas arrangement sync-status` | Read-only: the sync state, queued edits, notes, proposals, the web link, and how far "for the web" preparation has got | none |
+| `arrangement_sync_status` | `sas arrangement sync-status` | Read-only: the sync state, queued edits, notes, proposals, the web link, the latest changes from another device (`lastRemote`, e.g. "3 changes from your iPhone"), and how far "for the web" preparation has got (`webPrep`, with `sessionPaused` while paused until restart) | none |
 | `arrangement_sync` | `sas arrangement sync` | Control the background cloud sync (on by default when signed in): `enabled` (false = nothing leaves the computer), `now` (push and pull right away), `dismissNotes`; and the "for the web" preparation of every scene's audio: `prepareAllScenes` (on by default), `pausePreparation` (until the app restarts). Reports `state`, `queued`, `enabled` and `webPrep` (`state`, `done`, `total`, `scene`, `notFit`, `reason`) | `enabled`, `now`, `dismissNotes`, `prepareAllScenes`, `pausePreparation` (at least one) |
 
 The web arranger edits the same arrangement (see
