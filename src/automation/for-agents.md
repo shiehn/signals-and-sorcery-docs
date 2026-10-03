@@ -338,7 +338,10 @@ How they behave:
   (`name`, `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades
   and their curves, gain, `gainEnvelope`, `splits`, `treatments`),
   `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
-  the tracks they silence (`silentRows[]`).
+  every track you don't hear (`silentRows[]`), each with its `reasons`:
+  `row-muted` or `other-row-soloed` (the arranger's M and S), and
+  `muted-in-compose` or `solo-in-compose` (the composer's mute, or another
+  track's solo in its scene, which silences it here too).
 - **Linked copies share one arrangement.** Edits to a linked section change
   every linked copy, and the result lists them in `alsoAffects`. Use an
   independent copy, or `unlink: true` on resize, when only one should
@@ -358,7 +361,8 @@ How they behave:
   first start renders every layer and can take minutes. Then
   `arrangement_play`. If the arrangement is still preparing its audio, Play
   returns `changes.pending: true` and playback **starts by itself** when it
-  is ready (`arrangement_stop` cancels the wait). By default the whole
+  is ready: don't call Play again (`arrangement_status` reports
+  `playPending`; `arrangement_stop` cancels the wait). By default the whole
   arrangement **loops**; `arrangement_set_loop` changes that. The
   composition and the arrangement never play at the same time: starting one
   stops the other.
@@ -373,11 +377,11 @@ How they behave:
 | `arrangement_start` | `sas arrangement start` | Enter arrange mode, create the arrangement if needed, render changed layers, build it. **Async** | `dependsOn` |
 | `arrangement_play` | `sas arrangement play` | Play from the playhead; while the arrangement is still preparing, returns `pending: true` and starts by itself | `fromSeconds` |
 | `arrangement_stop` | `sas arrangement stop` | Stop (tails ring out). `leaveArrangeMode` hands playback back to the composition | `returnToStart`, `leaveArrangeMode` |
-| `arrangement_status` | `sas arrangement status` | Read-only: arrange mode, the arrangement, stem freshness, who owns the output, the playhead (seconds, bar, beat, section) | none |
+| `arrangement_status` | `sas arrangement status` | Read-only: arrange mode, the arrangement, stem freshness, who owns the output, whether a Play is queued (`playPending`), the playhead (seconds, bar, beat, section) | none |
 | `arrangement_seek` | `sas arrangement seek` | Move the playhead | `seconds` |
-| `arrangement_get_loop` | `sas arrangement loop-get` | The ruler loop: its range in beats, on or off, whether it covers the whole arrangement | none |
+| `arrangement_get_loop` | `sas arrangement loop-get` | Read-only: the ruler loop (its range in beats, on or off, whether it covers the whole arrangement), or the section loop holding playback | none |
 | `arrangement_set_loop` | `sas arrangement loop-set` | Set the ruler loop: a beat range, a section, or the whole arrangement; turn it on or off. Saved per arrangement on this computer (not part of undo) | `startBeat` + `endBeat`, or `instance`, or `whole`; `enabled` |
-| `arrangement_loop_instance` | `sas arrangement loop` | Loop one section (replaces the ruler loop until cleared), or `clear` | `instance`, `clear` |
+| `arrangement_loop_instance` | `sas arrangement loop` | Loop one section (it replaces the ruler loop while it holds), or `clear` to hand back to the ruler loop | `instance`, `clear` |
 | `arrangement_get` | `sas arrangement get` | Read-only: sections, layers, clips, effects, scenes | none |
 
 ### Sections
@@ -541,13 +545,18 @@ Example:
 Agents read the `suggestion`, adjust, and retry. No guesswork, no
 round-trips to `get_status`.
 
-**Some calls wait for playback to stop.** Opening the editor of an instrument
-on a frozen track while music plays (`instrument_open_editor`) returns
-`deferred_until_stop` with remediation `deck_busy`: loading the plugin then
-would interrupt the music. Stop playback and call it again; by then it opens
-at once. Pick the stop that matches what is playing: `arrangement_stop` for
-the arrangement, `dsl_stop` for the composer's transport. `deck_stop` stops
-only the one deck you name.
+**Some calls wait for the composition to stop.** Opening the editor of an
+instrument on a frozen track while the composition plays
+(`instrument_open_editor`) returns `deferred_until_stop` with remediation
+`deck_busy`: loading the plugin then would interrupt the music. Stop the
+composition (`deck_stop` with `deckId: "loop-a"`, or `dsl_stop`) and call it
+again; by then it opens at once. A playing arrangement doesn't block it.
+
+**Which stop stops what.** `dsl_stop` is the transport bar's Stop: it stops
+the composition (loop-a). `deck_stop` stops one deck, and `deck_stop_all`
+stops both decks (loop-a and loop-b's baked loop), like the UI's Stop All.
+None of these stop the arrangement; `arrangement_stop` does. For total
+silence, call `deck_stop_all` and `arrangement_stop`.
 
 ## Further reading
 

@@ -497,7 +497,7 @@ Every command works on the project's one arrangement.
 | `sas arrangement seek --seconds N` | `arrangement_seek` | Move the playhead |
 | `sas arrangement loop-get` | `arrangement_get_loop` | The ruler loop (read-only) |
 | `sas arrangement loop-set --instance X` / `--whole` / `--start-beat A --end-beat B` / `--no-enabled` | `arrangement_set_loop` | Set or turn off the ruler loop (by default the whole arrangement loops) |
-| `sas arrangement loop --instance X` / `--clear` | `arrangement_loop_instance` | Loop one section (replaces the ruler loop until cleared) |
+| `sas arrangement loop --instance X` / `--clear` | `arrangement_loop_instance` | Loop one section (replaces the ruler loop while it holds; `--clear` hands back to it) |
 | `sas arrangement get` | `arrangement_get` | Sections, layers, clips, effects, scenes (read-only) |
 | `sas arrangement insert --scene X [--index N] [--length-bars N]` | `arrangement_insert_instance` | Insert a scene |
 | `sas arrangement move --instance X --to-index N` | `arrangement_move_instance` | Move a section |

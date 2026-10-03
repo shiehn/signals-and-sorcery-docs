@@ -389,7 +389,7 @@ project: they are picked up when you enter arrange mode, press Play, or export.
 
 ### The header indicators
 
-- **Preparing n/m…** (also "Preparing edges", "Preparing effects" or "Building") means the arranger is rendering what the arrangement needs in the background. It never blocks you: playback and edits carry on, and background preparation steps aside when you press Play. If you press Play while the arrangement is still preparing its audio, playback **starts by itself** when it is ready; a note under the header says so.
+- **Preparing n/m…** (also "Preparing edges", "Preparing effects" or "Building") means the arranger is rendering what the arrangement needs in the background. It never blocks you: playback and edits carry on, and background preparation steps aside when you press Play. If you press Play while the arrangement is still preparing its audio, playback **starts by itself** when it is ready; a note under the header says so, and the button reads **Starting… (cancel)** until then (click it, or press Space, to cancel).
 - **Render stale (N)**: N layers' sounds changed since their last render. Until they re-render, those layers **keep playing their previous render**, so playback never stops for them. Stale layers refresh on their own when you enter arrange mode and whenever the app is idle and stopped; press the button to do it right away.
 - **Render pending (N)**: the exact starts and stops of layers that come in or leave mid-loop, and your placed effects, are waiting to render. Until then those edges are close approximations and placed effects are silent.
 - **● arrangement up to date**: everything matches.
