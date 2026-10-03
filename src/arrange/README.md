@@ -271,7 +271,7 @@ arrangement: everywhere the track plays, in its own sections and as a guest.
 - **M** mutes the track.
 - **S** solos it: while any track is soloed, only soloed tracks sound (and a muted track stays muted). To solo that track **alone**, unsoloing the others in one step, **Alt- or ⌘-click S** on macOS (**Alt- or Ctrl-click** on Windows). On macOS, Ctrl-click opens the menu instead.
 - Silenced tracks are drawn dimmed. Changes are instant, with no rendering.
-- The arranger's mute and solo are separate from the composer's. A track muted in the composer stays silent here too, and its row says **muted in Compose** (its M stays unlit).
+- The arranger's mute and solo are separate from the composer's. A track the composer silences (muted, left out by a solo, or on a panel bus that is muted) stays silent here too, and its row says why, for example **muted in Compose** or **silent in Compose (its bus is muted)**. Its M stays unlit.
 - M and S are saved with the arrangement, and each click is one undo step.
 - [Exports](#exporting-your-song) follow what you hear.
 

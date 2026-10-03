@@ -340,8 +340,9 @@ How they behave:
   `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
   every track you don't hear (`silentRows[]`), each with its `reasons`:
   `row-muted` or `other-row-soloed` (the arranger's M and S), and
-  `muted-in-compose` or `solo-in-compose` (the composer's mute, or another
-  track's solo in its scene, which silences it here too).
+  `muted-in-compose`, `solo-in-compose` or `bus-muted-in-compose` (the
+  composer's mute, another track's solo in its scene, or its panel bus muted
+  in the composer, which silence it here too).
 - **Linked copies share one arrangement.** Edits to a linked section change
   every linked copy, and the result lists them in `alsoAffects`. Use an
   independent copy, or `unlink: true` on resize, when only one should
