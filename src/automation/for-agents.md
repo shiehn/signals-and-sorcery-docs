@@ -339,10 +339,8 @@ How they behave:
   and their curves, gain, `gainEnvelope`, `splits`, `treatments`),
   `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
   every track you don't hear (`silentRows[]`), each with its `reasons`:
-  `row-muted` or `other-row-soloed` (the arranger's M and S), and
-  `muted-in-compose`, `solo-in-compose` or `bus-muted-in-compose` (the
-  composer's mute, another track's solo in its scene, or its panel bus muted
-  in the composer, which silence it here too).
+  `row-muted` or `other-row-soloed` (the arranger's own M and S, the only
+  things that silence a track here).
 - **Linked copies share one arrangement.** Edits to a linked section change
   every linked copy, and the result lists them in `alsoAffects`. Use an
   independent copy, or `unlink: true` on resize, when only one should
@@ -367,9 +365,11 @@ How they behave:
   arrangement **loops**; `arrangement_set_loop` changes that. The
   composition and the arrangement never play at the same time: starting one
   stops the other.
-- **Mute and solo** are per track for the whole arrangement (the arranger's
-  M and S), separate from the composer's own mute and solo, which also
-  apply. They are saved with the arrangement and undoable.
+- **Mute and solo are per view.** In the arrangement, only the arranger's
+  own M and S (per track, for the whole arrangement) decide what plays and
+  what exports; the composer's mutes, solos and bus mutes affect only the
+  composer. Levels, pan and effects are shared. Arranger mute and solo are
+  saved with the arrangement and undoable.
 
 ### Build and play
 

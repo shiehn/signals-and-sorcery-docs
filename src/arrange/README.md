@@ -272,7 +272,8 @@ arrangement: everywhere the track plays, in its own sections and as a guest.
 - **M** mutes the track.
 - **S** solos it: while any track is soloed, only soloed tracks sound (and a muted track stays muted). To solo that track **alone**, unsoloing the others in one step, **Alt- or ⌘-click S** on macOS (**Alt- or Ctrl-click** on Windows). On macOS, Ctrl-click opens the menu instead.
 - Silenced tracks are drawn dimmed. Changes are instant, with no rendering.
-- The arranger's mute and solo are separate from the composer's. A track the composer silences (muted, left out by a solo, or on a panel bus that is muted) stays silent here too, and its row says why, for example **muted in Compose** or **silent in Compose (its bus is muted)**. Its M stays unlit.
+- **Mute and solo are per view:** the arranger's own M and S alone decide what plays here, and what an export contains. Muting or soloing a track, or muting a panel bus, in the composer affects only the composer. Levels, pan and effects are shared between the two.
+- When you first open an arrangement made before mute and solo became per view, the tracks the composer was silencing are muted here instead, so it still sounds the same. A note says how many (**Muted N rows that were silent because of Compose**), with **Undo**.
 - M and S are saved with the arrangement, and each click is one undo step.
 - [Exports](#exporting-your-song) follow what you hear.
 
@@ -372,7 +373,8 @@ and **its own insert effects**. Everything after that is applied live, once:
 
 **Instant, no rendering (the mix):**
 
-- track faders, pan, mute and solo;
+- track faders and pan;
+- the arranger's own mute and solo (see [Mute and solo](#mute-and-solo));
 - panel bus levels and the **panel bus effects** themselves. A bus plugin has one setting for the composer and the arranger: tweak it in its plugin window on either side and the other follows. The plugin window opens on whichever is playing;
 - everything you do in the arranger: layers on and off, copying and pasting, fades, gains, moving, copying and resizing sections.
 
@@ -496,7 +498,7 @@ Tick any of:
 The **Mix** and the **Master** are ticked to start with.
 
 The export **follows what you hear**: tracks muted (or left out by soloing others) in
-the arranger or in the composer are not in the Mix and get no stems. The dialog lists
+the arranger are not in the Mix and get no stems. The dialog lists
 them under **Left out**, so nothing goes missing by surprise. In an Ableton hand-off,
 the arranger's muted tracks arrive as muted tracks.
 
