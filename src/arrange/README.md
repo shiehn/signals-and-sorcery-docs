@@ -89,6 +89,7 @@ From left to right:
 - **⧉** and what is on the clipboard, after you copy something;
 - a small progress indicator while the arranger prepares audio (see [Preparing](#preparing-and-rendering));
 - the stem status: **● arrangement up to date**, or a **Render stale (N)** / **Render pending (N)** button;
+- the **sync badge** (see [Cloud sync and your phone](#cloud-sync-and-your-phone));
 - **◆ Save** when one section is selected (see [Saved sections](#saved-sections));
 - **↶** and **↷** for undo and redo;
 - **Export…** (see [Exporting your song](#exporting-your-song));
@@ -573,16 +574,60 @@ needs the S&S Ableton extension **1.4.0**, which Signals & Sorcery installs for 
 
 ---
 
-## The Cloud tab
+## Cloud sync and your phone
 
-The **Arrangement** tab is the local arranger described on this page. The **Cloud**
-tab holds the older cloud arranger, which needs you to sign in; it is separate from
-your project's arrangement.
+Your arrangement lives on your computer and works without a connection. When you are
+signed in, it also **syncs to the cloud** in the background, so you can open it on your
+phone, keep arranging there, and find your edits back on the desktop.
+
+### Cloud sync
+
+The **sync badge** at the right of the arranger header shows where things stand:
+**Synced**, **Syncing…**, **Offline · saved, will sync**, **Local only** (signed
+out), **Sync off**, or **Needs attention** with the reason. Click it for:
+
+- **Sync arrangements to the cloud**: on by default when you are signed in. Turn it off and nothing leaves this computer.
+- **Sync now**, and any notes. When both devices change the same thing, your newest edit wins, and the other device shows a note with **Undo**.
+- **Open on web ↗**, and a **QR code** to scan with your phone: both open this arrangement on the web.
+- **From the cloud (not applied)**: versions saved elsewhere that couldn't be merged automatically. **Use this version** applies one, as a single undoable step.
+
+Edits from the web arrive on their own; a note says how many, with **Undo**.
+
+### For the web
+
+Your phone plays the audio your computer prepares. With **Prepare every scene for the
+web** on (it is, by default, while sync is on), Signals & Sorcery prepares every scene's
+audio in the background: one scene at a time, smallest first, only after you have been
+away for a couple of minutes and never while anything plays. It stays within your plan's
+storage and waits if your disk is nearly full. The badge shows the progress, like
+"For the web: 3 of 12 scenes ready"; **Pause until restart** stops it for now.
+
+### On your phone
+
+Open **[signalsandsorceryapi.com/arranger](https://signalsandsorceryapi.com/arranger/)**
+on your phone (or scan the QR code from the sync badge) and sign in with the same
+account. Each project has its arrangement, the same one you see on the desktop.
+
+- **Turn your phone sideways.** The timeline needs the width. On iPhone, for the full screen, tap Share, then **Add to Home Screen**, and open the arranger from there.
+- **Tap** to select, **long-press** for menus (on a section, a track name, or the lanes), drag one finger to scroll, **pinch** to zoom, and **double-tap** a clip for the wave editor. Long-press, then drag, to select a box of bars.
+- **The rail on the right** holds the tools: Select, Draw, Add (the scenes), Paste, Loop and Fit. With something selected it switches to Split, Join, Copy, Paste, Duplicate, Loop this and Delete.
+- **Mute and solo** are in a track's menu: tap its name.
+- **Play** with **Live**: your arrangement as it is on the phone, edits included, played right there (without your panel bus effects). You can also play the mix your desktop made. On iPhone, the ring/silent switch mutes web audio, so flip it if you hear nothing.
+- **History** (🕘) lists earlier versions to restore, next to undo and redo.
+- **Scenes appear as your desktop prepares them.** One that isn't ready yet shows greyed out in the scene list.
+- **Some things stay on the desktop:** levels (gains and gain envelopes show on the phone, but you change them on the desktop), panel bus effects, reviewing new tracks, and exporting.
+
+Your phone's edits reach the desktop within seconds when both are online, and edits made
+offline are kept and sync when you reconnect.
+
+### The Cloud tab
+
+The **Arrangement** tab is the arranger described on this page. The **Cloud** tab holds
+the older cloud arranger, which needs you to sign in; it is separate from your
+project's arrangement.
 
 ::: tip Coming soon
-Syncing your arrangement to the cloud, share links, and a web and phone companion for
-listening on the go are on the way. Until then, the sync badge in the header reads
-**Cloud sync unavailable**, and your arrangement stays on your computer.
+Share links, so anyone can listen to your latest synced mix, are on the way.
 :::
 
 ---

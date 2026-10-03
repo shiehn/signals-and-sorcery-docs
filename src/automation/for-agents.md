@@ -303,12 +303,12 @@ with. Tools marked **deferred** require `tool_search` to discover.
 | **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
 | **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
 | **Discovery** | `tool_search` (always visible; finds any registered tool, deferred or not) |
-| **Arrangement** *(deferred)* | 31 `arrangement_*` tools that build, edit, play and export a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
+| **Arrangement** *(deferred)* | The `arrangement_*` tools that build, edit, play, export and sync a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
 
 ## Arrangement tools
 
-[Arrange mode](/arrange/) is fully scriptable. Thirty-one `arrangement_*`
-tools cover what the arranger does: build and play the song, loop part of it,
+[Arrange mode](/arrange/) is fully scriptable. The `arrangement_*` tools cover
+what the arranger does: build and play the song, loop part of it,
 place and copy sections, mute and solo tracks, switch layers on and off, copy
 and paste bars, split clips, fade, add effects, undo, and export. They are deferred, so find them with
 `tool_search` (query `arrangement`), or call them by name. In the CLI they
@@ -469,11 +469,19 @@ with `approval_denied` and the agent should not retry. Exports you start from
 the app's own Export dialog don't ask twice. See
 [Exporting your song](/arrange/#exporting-your-song) for what each output is.
 
-::: tip Coming soon
-The `arrangement_sync`, `arrangement_sync_status`, `arrangement_share` and
-`arrangement_import_proposal` tools belong to cloud sync, sharing and the web
-companion, which are not available yet. Today they report that cloud sync is
-unavailable; your arrangement stays on your computer.
+### Cloud sync and the web
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_sync_status` | `sas arrangement sync-status` | Read-only: the sync state, queued edits, notes, proposals, the web link, and how far "for the web" preparation has got | none |
+| `arrangement_sync` | `sas arrangement sync` | Control the background cloud sync (on by default when signed in): `enabled` (false = nothing leaves the computer), `now` (push and pull right away), `dismissNotes`; and the "for the web" preparation of every scene's audio: `prepareAllScenes` (on by default), `pausePreparation` (until the app restarts). Reports `state`, `queued`, `enabled` and `webPrep` (`state`, `done`, `total`, `scene`, `notFit`, `reason`) | `enabled`, `now`, `dismissNotes`, `prepareAllScenes`, `pausePreparation` (at least one) |
+
+The web arranger edits the same arrangement (see
+[Cloud sync and your phone](/arrange/#cloud-sync-and-your-phone)).
+
+::: tip Not covered yet
+`arrangement_share` (share links) and `arrangement_import_proposal` (adopting a
+version from the cloud) are not documented here yet.
 :::
 
 ::: warning A similar name

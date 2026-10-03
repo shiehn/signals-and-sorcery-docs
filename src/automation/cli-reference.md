@@ -520,6 +520,8 @@ Every command works on the project's one arrangement.
 | `sas arrangement undo` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history |
 | `sas arrangement export [--stems] [--ableton] [--preset P] …` | `arrangement_export` | Export (**async**: returns a `jobId`) |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
+| `sas arrangement sync-status` | `arrangement_sync_status` | Cloud sync state, notes, the web link, "for the web" progress (read-only) |
+| `sas arrangement sync --now` / `--enabled false` / `--prepare-all-scenes false` / `--pause-preparation` | `arrangement_sync` | Sync now, turn sync off or on, control the "for the web" preparation |
 
 `--instance` takes a section's label (`"Chorus (2)"`), its scene
 (`"the verse"`) or its position (`"the second chorus"`, `"the last verse"`);

@@ -97,10 +97,10 @@ CLI and the MCP server wrap.
 - **Composite tools** that wrap multi-step flows: `compose_scene`,
   `compose_contract`, `add_instrument`, `generate_track`, `play_scene`,
   `render_to_performance`.
-- **[Arrangement tools](./for-agents.md#arrangement-tools)**: 31
-  `arrangement_*` tools that lay your scenes out as a song, edit it, mute
-  and solo its tracks, add effects, loop it, play it and export it, the same
-  things you do in [Arrange mode](/arrange/).
+- **[Arrangement tools](./for-agents.md#arrangement-tools)**: the
+  `arrangement_*` tools lay your scenes out as a song, edit it, mute and
+  solo its tracks, add effects, loop it, play it, export it and sync it, the
+  same things you do in [Arrange mode](/arrange/).
 - **[Async-by-default execution](./status-and-jobs.md)**: every
   state-mutating tool returns a `jobId` immediately and finishes in the
   background. Agents call `wait_for_job` (MCP) or `sas job wait` (CLI)
