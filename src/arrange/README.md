@@ -15,8 +15,11 @@ panel bus effects applied live.
 Arranging is **manual and literal**: what you place is what plays. Nothing is added
 between sections for you, and nothing is filled in automatically.
 
-Each project has **one arrangement**, saved with the project and built from its
-scenes. It needs no account and no connection.
+Each project has **one arrangement**, built from its scenes. It needs no account and no
+connection, and it is saved in the project file whenever you save (⌘S or **Save As…**):
+sections, track edits, clips, fades, effects, the arranger's own mute and solo, and the
+loop all travel with the file. Its rendered audio doesn't; that is rebuilt automatically
+when you open the arranger.
 
 ::: tip The short version
 1. Compose a few scenes (a verse, a chorus, a breakdown).
