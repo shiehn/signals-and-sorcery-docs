@@ -30,7 +30,7 @@ If you only want to use an existing plugin, skip this page and read
 
 ## Prerequisites
 
-- **Signals & Sorcery** v4.2.0 or later (plugin SDK contract 3.x); install the SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v3.20.1)
+- **Signals & Sorcery** v4.2.0 or later (plugin SDK contract 3.x); install the SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v3.21.1)
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
