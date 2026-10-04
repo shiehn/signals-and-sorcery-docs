@@ -585,11 +585,23 @@ phone, keep arranging there, and find your edits back on the desktop.
 
 ### Cloud sync
 
-The **sync badge** at the right of the arranger header shows where things stand:
-**Synced**, **Syncing…**, **Offline · saved, will sync**, **Local only** (signed
-out), **Sync off**, or **Needs attention** with the reason. Click it for:
+Sync is one switch, **Auto Sync Arrangements**. You find it in **Settings → Arranger**
+and in the sync badge's menu (it is the same switch). It is on by default when you are
+signed in; turn it off and nothing leaves this computer.
 
-- **Sync arrangements to the cloud**: on by default when you are signed in. Turn it off and nothing leaves this computer.
+- **Your edits sync right away.**
+- **The audio uploads gently, in the background.** Each layer's stems go up only while your computer is idle: never while you play, render or export, and not on battery or in Low Power Mode. It never slows the app down, so for a big project it can take a while.
+- **Sync now** (in the badge's menu) uploads everything right away, at full speed.
+- **Pause until restart** pauses the background uploads until you restart Signals & Sorcery; **Resume** carries on.
+
+The **sync badge** at the right of the arranger header shows what is happening, for
+example **Synced**, **Syncing…**, **Uploading in the background · 12 of 65 files
+(180 MB left)**, **Syncing now · 34 %**, **Waiting for idle**, **Paused while you
+play**, **Waiting · on battery**, **The cloud is busy · trying again shortly**,
+**Offline · saved, will sync**, **Local only** (signed out), **Sync off**, or **Needs
+attention** with the reason. Click it for:
+
+- **Auto Sync Arrangements**, and the upload's **Pause until restart** or **Resume**.
 - **Sync now**, and any notes. When both devices change the same thing, your newest edit wins, and the other device shows a note with **Undo**.
 - **Open on web ↗**, and a **QR code** to scan with your phone: both open this arrangement on the web.
 - **From the cloud (not applied)**: versions saved elsewhere that couldn't be merged automatically. **Use this version** applies one, as a single undoable step.
@@ -606,7 +618,8 @@ hadn't synced yet. You never get stuck, and nothing is lost.
 ### For the web
 
 Your phone plays the audio your computer prepares. With **Prepare every scene for the
-web** on (it is, by default, while sync is on), Signals & Sorcery prepares every scene's
+web** on (it sits under Auto Sync Arrangements, and is on by default while sync is on),
+Signals & Sorcery prepares every scene's
 audio in the background: one scene at a time, smallest first, only after you have been
 away for a couple of minutes and never while anything plays. It stays within your plan's
 storage and waits if your disk is nearly full. The badge shows the progress, like

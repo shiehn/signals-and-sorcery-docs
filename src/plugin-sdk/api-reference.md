@@ -1276,6 +1276,46 @@ getDataDirectory(): string
 
 `showOpenDialog` and `showSaveDialog` require the `fileDialog` capability in the manifest. `downloadFile` requires the URL's host in `network.allowedHosts`. `importFile` needs no capability.
 
+### scanInstrumentLibrary(root, opts?)
+
+*Optional (SDK 3.21.0).* The host scans an instrument pack root once and caches the
+result: one call instead of a `listAudioFiles` walk plus a `readTextFile` per prompt and
+per manifest (a large pack has tens of thousands of files).
+
+```typescript
+scanInstrumentLibrary?(root: string, opts?: { refresh?: boolean }): Promise<InstrumentLibraryScan>
+```
+
+The cache is per `root` and survives renderer reloads; it follows the pack's
+`_pack-version.json` version (or the category folders' change times when there is none).
+Pass `refresh: true` to scan again, for example after reinstalling the same version.
+
+**InstrumentLibraryScan:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `root` | `string` | The scanned root |
+| `version` | `string` | `_pack-version.json`'s version (`''` when there is none) |
+| `flat` | `InstrumentLibraryFlatEntry[]` | Samples directly under a category: `{ categoryId, filename, prompt }` (`prompt` is the sibling `.txt`, or `null`) |
+| `folders` | `InstrumentLibraryFolderEntry[]` | `<category>/<subdir>/manifest.json` folders: `{ categoryId, subdir, manifest, error? }` |
+
+`manifest` holds the fields the instrument plugin uses (`schema_version`, `instrument_id`,
+`category_display`, `open_ended`, `prompt`, `zones[]` of `{ sample, root_midi, min_midi,
+max_midi }`), trimmed but **not validated**, so keep your own checks. It is `null` (with
+`error`) when the file is missing or isn't valid JSON; one bad folder never fails the
+scan. Paths with a `_`-prefixed segment are skipped.
+
+Hosts older than 3.21.0 don't have this method: feature-detect it and fall back to
+`listAudioFiles` + `readTextFile`.
+
+```typescript
+const scan = host.scanInstrumentLibrary
+  ? await host.scanInstrumentLibrary(root)
+  : await myOwnWalk(root); // listAudioFiles + readTextFile
+```
+
+---
+
 ### showOpenDialog(options)
 
 Show a native file open dialog.
