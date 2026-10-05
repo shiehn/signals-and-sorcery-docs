@@ -454,20 +454,33 @@ and default):
 |---|---|---|---|
 | `arrangement_undo` | `sas arrangement undo` | Undo the last edit made on this computer (the arrangement's own history; changes synced in from another device are not undo steps, and a field another device changed later is kept, counted in `keptRemote`). `fromOtherDevice` reverts the latest batch of changes from another device instead (the note's "Undo these N"), as a new, undoable edit | `fromOtherDevice` |
 | `arrangement_redo` | `sas arrangement redo` | Redo | none |
-| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `renderStale` |
+| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `name`, `tail` (`"auto"` or seconds, 0 to 30), `renderStale` |
 | `arrangement_export_cancel` | `sas arrangement export-cancel` | Cancel the running export (nothing is written) | `jobId` |
 
-`arrangement_export` writes a new dated folder (default
-`~/Music/Signals & Sorcery Exports`) and returns a `jobId`; the finished job
-lists the files, the loudness report, the stems null test and any warnings.
-Only one export runs at a time. The export follows what you hear: tracks
-the arranger's mute or solo silences get no stem (the Ableton hand-off
-brings them in as muted tracks). Because it writes files that no undo can
-take back, **an agent's export needs your approval**: the app asks before it
-starts (the chat assistant asks in the chat). If you decline, the call fails
-with `approval_denied` and the agent should not retry. Exports you start from
-the app's own Export dialog don't ask twice. See
-[Exporting your song](/arrange/#exporting-your-song) for what each output is.
+`arrangement_export` writes a new folder inside `path` (default
+`~/Music/Signals & Sorcery Exports`) and returns a `jobId` and the `name` it
+used; the finished job lists the files, the loudness report, the stems null
+test and any warnings. Only one export runs at a time. The export follows
+what you hear: tracks the arranger's mute or solo silences get no stem (the
+Ableton hand-off brings them in as muted tracks). Because it writes files
+that no undo can take back, **an agent's export needs your approval**: the
+app asks before it starts (the chat assistant asks in the chat). If you
+decline, the call fails with `approval_denied` and the agent should not
+retry. Exports you start from the app's own Export dialog don't ask twice.
+
+- **`name`** names the folder (`<name> <date> <time>`) and the Mix, the
+  Master and `export.json` inside it. Without one, the export takes the
+  project's last export name, else the project's name followed by "Bounce".
+  A `name` you pass is remembered for the project's next export.
+- **Never overwrites an earlier export:** a second one with the same name in
+  the same minute goes to a folder ending in `(2)`, then `(3)`. A failed or
+  cancelled export removes only its own new folder.
+- **`tail`** sets how long the files run past the song's end: `"auto"` (the
+  default) rings out until silent, for up to 10 seconds; a number of seconds
+  from 0 to 30 (such as `"1.0"`) ends every file exactly that long after the
+  song. `export.json` records the name and the tail.
+
+See [Exporting your song](/arrange/#exporting-your-song) for what each output is.
 
 ### Cloud sync and the web
 

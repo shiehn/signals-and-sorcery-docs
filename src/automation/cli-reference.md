@@ -518,7 +518,7 @@ Every command works on the project's one arrangement.
 | `sas arrangement paste --at '{…}'` (or `--after-section X`) | `arrangement_paste` | Paste |
 | `sas arrangement duplicate-selection --sections X` (or `--region`, `--clip`) | `arrangement_duplicate` | Duplicate sections, bars or a clip |
 | `sas arrangement undo [--from-other-device]` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history (this computer's edits; `--from-other-device` reverts the latest changes from another device) |
-| `sas arrangement export [--stems] [--ableton] [--preset P] …` | `arrangement_export` | Export (**async**: returns a `jobId`) |
+| `sas arrangement export [--stems] [--ableton] [--preset P] [--name N] [--tail auto\|S] …` | `arrangement_export` | Export (**async**: returns a `jobId`). `--name` names the new folder and its files (default: the project's last export name, else the project's name followed by "Bounce"); `--tail` is `auto` (until silent, up to 10 s) or a fixed number of seconds from 0 to 30. An earlier export's folder is never overwritten |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
 | `sas arrangement sync-status` | `arrangement_sync_status` | Cloud sync state, notes, the web link, "for the web" progress (read-only) |
 | `sas arrangement sync --now` / `--enabled false` / `--pause-uploads` / `--prepare-all-scenes false` / `--pause-preparation` | `arrangement_sync` | Sync now, turn Auto Sync off or on, pause the background uploads, control the "for the web" preparation |
@@ -533,6 +533,7 @@ sas arrangement copy --region '{"instance": "the first chorus", "track": "Kick"}
 sas arrangement paste --at '{"instance": "the second chorus", "bar": 1}'
 sas arrangement duplicate-selection --sections "Chorus (2)"
 sas arrangement export --outputs mix,stems --render-stale false
+sas arrangement export --name "Night Drive Bounce" --tail 2
 ```
 
 The older verbs `duplicate`, `remove`, `clear` and `dup` still work for now

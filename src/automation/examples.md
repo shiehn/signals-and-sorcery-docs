@@ -483,11 +483,11 @@ bars without shortening the song, use `sas arrangement silence`
 ## 18. Export the song
 
 Render the arrangement offline: the Mix, a streaming Master at 44.1 kHz,
-one stem per panel, and an Ableton hand-off.
+one stem per panel, and an Ableton hand-off, named "Night Drive Bounce".
 
 ```bash
 JOB=$(sas arrangement export --stems --ableton --preset streaming \
-  --sample-rate 44100 --json | jq -r '.data.changes.jobId')
+  --sample-rate 44100 --name "Night Drive Bounce" --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 900
 ```
 
@@ -495,8 +495,15 @@ Exporting writes files that no undo can take back, so the app asks you to
 **approve** it before it starts. If you decline, the call fails with
 `approval_denied`.
 
-The files land in a new dated folder under `~/Music/Signals & Sorcery
-Exports` (pass `--path` for another place). The export follows what you
+The files land in a new folder named after the export and the date and
+time, such as `Night Drive Bounce 2026-10-04 1530`, under
+`~/Music/Signals & Sorcery Exports` (pass `--path` for another place).
+Without `--name`, the export takes the project's last export name, else the
+project's name followed by "Bounce". An export never overwrites an earlier
+one: the same name in the same minute gets `(2)`, `(3)`. Every file runs
+until the sound dies away, for up to 10 seconds past the song; pass
+`--tail 2` to end every file exactly 2 seconds after it instead (0 to 30).
+The export follows what you
 hear: a track you muted (or left out by soloing others) in the arranger gets
 no stem, and the Ableton hand-off brings it in as a muted track. The finished job lists every
 file, the loudness report (integrated loudness, loudness range, true peak,

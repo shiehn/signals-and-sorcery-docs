@@ -486,6 +486,14 @@ Press **Export…** in the arranger header (in arrange mode, with at least one s
 Everything is **rendered offline** from the arrangement, never recorded live, and the
 monitor-only **Master FX** is never included. You don't need to stop or save first.
 
+### Name
+
+The **Name** field at the top names the export: its folder and the files inside it. It
+starts as your project's name followed by **Bounce** (a project called Night Drive
+exports as **Night Drive Bounce**), and you can change it. The project
+remembers the name you export with, so its next export starts with the same name.
+Characters a file name can't hold, such as `/` or `:`, become spaces.
+
 ### What to export
 
 Tick any of:
@@ -505,10 +513,6 @@ the arranger are not in the Mix and get no stems. The dialog lists
 them under **Left out**, so nothing goes missing by surprise. In an Ableton hand-off,
 the arranger's muted tracks arrive as muted tracks.
 
-Every file is the song **plus its tail**: bus reverbs and delays ring out for up to
-10 seconds after the last bar, trimmed where the sound ends. All files have the same
-length, so they line up.
-
 ### Master settings
 
 - **Preset:** **Streaming** (−14 LUFS, −1 dBTP, the default, right for most streaming services), **Loud** (−9 LUFS, −1 dBTP) or **Custom** (a **Target LUFS** from −60 to −1 and a **Ceiling dBTP** from −20 to 0).
@@ -519,20 +523,35 @@ length, so they line up.
 If some layers' stems are out of date, a box (ticked by default) renders them before
 the export, so what you export always matches your composition.
 
+### Tail
+
+Every file is the song **plus a tail**, so bus reverbs and delays can ring out after
+the last bar. Choose how long under **Tail**:
+
+- **Auto (until silent, ≤ 10 s)**, the default: the tail runs for up to 10 seconds and is trimmed where the sound ends.
+- **Fixed**: a length you enter, from 0 to 30 seconds. Every file ends exactly that long after the last bar, which helps when the files must have a precise length. **0** ends them right at the last bar. A fixed tail is a clean cut: anything still ringing at that point stops there.
+
+All files have the same length, so they line up.
+
 ### Where the files go
 
 Choose a **Destination** (the default is **~/Music/Signals & Sorcery Exports**). Each
-export makes a **new folder** named after the arrangement and the date and time, so an
-export never overwrites an earlier one. Inside:
+export makes a **new folder** there, named with the export's name and the date and
+time, such as `Night Drive Bounce 2026-10-04 1530`. An export **never overwrites** an
+earlier one: a second export with the same name in the same minute goes to
+`Night Drive Bounce 2026-10-04 1530 (2)`, then `(3)`, and so on. Inside, where
+`<name>` is the export's name:
 
 - `<name> - Mix (32f).wav`
 - `<name> - Master (Streaming -14 LUFS, 24-bit).wav` (the name records the preset and format)
 - `Stems/01 Drums.wav`, `Stems/02 Bass.wav`, … and `Editable stems/…`
-- `<name> - export.json`: a record of the export (the settings, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings)
+- `<name> - export.json`: a record of the export (its name, the settings including the tail, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings)
 
 A progress bar shows each step. **Cancel** stops the export and removes its folder, so
-nothing half-written is left behind. When it finishes: **Reveal in Finder**, **Export
-again** or **Close**. One export runs at a time.
+nothing half-written is left behind, and an export that fails cleans up the same way.
+Only that export's own new folder is removed; earlier exports are never touched. When
+it finishes: **Reveal in Finder**, **Export again** or **Close**. One export runs at a
+time.
 
 ### Reading the loudness report
 
