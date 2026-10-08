@@ -92,6 +92,7 @@ From left to right:
 - **⧉** and what is on the clipboard, after you copy something;
 - a small progress indicator while the arranger prepares audio (see [Preparing](#preparing-and-rendering));
 - the stem status: **● arrangement up to date**, or a **Render stale (N)** / **Render pending (N)** button;
+- **Normalize kick levels** (see [Kick levels](#kick-levels));
 - the **sync badge** (see [Cloud sync and your phone](#cloud-sync-and-your-phone));
 - **◆ Save** when one section is selected (see [Saved sections](#saved-sections));
 - **↶** and **↷** for undo and redo;
@@ -244,6 +245,27 @@ doesn't change the sound.
 Both are in the **Edit** menu and in the right-click menu of a clip (**Split at bar N**,
 **Join clips**).
 
+### Drag a clip's edge
+
+Grab the start or end of a clip and drag it to **extend or trim** the clip, as in any
+DAW. This works with the **Select** tool.
+
+- **Grab the lower half** of the lane at the clip's edge (the top corners are the fade handles). The pointer becomes a resize arrow, and hovering says which edge you are on.
+- The edge **snaps to whole bars**. While you drag, the bars the clip gains or loses are shaded, a line shows where the edge will land, and a readout says where the clip will start or end, for example "Kick: starts at bar 5 (+4 bars)".
+- **Extending reveals what was hidden.** Dragging the start earlier brings back the music that leads into the clip, and dragging the end later lets it carry on. The bars you already had sound exactly the same, and nothing is stretched. Trimming switches the cut bars off.
+- **Where an edge stops:** at its own section's start or end (a clip never crosses a section boundary), and at the next clip on the lane (they can touch, but they stay separate clips). A clip keeps at least 1 bar. At a limit the readout adds "the edge stops here".
+- An effect that starts on a bar you trim away goes with it.
+- Each drag is one undo step. In a linked section it changes every linked copy, and the undo step's name says how many.
+
+For example: split an 8-bar part at bar 5, delete bars 1 to 4, then drag the start of
+what's left back to bar 1. The first four bars come back, in step with the rest.
+
+**From the keyboard:** select a clip, then press **⌥⇧←** or **⌥⇧→** to move its start
+by a bar, or **⌥←** or **⌥→** to move its end (Alt on Windows). At a limit, a note says
+why the edge stopped.
+
+**On your phone:** tap a clip to select it. A grip appears at each end; drag a grip.
+
 ### Layers from other scenes (guests)
 
 Every layer of every scene has a lane, and **you can play any layer inside any
@@ -287,6 +309,23 @@ arrangement: everywhere the track plays, in its own sections and as a guest.
 - **Copy track ID** and **Copy track name**. Hovering a name also shows its ID, with a copy button. IDs are handy when you work with an agent or the `sas` CLI.
 - **Restore** (it shows the track's name, for example **Restore Kick**) clears every arranger edit to that track (bars switched off, clips and splits, gain, fades, gain envelopes, effects, phase), so it plays again in every section of its scene. Mute, solo and your sections are left as they are, and sections you deleted don't come back. It is one undo step, and it is greyed out when there is nothing to restore.
 - For a new track: **Turn off in arranged sections** and **Mark reviewed**.
+
+### Reorder the rows
+
+The lanes start in the order of your scenes and their tracks. You can put the rows in
+any order you like:
+
+- **Move a scene group:** drag its header in the gutter up or down. Its tracks move with it.
+- **Move a track:** drag its name up or down. A track stays inside its own scene's group.
+- A line shows where the row will land, and dragging near the top or bottom of the list scrolls it.
+- **Menus:** right-click a track's name, or a scene group's header, and choose **Move up** or **Move down**. The group header's menu also has **Collapse** (or **Expand**).
+- **Keys:** with a clip selected on a track (or an empty cell clicked), **⌥↑** and **⌥↓** move that track, and **⌥⇧↑** and **⌥⇧↓** move its whole scene group (Alt on Windows).
+- **On your phone:** tap a track's name and choose **Reorder rows…**. Every row gets a **≡** handle: drag the rows with your finger, then tap **Done**.
+
+The order only changes how the arranger looks. It never changes the sound, the
+composer's order, or the scene letters (A, B, C…). Each move is one undo step and syncs
+to your other devices, and the [Ableton hand-off](#ableton-hand-off) lists its tracks in
+this order.
 
 ---
 
@@ -332,6 +371,34 @@ small ▼ marker; hovering it explains the jump. Resize the first section to a w
 number of loops, or set that layer to **continue the run**, if you don't want it.
 
 Fades, gain envelopes and settings belong to the section, so linked copies share them.
+
+---
+
+## Kick levels
+
+When you compose scene by scene, the kick can end up louder in the chorus than in the
+verse. **Normalize kick levels**, in the arranger header, evens it out in one click:
+
+- It measures the kick in every scene from the layer stems, then gives each scene **one level** (a scene gain, on top of your faders and lane gains) so the kick hits **equally hard in every scene** that has a clear kick.
+- It makes them as loud as they can all go: no scene is raised more than 6 dB or lowered more than 12 dB, and no scene's peaks go above −1 dBTP (or above the loudest peak your song already has, if that is higher).
+- Scenes **without a kick**, or where it isn't clear which layer is the kick, are matched on their **overall loudness** instead.
+- The whole change is **one undo step**. The result appears next to the button, with **Details** and **Undo**. Running it again replaces the previous match; it never adds up.
+- Each scene's level shows on its sections' headers, such as **+2.0 dB**. Hover it to see how it was set.
+- Any out-of-date layer stems render first, and rendering waits for silence: if the song is playing, the button asks you to stop playback and press it again.
+
+**Details** opens a table with a row per scene: its kick layer, the kick's loudness
+(LUFS), the level it got, its headroom and a note (such as no kick, or the limit that
+stopped it). From there you can:
+
+- tick **excl.** to leave a scene exactly as it is;
+- **reset** a scene's level;
+- change **Max boost** and **Max cut** (6 dB and 12 dB to start); the match runs again right away;
+- tick **Hear without** to play the song without the scene levels and compare. It changes only what you hear; the arrangement stays as it is.
+
+The levels apply wherever the arrangement plays, including exports and your phone, and a
+layer playing as a guest keeps its own scene's level. If some layers couldn't be
+measured, Details lists them. A loop from a scene you haven't opened since you opened
+the project isn't loaded yet: open that scene, then normalize again.
 
 ---
 
@@ -593,7 +660,9 @@ material and are not part of the null test.
 Tick **Ableton hand-off** to send the song to Live. In Live, right-click a scene and
 choose **Import S&S mix…**: the song lands in **Arrangement view** with the tempo set,
 one track per stem at **0 dB and centred** (your mix is already in the audio), a
-**locator at every section**, and any editable stems **muted** and ready to swap in. It
+**locator at every section**, and any editable stems **muted** and ready to swap in. The
+tracks arrive in the order of your arranger's rows (see [Reorder the rows](#reorder-the-rows));
+the numbered files in the export folder keep their usual order. It
 needs the S&S Ableton extension **1.4.0**, which Signals & Sorcery installs for you. See
 [Ableton Integration](/ableton/#hand-off-a-song-to-arrangement-view) for details.
 
@@ -661,7 +730,9 @@ account. Each project has its arrangement, the same one you see on the desktop.
 - **Play** with **Live**: your arrangement as it is on the phone, edits included, played right there (without your panel bus effects). You can also play the mix your desktop made. On iPhone, the ring/silent switch mutes web audio, so flip it if you hear nothing.
 - **History** (🕘) lists earlier versions to restore, next to undo and redo.
 - **Scenes appear as your desktop prepares them.** One that isn't ready yet shows greyed out in the scene list.
-- **Some things stay on the desktop:** levels (gains and gain envelopes show on the phone, but you change them on the desktop), panel bus effects, reviewing new tracks, and exporting.
+- **Reorder the rows:** tap a track's name and choose **Reorder rows…**, drag the rows by their **≡** handles, then tap **Done**.
+- **Extend or trim a clip:** tap it, then drag the grip at either end.
+- **Some things stay on the desktop:** levels (gains, gain envelopes and scene levels show on the phone, but you change them on the desktop, including **Normalize kick levels**), panel bus effects, reviewing new tracks, and exporting.
 
 Your phone's edits reach the desktop within seconds when both are online, and edits made
 offline are kept and sync when you reconnect.
@@ -704,6 +775,7 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 | Duplicate | ⌘D |
 | Delete | Delete or Backspace |
 | Split / join clips | ⌘E / ⌘J |
+| Extend or trim a clip | Drag its edge in the lower half of the lane (Select tool); with a clip selected, ⌥⇧← / ⌥⇧→ moves its start and ⌥← / ⌥→ its end |
 | Fades | Right-click a clip, or drag its corner handles |
 | Wave editor | Double-click a clip |
 | Lane settings (gain, fades, phase) | Right-click an empty cell |
@@ -716,7 +788,9 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 | Set a loop | Drag across the ruler, or drag the loop markers |
 | Loop a section | Double-click it on the ruler, or ⟲ on the section; ⇧L for the selected sections |
 | Mute / solo a track | **M** / **S** beside its name; ⌥- or ⌘-click S to solo it alone (Alt- or Ctrl-click on Windows) |
-| Track menu (copy ID, restore) | Right-click the track's name |
+| Track menu (move, copy ID, restore) | Right-click the track's name |
+| Reorder rows | Drag a scene group's header or a track's name; **Move up** / **Move down** in their right-click menus; ⌥↑ / ⌥↓ moves the selected track, ⌥⇧↑ / ⌥⇧↓ its scene group |
+| Even out the kick | **Normalize kick levels** in the header |
 | Undo / redo | ⌘Z / ⇧⌘Z, or ↶ ↷ |
 | Clear the selection | Escape |
 | Collapse a scene's lanes | Click its group header |
@@ -725,10 +799,13 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 
 ## Arranging from an agent or a script
 
-Everything on this page is also available to agents and scripts, through the
+Everything on this page, apart from reordering the rows and dragging a clip's edge, is
+also available to agents and scripts, through the
 `arrangement_*` tools and the `sas arrangement` commands. They take plain names ("the
 second chorus", "Kick"), and an agent's edit and a gesture in the timeline land in the
 same history, so you can undo either from either side. What an agent copies shows on
-the clipboard in the header, and an agent's export asks for your approval first. See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
+the clipboard in the header, and an agent's export asks for your approval first. An agent
+can also even out the kick (`arrangement_normalize_kick_levels`, the same match as the
+button) or set one scene's level (`arrangement_set_scene_gain`). See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
 for the tool list, [`sas arrangement`](/automation/cli-reference.html#arrange-a-song-sas-arrangement)
 for the commands, and [the worked examples](/automation/examples.html#_15-arrange-a-song-from-your-scenes).

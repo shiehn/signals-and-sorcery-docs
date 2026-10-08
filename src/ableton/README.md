@@ -89,7 +89,8 @@ thing to Live as stems that already sound exactly like your S&S mix.
 3. The song lands in **Arrangement view**:
    - the tempo is set first;
    - one audio track per stem (one per panel, plus any layer that isn't on a
-     panel bus), each clip the full length of the song, unwarped;
+     panel bus), each clip the full length of the song, unwarped, in the order of
+     your arranger's rows (see [Reorder the rows](/arrange/#reorder-the-rows));
    - every track at **0 dB and centred**: your faders, pan and bus effects are
      already in the audio, so leave the Live mixer flat to hear your S&S mix;
    - a **locator** at the start of every section, named after it;

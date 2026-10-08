@@ -99,8 +99,15 @@ CLI and the MCP server wrap.
   `render_to_performance`.
 - **[Arrangement tools](./for-agents.md#arrangement-tools)**: the
   `arrangement_*` tools lay your scenes out as a song, edit it, mute and
-  solo its tracks, add effects, loop it, play it, export it and sync it, the
-  same things you do in [Arrange mode](/arrange/).
+  solo its tracks, add effects, even out its kick levels, loop it, play it,
+  export it and sync it, the same things you do in [Arrange mode](/arrange/).
+- **Failures that say what to do**: a refused call carries a `remediation`
+  (older tools: a `suggestion`) with the reason and the fix, and where it
+  matters a `retryable` flag that says whether the same call is worth making
+  again. A
+  busy moment, such as Play while tracks are being frozen, is retryable; a
+  lost race for the audio output is not. See
+  [When a tool fails](./for-agents.md#when-a-tool-fails).
 - **[Async-by-default execution](./status-and-jobs.md)**: every
   state-mutating tool returns a `jobId` immediately and finishes in the
   background. Agents call `wait_for_job` (MCP) or `sas job wait` (CLI)

@@ -298,7 +298,7 @@ with. Tools marked **deferred** require `tool_search` to discover.
 | **FX** (3rd-party VST3/AU inserts) | `dsl_fx_remove`, `dsl_fx_set_bypass`, `dsl_fx_set_param`, `dsl_sweep` (deferred: `fx_list_plugins`, `fx_add_plugin`, `fx_remove_plugin`, `fx_move_plugin`, `fx_set_bypass`, `fx_set_param`, `dsl_load_fx_chain`, `rack_apply_random_fx`) |
 | **Musical context** *(deferred)* | `get_musical_context`, `set_musical_context` |
 | **Samples** *(deferred)* | `search_samples`, `import_samples`, `add_sample_track` |
-| **Export** *(deferred)* | `export_audio` |
+| **Export** *(deferred)* | `export_audio` (a whole scene), `export_track_audio` (exactly one track, rendered from its own scene at that scene's length and time signature, with its fader, pan and effects; the app asks for approval first, as it does for `export_audio`) |
 | **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `generate_track`, `play_scene`, `render_to_performance` |
 | **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
 | **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
@@ -310,7 +310,8 @@ with. Tools marked **deferred** require `tool_search` to discover.
 [Arrange mode](/arrange/) is fully scriptable. The `arrangement_*` tools cover
 what the arranger does: build and play the song, loop part of it,
 place and copy sections, mute and solo tracks, switch layers on and off, copy
-and paste bars, split clips, fade, add effects, undo, and export. They are deferred, so find them with
+and paste bars, split clips, fade, add effects, even out the kick across scenes,
+undo, and export. They are deferred, so find them with
 `tool_search` (query `arrangement`), or call them by name. In the CLI they
 are the [`sas arrangement` group](./cli-reference.md#arrange-a-song-sas-arrangement).
 The in-app chat assistant uses the same tools.
@@ -364,7 +365,10 @@ How they behave:
   `playPending`; `arrangement_stop` cancels the wait). By default the whole
   arrangement **loops**; `arrangement_set_loop` changes that. The
   composition and the arrangement never play at the same time: starting one
-  stops the other.
+  stops the other. If a deck Play started after this Play was asked for, the
+  deck keeps the output and Play fails with `PLAY_SUPERSEDED`; while tracks are
+  being frozen it fails with `FREEZE_IN_PROGRESS` (see
+  [When a tool fails](#when-a-tool-fails)).
 - **Mute and solo are per view.** In the arrangement, only the arranger's
   own M and S (per track, for the whole arrangement) decide what plays and
   what exports; the composer's mutes, solos and bus mutes affect only the
@@ -448,6 +452,48 @@ and default):
   follows from it): hits and shots on a bar, risers that land at the end of
   their bar (`hit_beats` or `beats`, `gain_db`).
 
+### Scene levels and kick matching
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `arrangement_normalize_kick_levels` | `sas arrangement normalize-kicks` | The arranger's **Normalize kick levels** button: measures each scene's kick from its layer stems and sets one level per scene (a scene gain, on top of faders and lane gains) so every scene with a clear kick hits equally hard; scenes without a clear kick are matched on overall loudness. One undo step; running it again replaces the previous match. **Async** | `apply` (default true; `false` is a dry run that measures and reports but changes nothing), `maxBoostDb` (default 6), `maxCutDb` (default 12, a positive number), `ceilingDbtp` (default −1), `exclude` (scene names or ids to leave exactly as they are) |
+| `arrangement_set_scene_gain` | `sas run arrangement_set_scene_gain` | Set one scene's level by hand: every layer of that scene, wherever it plays. One undo step | `scene` (name or id), `gainDb` (−24 to +24 dB in 0.1 dB steps, or `null` to clear it) |
+
+How they behave:
+
+- **Stems first.** The match renders any out-of-date layer stems before it
+  measures. Rendering can't happen while something plays, so if a stem needs
+  it, the call fails until you stop playback (`dsl_stop` or `arrangement_stop`);
+  a render that is already running fails it with a retryable remediation.
+- **The ceiling.** No scene's peaks go above `ceilingDbtp` before the master,
+  or above the arrangement's loudest current peak if that is higher. No scene is
+  raised more than `maxBoostDb` or lowered more than `maxCutDb`.
+- **The result** (`changes`): `status` is `applied`, `already-matched` (nothing
+  to change), `dry-run`, `no-kick` (no scene has a clear kick, so nothing
+  changed) or `empty`; then `summary`, `target_lufs`, `overall_target_lufs`,
+  `ceiling_dbtp` and `scenes[]` (`scene`, `scene_id`, `basis` as `kick`,
+  `overall` or `excluded`, `kick_tracks`, `kick_lufs`, `overall_lufs`,
+  `confidence`, `peak_dbtp`, `headroom_db`, `gain_db`, `flag`). When some
+  layers weren't heard, `not_measured[]` names them with a `reason`:
+  `not-loaded` (a loop of a scene not opened since the project was opened:
+  open that scene, then call again) or `no-stem` (its stem didn't render).
+- **A hand-set level** from `arrangement_set_scene_gain` is replaced by a later
+  match for any scene the match covers; pass that scene in `exclude` to keep it.
+- **Where it applies.** A scene's level reaches everything the arrangement
+  plays: playback, exports and the web arranger. A layer playing as a guest in
+  another scene's section keeps its own scene's level.
+- `arrangement_undo` takes either change back in one step.
+
+```bash
+# Dry run: what would change?
+JOB=$(sas arrangement normalize-kicks --apply false --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 300
+
+# Set the chorus 1.5 dB down by hand, then clear it again
+sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-1.5
+sas run arrangement_set_scene_gain --json-body '{"scene": "Chorus", "gainDb": null}'
+```
+
 ### Undo and export
 
 | Tool | CLI | What it does | Inputs |
@@ -479,6 +525,11 @@ retry. Exports you start from the app's own Export dialog don't ask twice.
   default) rings out until silent, for up to 10 seconds; a number of seconds
   from 0 to 30 (such as `"1.0"`) ends every file exactly that long after the
   song. `export.json` records the name and the tail.
+- **Ableton track order.** The Ableton hand-off lists its Live tracks in the
+  order of the Arrange view's rows, as the user arranged them; the numbered
+  files in `Stems/` keep their usual order. The cloud arranger's
+  `arranger_export_ableton` orders its tracks the same way, from the project's
+  own arrangement. With no custom order, both are exactly as before.
 
 See [Exporting your song](/arrange/#exporting-your-song) for what each output is.
 
@@ -505,8 +556,9 @@ mode.
 
 See the worked examples [15](./examples.md#_15-arrange-a-song-from-your-scenes),
 [16](./examples.md#_16-add-an-effect-to-one-bar),
-[17](./examples.md#_17-copy-a-part-from-one-section-to-another) and
-[18](./examples.md#_18-export-the-song).
+[17](./examples.md#_17-copy-a-part-from-one-section-to-another),
+[18](./examples.md#_18-export-the-song) and
+[19](./examples.md#_19-even-out-the-kick-across-the-song).
 
 ## Pattern: observe → reason → act
 
@@ -579,6 +631,54 @@ the composition (loop-a). `deck_stop` stops one deck, and `deck_stop_all`
 stops both decks (loop-a and loop-b's baked loop), like the UI's Stop All.
 None of these stop the arrangement; `arrangement_stop` does. For total
 silence, call `deck_stop_all` and `arrangement_stop`.
+
+**Play waits while tracks freeze.** While a freeze runs (one track or a whole
+scene, from its first track to its last), Play is refused: `dsl_play`,
+`deck_play`, `deck_queue_scene` and `arrangement_play` fail with
+`FREEZE_IN_PROGRESS`, and the remediation has `retryable: true`. Nothing was
+started or changed. Wait for the freeze to finish, then make the same call
+again; the message says how far the freeze has got.
+
+**One output: the newest Play wins.** The composition's decks and the
+arrangement share one output, so when two Plays race, the later one keeps it:
+
+- `deck_play` and `dsl_play` fail with `ARRANGEMENT_TOOK_OUTPUT` when the
+  arrangement started playing while the deck was starting. If the deck should
+  play, stop the arrangement (`arrangement_stop`), then play the deck again.
+- `arrangement_play` fails with `PLAY_SUPERSEDED` when a deck started playing
+  after this Play was asked for. If the arrangement should play, stop the decks
+  (`deck_stop_all`), then call `arrangement_play` again.
+
+Neither is broken, and neither is retryable (`retryable: false`): retrying
+blindly would just take the output back. The remediation carries the stop call
+as a CLI command and an MCP call.
+
+**A freeze never installs silence.** `track_freeze` refuses to freeze a track
+to silence, and so does each track of `scene_freeze` (there, the refusal is an
+entry in `changes.failed` and the rest of the batch carries on). Nothing is
+frozen, and the track keeps playing live:
+
+- **The instrument made no sound.** The track has notes, but its instrument
+  rendered pure silence; the message says it "made no sound for its notes".
+  The remediation has `retryable: false`, because a retry renders the same
+  silence. Tell the user to open the instrument and check that a patch or
+  preset is loaded. For a sampler track, the usual cause is a sample library
+  that was missing when the project loaded: install it, reopen the project and
+  freeze again.
+- **A plugin dropped out.** A sandboxed plugin (Kontakt, for example) dropped
+  out during the offline render, so the engine refused the render; the message
+  names the plugin. The remediation has `retryable: true`. The freeze already
+  retried once: retry the same call once more, and if it drops out again, tell
+  the user which plugin the message names.
+
+**A save can succeed with a warning.** `project_save`, `project_save_as` and
+`project_export` write the document even when the app couldn't update its own
+working copy of the project (a read-only folder, a full disk, or no
+confirmation from the audio engine). The call succeeds, but `changes.engineSave`
+is present (`{ ok: false, errorCode, message }`) and the message asks the agent
+to tell the user: until that is fixed, reopening the project in the app may
+bring back older instrument and effect settings, while the saved document has
+the current ones.
 
 ## Further reading
 

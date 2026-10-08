@@ -273,9 +273,9 @@ await host.shufflePreset(copy.id);
 
 ## FX Operations
 
-Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. There is no built-in FX rack — the inserts come from the plugins installed on the user's machine, discovered via `getAvailableFx()` (same `InstrumentDescriptor` shape as `getAvailableInstruments`, filtered to non-instrument plugins). Insert states persist per track and are re-applied when the project reopens.
+Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. There is no built-in FX rack: the inserts come from the plugins installed on the user's machine, discovered via `getAvailableFx()` (same `InstrumentDescriptor` shape as `getAvailableInstruments`, filtered to non-instrument plugins). Insert states persist per track and are re-applied when the project reopens.
 
-All FX methods are ownership-scoped and optional — feature-gate on `typeof host.getTrackExternalFx === 'function'`.
+All FX methods are ownership-scoped and optional: feature-gate on `typeof host.getTrackExternalFx === 'function'`.
 
 ### getAvailableFx()
 
@@ -299,7 +299,7 @@ getTrackExternalFx(trackId: string): Promise<TrackExternalFxEntry[]>
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `index` | `number` | Engine chain index — pass this back to the remove/bypass/move/editor calls. Not contiguous from 0 |
+| `index` | `number` | Engine chain index: pass this back to the remove/bypass/move/editor calls. Not contiguous from 0 |
 | `pluginId` | `string` | Scanned plugin id (matches `InstrumentDescriptor.pluginId`) |
 | `name` | `string` | Display name |
 | `enabled` | `boolean` | `false` when bypassed |
@@ -376,7 +376,7 @@ await host.setTrackExternalFxEnabled(track.id, first.index, false);
 
 ### moveTrackExternalFx(trackId, fromFxIndex, toFxIndex)
 
-Move an insert to another slot in the chain (drag-to-reorder). Both indices are `TrackExternalFxEntry.index` values, with splice semantics — the FX lands *at* `toFxIndex`. Only external inserts are movable or valid landing slots (never the instrument). Feature-gate on `typeof host.moveTrackExternalFx === 'function'`.
+Move an insert to another slot in the chain (drag-to-reorder). Both indices are `TrackExternalFxEntry.index` values, with splice semantics: the FX lands *at* `toFxIndex`. Only external inserts are movable or valid landing slots (never the instrument). Feature-gate on `typeof host.moveTrackExternalFx === 'function'`.
 
 ```typescript
 moveTrackExternalFx(trackId: string, fromFxIndex: number, toFxIndex: number): Promise<void>
@@ -400,7 +400,7 @@ showTrackExternalFxEditor(trackId: string, fxIndex: number): Promise<void>
 
 ### copyTrackFxFrom(destTrackId, sourceTrackDbId)
 
-Copy a source track's whole FX chain (external inserts with their states) onto an owned track. The source is addressed by DB row id and may live in another scene; only the destination is ownership-asserted. Partial success is normal — third-party plugins missing from this machine land in `externalMissing` while everything else still copies. Feature-gate on `typeof host.copyTrackFxFrom === 'function'`.
+Copy a source track's whole FX chain (external inserts with their states) onto an owned track. The source is addressed by DB row id and may live in another scene; only the destination is ownership-asserted. Partial success is normal: third-party plugins missing from this machine land in `externalMissing` while everything else still copies. Feature-gate on `typeof host.copyTrackFxFrom === 'function'`.
 
 ```typescript
 copyTrackFxFrom(destTrackId: string, sourceTrackDbId: string): Promise<TrackFxCopyResult>
@@ -604,6 +604,35 @@ writeAudioClip(trackId: string, filePath: string, position?: number): Promise<vo
 
 ---
 
+### exportTrackAudio(trackId)
+
+*Optional.* Render one track you own to a temporary WAV and get its path.
+
+```typescript
+exportTrackAudio?(trackId: string): Promise<ExportTrackAudioResult>
+
+interface ExportTrackAudioResult {
+  path: string;       // a WAV in the app's temporary folder
+  bpm: number;
+  durationMs: number;
+  fromCopyFastPath?: boolean;
+}
+```
+
+The host renders **only that track**, offline, from **its own scene** (which need not be
+the active one): the scene's length in bars, in the scene's time signature, at the
+device's sample rate and the transport tempo. The track is rendered as heard, with its
+fader, pan and effects, and with no normalizing or limiting. Nothing is muted live, so
+the user hears no change while it renders.
+
+While another render holds the audio engine, it throws a `PluginError` with code
+`ENGINE_ERROR` and `details: { reason: 'TRANSITION_RENDER_IN_PROGRESS', retryable: true }`.
+Try again once that render has finished.
+
+**Errors:** `NOT_OWNED`, `TRACK_NOT_FOUND` (not a track of this project, or in no scene), `ENGINE_ERROR`
+
+---
+
 ### generateAudioTexture(request)
 
 Invoke the host's audio texture generation pipeline.
@@ -715,6 +744,70 @@ Like `setPluginState` / `getPluginState`, but in the plugin's own VST3/AU state 
 setRawPluginState(trackId: string, pluginIndex: number, stateBase64: string): Promise<void>
 getRawPluginState(trackId: string, pluginIndex: number): Promise<string>
 ```
+
+---
+
+### awaitStateApplied(trackId, opts?)
+
+*Optional (SDK 3.22.0).* Did the plugin actually load the last state you gave it? Call it
+after `setPluginState` or `setRawPluginState` resolves. Those only confirm that the host
+**received** the state, and reading the state back can't tell either: an untouched
+plugin reports exactly the state it was given, and Kontakt answers an immediate read
+with a near-empty state even when the apply works. The verdict comes from the audio
+engine, which re-reads the plugin's live state 1, 3, 10 and 20 seconds after the write.
+
+```typescript
+awaitStateApplied?(trackId: string, opts?: AwaitStateAppliedOptions): Promise<StateApplyVerdict>
+
+interface AwaitStateAppliedOptions {
+  pluginIndex?: number; // the slot you wrote; default: the track's instrument
+  timeoutMs?: number;   // default 45000
+}
+
+type StateApplyVerdict =
+  | { status: 'verified' }
+  | { status: 'not_applied'; errorCode: 'STATE_NOT_APPLIED'; appliedBytes?: number; liveBytes?: number }
+  | { status: 'timeout' }
+  | { status: 'unsupported' };
+```
+
+| Status | Meaning |
+|---|---|
+| `verified` | The plugin holds the state, usually within 1 to 3 seconds. |
+| `not_applied` | A large state is still near-empty after about 20 seconds: the plugin ignored it (for example, a Kontakt left with no instrument). `appliedBytes` is the size you sent, `liveBytes` the size the plugin last reported. |
+| `timeout` | `timeoutMs` ran out first. |
+| `unsupported` | The engine can't verify this plugin. |
+
+For a track you own it never rejects. Hosts older than 3.22.0 don't have the method:
+treat that like `unsupported` and carry on as before (no retry, not a failure). The
+constant `STATE_NOT_APPLIED` is exported for comparisons.
+
+```typescript
+import { STATE_NOT_APPLIED } from '@signalsandsorcery/plugin-sdk';
+
+await host.setRawPluginState(trackId, index, state);
+if (typeof host.awaitStateApplied === 'function') {
+  const verdict = await host.awaitStateApplied(trackId, { pluginIndex: index });
+  if (verdict.status === 'not_applied' && verdict.errorCode === STATE_NOT_APPLIED) {
+    await host.setRawPluginState(trackId, index, state); // one more try, then tell the user
+  }
+}
+```
+
+#### Linked parts ("→ All")
+
+The SDK's panel core uses this verdict when **→ All** sends one sound to every linked
+part of a track (`runLinkedBroadcast`, SDK 3.22.0):
+
+- The parts are still written one at a time, and their verdicts are awaited side by side, so five parts take about as long as the slowest one. Meanwhile the panel says "Checking every part loaded it…".
+- Each part's verdict is awaited for up to `LINKED_APPLY_VERDICT_TIMEOUT_MS` (45 000 ms). The broadcast passes it explicitly, so a host's default can never turn a real miss into `timeout`.
+- A part that ignored the sound gets it **once more** (just the state write). If it still hasn't loaded it, it counts as failed and is named in the "… applied to some parts only" warning, under `Skipped:`.
+- `timeout`, `unsupported` and a host without `awaitStateApplied` count as applied, exactly as before 3.22.0.
+
+If you run your own broadcast with `runLinkedBroadcast`, pass `verifyTarget` (it
+returns a `LinkedApplyVerdict`: `'verified'`, `'not_applied'` or `'unknown'`) to get
+the same checks, and `reapplyTarget` when your apply also records history, so the
+retry writes only the state.
 
 ---
 

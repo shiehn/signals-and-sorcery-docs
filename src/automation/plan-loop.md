@@ -26,10 +26,10 @@ via `suggestedFix`, and the relationship to checkpoints.
 | Multi-step musical change ("make a beat", "add bass + drums + keys") | Plan loop |
 | One-shot read ("what scenes exist?") | `sas inspect …` directly |
 | One-shot mutation already covered by a composite (`compose_scene`) | Either. The creative shortcuts (`sas make beat`, `revise_track`, `revise_scene`) run the loop for you, checkpoint included; `compose_scene` and the other composites don't checkpoint |
-| Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`) |
+| Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`). While tracks are being frozen, Play returns `FREEZE_IN_PROGRESS` (retryable): wait for the freeze, then call it again |
 | Anything you might want to undo | Plan loop |
 | State-dependent change ("revise the bass darker") | Plan loop; the validator catches missing preconditions |
-| Arranging scenes into a song ("the chorus twice after the verse") | The [arrangement tools](./for-agents.md#arrangement-tools) directly; they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
+| Arranging scenes into a song ("the chorus twice after the verse"), or evening out its kick ("the kick is louder in the chorus") | The [arrangement tools](./for-agents.md#arrangement-tools) directly (`arrangement_normalize_kick_levels` for the kick); they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
 
 The non-loop tools are still there. The loop is a *higher-leverage* path
 for changes the agent expects to think about: it forces a state check,

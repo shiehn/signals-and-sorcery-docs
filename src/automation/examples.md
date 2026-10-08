@@ -106,7 +106,7 @@ done
 ```
 
 Each `fx_add_plugin` call succeeds or fails independently, so one bad
-track doesn't abort the batch — the script collects failures and reports
+track doesn't abort the batch: the script collects failures and reports
 them at the end. Each failure envelope carries a `remediation` block
 saying why that track bounced, so the agent can retry the stragglers
 individually.
@@ -127,6 +127,19 @@ sas export_audio \
 ```
 
 Path tilde is expanded; `.wav` is auto-appended if missing.
+
+To export **one track** on its own, use `export_track_audio`. It renders only
+that track, from its own scene (not necessarily the active one), at that
+scene's length and time signature, with the track's fader, pan and effects:
+
+```bash
+JOB=$(sas run export_track_audio -p track=Bass -p output=~/Desktop/bass.wav --json \
+  | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 300
+```
+
+Like `export_audio`, it writes a file outside the app, so the app asks you to
+approve it first.
 
 ## 6. Search & use a sample from the library
 
@@ -230,7 +243,7 @@ sas compose_scene \
     {"name":"Lead","role":"lead","prompt":"ominous brass stabs"}
   ]'
 
-# 2. Tweak the mix — FX are 3rd-party inserts; plugin ids come from your scan
+# 2. Tweak the mix. FX are 3rd-party inserts; plugin ids come from your scan
 sas fx_add_plugin --track "808" --plugin-id "VST3/TDR Kotelnikov"          # compressor
 sas fx_add_plugin --track "Lead" --plugin-id "VST3/ValhallaSupermassive"   # reverb
 sas dsl_fx_set_param --track "Lead" --fx reverb --param-name wet --value 0.2
@@ -511,3 +524,41 @@ gain reduction) for the Mix and the Master, the stems null test, and any
 warnings. `sas arrangement export-cancel` stops a running export and
 removes its folder. See [Exporting your song](/arrange/#exporting-your-song)
 for what each file is.
+
+## 19. Even out the kick across the song
+
+The user says: *"The kick is louder in the chorus than in the verse. Even it
+out."*
+
+`arrangement_normalize_kick_levels` is the arranger's **Normalize kick levels**
+button. Run it as a dry run first to see what it would do, then for real:
+
+```bash
+#!/bin/bash
+set -e
+
+# 1. Dry run: measure every scene's kick, change nothing.
+JOB=$(sas arrangement normalize-kicks --apply false --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 300 --json \
+  | jq '.data.result.changes | {status, summary, scenes: [.scenes[] | {scene, basis, kick_lufs, gain_db, flag}]}'
+
+# 2. Apply it, leaving the intro exactly as it is.
+JOB=$(sas arrangement normalize-kicks --exclude Intro --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 300
+```
+
+Each scene gets one level, so its kick hits as hard as in every other scene with
+a clear kick; scenes without one are matched on overall loudness
+(`"basis": "overall"`). The whole change is one undo step: `sas arrangement undo`
+takes it back. Running it again replaces the previous match instead of adding to
+it.
+
+If it fails because a stem needs rendering while the song plays, stop playback
+(`sas arrangement stop`) and run it again. To set one scene's level by hand
+instead, use `arrangement_set_scene_gain`:
+
+```bash
+sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-2
+```
+
+A later match replaces a hand-set level, unless that scene is in `--exclude`.

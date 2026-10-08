@@ -36,7 +36,7 @@ npm install && npm run build
 
 Restart Signals & Sorcery; your plugin appears in the workstation. Edit the source, rebuild, and iterate.
 
-**[Plugin Template on GitHub](https://github.com/shiehn/sas-plugin-template)**: fully commented hello-world plugin with examples of track creation, MIDI writing, and all common patterns.
+**[Plugin Template on GitHub](https://github.com/shiehn/sas-plugin-template)**: fully commented hello-world plugin with examples of track creation, MIDI writing, and all common patterns. It builds against plugin SDK 3.x.
 
 ## Guides
 
@@ -156,6 +156,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 |--------|-----------|-------------|
 | `writeAudioClip` | `(trackId: string, filePath: string, position?: number) => Promise<void>` | Place an audio file (`.wav`, `.aiff`, `.mp3`, `.flac`, `.ogg`) on a track. **Ownership.** |
 | `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds, cuePoints }`. |
+| `exportTrackAudio` | `(trackId: string) => Promise<ExportTrackAudioResult>` | **Optional.** Render only this track, offline, from its own scene (its length and time signature) to a temporary WAV; returns `{ path, bpm, durationMs }`. Throws a retryable `ENGINE_ERROR` while another render holds the engine. See [exportTrackAudio](./api-reference.md#exporttrackaudio-trackid). **Ownership.** |
 
 ### Plugin/Synth Operations
 
@@ -165,6 +166,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `setPluginState` | `(trackId: string, pluginIndex: number, stateBase64: string) => Promise<void>` | Set plugin state from base64-encoded preset data. **Ownership.** |
 | `getPluginState` | `(trackId: string, pluginIndex: number) => Promise<string>` | Get current plugin state as base64. **Ownership.** |
 | `setRawPluginState` / `getRawPluginState` | `(trackId, pluginIndex, stateBase64) => Promise<void>` / `(trackId, pluginIndex) => Promise<string>` | Same as the two above, in the plugin's own VST3/AU state format. Use for third-party instruments whose patches the default format does not preserve. **Ownership.** |
+| `awaitStateApplied` | `(trackId: string, opts?: AwaitStateAppliedOptions) => Promise<StateApplyVerdict>` | **Optional (SDK 3.22.0).** The engine's verdict on whether the plugin really loaded the last state you wrote: `verified`, `not_applied` (`errorCode: 'STATE_NOT_APPLIED'`), `timeout` (default 45 s) or `unsupported`. Never rejects. **→ All** uses it to re-apply a part once and name a part that still missed. See [awaitStateApplied](./api-reference.md#awaitstateapplied-trackid-opts). **Ownership.** |
 | `getTrackPlugins` | `(trackId: string) => Promise<PluginSynthInfo[]>` | List all plugins loaded on a track. Returns `{ index, name, type, enabled }[]`. **Ownership.** |
 | `removePlugin` | `(trackId: string, pluginIndex: number) => Promise<void>` | Remove a plugin from a track. **Ownership.** |
 | `isPluginAvailable` | `(pluginName: string) => Promise<boolean>` | Check if a VST3/AU plugin is installed on the system. |
@@ -180,7 +182,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 
 ### FX Operations
 
-Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. All methods are optional — feature-gate on `typeof host.getTrackExternalFx === 'function'`.
+Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed before Volume & Pan. All methods are optional: feature-gate on `typeof host.getTrackExternalFx === 'function'`.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
@@ -189,7 +191,7 @@ Per-track FX are 3rd-party VST3/AU inserts on the track's plugin chain, placed b
 | `loadTrackExternalFx` | `(trackId: string, pluginId: string) => Promise<TrackExternalFxEntry>` | Add an FX plugin by scanned `pluginId` (from `getAvailableFx`). Instruments are rejected. **Ownership.** |
 | `removeTrackExternalFx` | `(trackId: string, fxIndex: number) => Promise<void>` | Remove an insert by its `TrackExternalFxEntry.index`. **Ownership.** |
 | `setTrackExternalFxEnabled` | `(trackId: string, fxIndex: number, enabled: boolean) => Promise<void>` | Bypass (or un-bypass) an insert. **Ownership.** |
-| `moveTrackExternalFx` | `(trackId: string, fromFxIndex: number, toFxIndex: number) => Promise<void>` | Move an insert to another slot (splice semantics — it lands *at* `toFxIndex`). **Ownership.** |
+| `moveTrackExternalFx` | `(trackId: string, fromFxIndex: number, toFxIndex: number) => Promise<void>` | Move an insert to another slot (splice semantics: it lands *at* `toFxIndex`). **Ownership.** |
 | `showTrackExternalFxEditor` | `(trackId: string, fxIndex: number) => Promise<void>` | Open the plugin's native editor window. **Ownership.** |
 | `copyTrackFxFrom` | `(destTrackId: string, sourceTrackDbId: string) => Promise<TrackFxCopyResult>` | Copy a source track's whole FX chain onto an owned track. Partial success is normal: plugins missing from this machine land in `externalMissing`. **Ownership (dest only).** |
 

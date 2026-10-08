@@ -517,6 +517,8 @@ Every command works on the project's one arrangement.
 | `sas arrangement copy --region '{…}'` (or `--run`, `--clip`, `--sections`) | `arrangement_copy` | Copy to the shared clipboard |
 | `sas arrangement paste --at '{…}'` (or `--after-section X`) | `arrangement_paste` | Paste |
 | `sas arrangement duplicate-selection --sections X` (or `--region`, `--clip`) | `arrangement_duplicate` | Duplicate sections, bars or a clip |
+| `sas arrangement normalize-kicks [--apply false] [--exclude A,B] [--max-boost-db N] [--max-cut-db N]` | `arrangement_normalize_kick_levels` | Even out the kick across the scenes, as one undo step (**async**: returns a `jobId`; `--apply false` is a dry run that changes nothing) |
+| `sas run arrangement_set_scene_gain -p scene=X -p gainDb=N` | `arrangement_set_scene_gain` | Set one scene's level by hand (−24 to +24 dB) |
 | `sas arrangement undo [--from-other-device]` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history (this computer's edits; `--from-other-device` reverts the latest changes from another device) |
 | `sas arrangement export [--stems] [--ableton] [--preset P] [--name N] [--tail auto\|S] …` | `arrangement_export` | Export (**async**: returns a `jobId`). `--name` names the new folder and its files (default: the project's last export name, else the project's name followed by "Bounce"); `--tail` is `auto` (until silent, up to 10 s) or a fixed number of seconds from 0 to 30. An earlier export's folder is never overwritten |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
