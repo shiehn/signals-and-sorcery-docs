@@ -103,7 +103,7 @@ Notes and errors appear in a bar under the header, each with a **Copy** button.
 
 ### Inside the arranger
 
-- **The palette** (top): one chip per scene, your saved sections (marked ◆), and the effects palette.
+- **The palette** (top): one chip per scene, and your saved sections (marked ◆).
 - **The ruler and section strip:** bar numbers, then one block per section, each with its time range (for example "Chorus · 0:30–1:00"). Hover the ruler for the exact position, like "17.3 · 0:42.6" (bar 17, beat 3, at 42.6 seconds); while the song plays, the same readout follows the playhead. Click the ruler to move the playhead, or drag across it to set a loop (see [Looping](#looping)).
 - **The lanes:** one row per layer, grouped by scene, with each stem's **waveform** drawn in it. The gutter on the left shows the layer's name, its **M** and **S** buttons (see [Mute and solo](#mute-and-solo)), a small status dot for its audio, and a level meter while the song plays.
 - **The corner** above the gutter: the tool button, **Select** or **Draw** (see [Select and Draw](#select-and-draw)), and the **⟲ Loop** switch.
@@ -404,26 +404,15 @@ the project isn't loaded yet: open that scene, then normalize again.
 
 ## Effects
 
-The **effects palette** under the scene chips holds one-bar (or longer) effects you
-place by hand:
+An effect sits on one layer for a bar or more. Effects already placed on a lane are
+part of the arrangement:
 
-| Effect | What it does |
-|---|---|
-| **Roll ⅛**, **Roll 1/16**, **Accelerating roll** | Drum-roll fills made from the layer |
-| **Stutter** | Repeats a slice of the bar (2 to 16 repeats) |
-| **Reverse** | Plays the bar backwards |
-| **Gap** | Cuts the end of the bar to silence |
-| **High-pass sweep**, **Low-pass sweep** | Filter sweeps over one or more bars (start and end frequency, curve) |
-| **Tape stop** | Slows the layer to a stop |
-| **Bar loop** | Repeats a short window of bars |
-| **Crash wash**, **Impact** | A hit with echoes and room, played on top |
-| **Mix Assets** (↗ risers, ✦ hits and shots) | Your Mix Assets sounds, placed where you want them |
-
-- **Drag an effect onto a lane cell** to place it on that layer at that bar. Most effects replace the layer's sound for those bars; **Crash wash**, **Impact** and Mix Assets play on top.
-- **Drag a Mix Assets sound** onto a bar, or **onto a section's header**: a hit lands on the section's first beat and a riser builds into its end.
-- **Click a placed effect** to select it and edit its settings; **drag it** to another bar or section on the same lane; press **Delete** to remove it.
-- Placed effects follow the lane's level and fades. Each is **rendered once and cached**, so it plays after its render is ready (see [Render pending](#preparing-and-rendering)).
+- They play with the song and follow the lane's level and fades.
+- **Click an effect** to select it and edit its settings. Its settings also say whether it replaces the layer's sound for those bars or plays on top.
+- **Drag it** to another bar or section on the same lane to move it.
+- Press **Delete** to remove the selected effect.
 - In a linked section, an effect applies to every copy.
+- Each effect is **rendered once and cached**, so it plays after its render is ready (see [Render pending](#preparing-and-rendering)).
 
 Nothing is ever placed automatically.
 
@@ -780,7 +769,7 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 | Wave editor | Double-click a clip |
 | Lane settings (gain, fades, phase) | Right-click an empty cell |
 | Nudge gain | ⌥ + mouse wheel over a cell |
-| Place an effect | Drag it from the effects palette onto a cell |
+| Edit a placed effect | Click it for its settings; drag it to move it; Delete removes the selected one |
 | Zoom | ⌘ + mouse wheel |
 | Play / stop | Space, or the Play button |
 | Jump | Click the ruler |
