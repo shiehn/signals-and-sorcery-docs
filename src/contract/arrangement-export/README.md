@@ -17,7 +17,9 @@ the app works inside.
 - **Current version:** 1.2.0
 - **JSON Schemas:** [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
 - **Changelog:** [what changed, version by version](/contract/arrangement-export/changelog.html)
-- **Source:** [github.com/shiehn/sas-arrangement-export-contract](https://github.com/shiehn/sas-arrangement-export-contract), with the specification, the schemas and the fixtures
+- **Source:** [github.com/shiehn/sas-arrangement-export-contract](https://github.com/shiehn/sas-arrangement-export-contract), with the specification, the schemas and the [fixtures](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures)
+- **Reader:** [the reference reader](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader) (TypeScript) and its `sas-export` command, which checks an export against its version's schema and recomputes its `timingHash` and `scoreHash` (see [Validating](#validating))
+- **Your tool's checks:** if your tool reads these exports, add what it relies on as a [consumer fixture](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures/consumers), and every change to the format is checked against it
 - **Licence:** MIT, for everything in the contract: the specification, the schemas and the fixtures
 
 Each schema is served at the URL in its `$id`. A version's URL is the one an export of that
@@ -40,7 +42,7 @@ that made it.
 - The JSON Schemas: [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
 - What changed and when: [the changelog](/contract/arrangement-export/changelog.html).
 - Fixtures that prove each rule below through Signals & Sorcery's own arrangement code:
-  linked from each rule, and all in the [contract repository](https://github.com/shiehn/sas-arrangement-export-contract).
+  [`fixtures/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures).
 
 Everything here is stated from the code that writes and plays the export, not from listening.
 
@@ -543,7 +545,7 @@ Score payload, version 1 (1.2):
 - `notes` is `null` when the export left notes out. **Compare `scoreHash` only between exports
   made with the same `options.scoreNotes`.**
 
-Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract) carries its payloads and hashes.
+Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures/semantics) carries its payloads and hashes.
 
 ---
 
@@ -590,6 +592,22 @@ The schemas give every field's type and whether it is required.
 ---
 
 ## Validating
+
+The reference reader and its `sas-export` command, in [`reader/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader), check a file
+against the schema of its version and recompute the hashes it carries that its content covers
+(`timingHash`, and `scoreHash` with a score):
+
+```sh
+cd reader && npm install && npm run build
+node dist/bin.js validate "My Song - export.json"   # exit 0 when valid, 1 with the errors listed
+node dist/bin.js info "My Song - export.json"       # a summary; --json for the export as read
+```
+
+From code, `readExport(path)` validates first, then returns the tempo and meter maps, bars,
+sections, layers and notes. The contract, with the reader and every fixture, is published at
+<https://github.com/shiehn/sas-arrangement-export-contract> (MIT).
+
+With any JSON Schema 2020-12 validator:
 
 ```js
 import Ajv2020 from 'ajv/dist/2020';
