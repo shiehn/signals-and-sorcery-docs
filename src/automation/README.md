@@ -99,7 +99,7 @@ CLI and the MCP server wrap.
   `render_to_performance`.
 - **[Arrangement tools](./for-agents.md#arrangement-tools)**: the
   `arrangement_*` tools lay your scenes out as a song, edit it, mute and
-  solo its tracks, add effects, even out its kick levels, loop it, play it,
+  solo its tracks, add effects, match its scene levels, loop it, play it,
   export it and sync it, the same things you do in [Arrange mode](/arrange/).
 - **Failures that say what to do**: a refused call carries a `remediation`
   (older tools: a `suggestion`) with the reason and the fix, and where it

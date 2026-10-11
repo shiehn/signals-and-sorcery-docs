@@ -1,0 +1,304 @@
+{
+  "rule": "A layer plays in another scene's section only through a lane there with `play` ('on' or a mask). Its loop reads from 0 where the run starts.",
+  "spec": "SPEC.md#layers",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr",
+    "projectId": "p",
+    "name": "Arrangement",
+    "instances": {
+      "arr:i1": {
+        "id": "arr:i1",
+        "orderKey": "a0",
+        "variantId": "arr:v1"
+      },
+      "arr:i2": {
+        "id": "arr:i2",
+        "orderKey": "a1",
+        "variantId": "arr:v2"
+      }
+    },
+    "variants": {
+      "arr:v1": {
+        "id": "arr:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr:v2": {
+        "id": "arr:v2",
+        "sceneId": "sc_b",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {
+          "t_a_kick": {
+            "play": {
+              "mask": "00111100"
+            }
+          }
+        }
+      }
+    }
+  },
+  "expected": {
+    "timing": {
+      "v": 1,
+      "sampleRate": 48000,
+      "bpm": 120,
+      "endFrame": 1152000,
+      "sections": [
+        {
+          "id": "arr:i1",
+          "label": "verse 1",
+          "meter": "4/4",
+          "lengthBars": 4,
+          "startFrame": 0,
+          "lengthFrames": 384000
+        },
+        {
+          "id": "arr:i2",
+          "label": "chorus 1",
+          "meter": "4/4",
+          "lengthBars": 8,
+          "startFrame": 384000,
+          "lengthFrames": 768000
+        }
+      ]
+    },
+    "timingHash": "64de13ee40d03b5c38dc742cfc259deb93ae01ef4e52823e5f1df5c70f171def",
+    "arrangement": {
+      "v": 1,
+      "timingHash": "64de13ee40d03b5c38dc742cfc259deb93ae01ef4e52823e5f1df5c70f171def",
+      "silent": [],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_kick",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            },
+            {
+              "section": "arr:i2",
+              "enterBar": 3,
+              "exitBar": 7,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_pad",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_chords",
+          "runs": [
+            {
+              "section": "arr:i2",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_kick",
+          "runs": [
+            {
+              "section": "arr:i2",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_lead",
+          "runs": [
+            {
+              "section": "arr:i2",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        }
+      ],
+      "treatments": []
+    },
+    "arrangementHash": "f428b4bc468d72b114969daa9b225f4bc0e4626e7fa431addd7963fd4be08fe5"
+  }
+}

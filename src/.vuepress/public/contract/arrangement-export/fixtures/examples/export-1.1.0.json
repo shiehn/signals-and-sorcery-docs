@@ -1,0 +1,189 @@
+{
+  "$schema": "https://signalsandsorcery.com/contract/arrangement-export/1.1.0/schema.json",
+  "exportVersion": "1.1.0",
+  "exportId": "6f1d3a52-8c4e-4b7a-9f0e-2d5c7b8a1e34",
+  "schema": "sas-arrangement-export/1",
+  "renderedAt": "2026-10-10T19:12:41.512Z",
+  "project": {
+    "id": "b7e2c9d4-1f3a-4e6b-8c5d-0a9f8e7d6c5b",
+    "name": "Example Song",
+    "bpm": 120
+  },
+  "arrangement": {
+    "id": "arr",
+    "name": "Example Song",
+    "planId": "3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f",
+    "instances": [
+      {
+        "instanceId": "arr:i1",
+        "label": "verse 1",
+        "startFrame": 0,
+        "lengthFrames": 384000
+      },
+      {
+        "instanceId": "arr:i2",
+        "label": "chorus 1",
+        "startFrame": 384000,
+        "lengthFrames": 768000
+      },
+      {
+        "instanceId": "arr:i3",
+        "label": "bridge 1",
+        "startFrame": 1152000,
+        "lengthFrames": 288000
+      }
+    ],
+    "revision": {
+      "seq": 41,
+      "docHash": "82105f2c77129e385b430840a5cf5ef80dc264ae2ba4034659a9ab95cf3a9cdc"
+    },
+    "endFrame": 1440000
+  },
+  "contractVersion": "0.11.0",
+  "timingHash": "0eeb40f19f5b50d35d679c3e5126e56ec8c84b524625800209c933366906cf35",
+  "arrangementHash": "1a75f83a2982ea859a397cf33061d186cbaca544ee8cc43d6b69684ce511ecfd",
+  "engine": {
+    "sha256": "ed9f6f25068608efd412958da4dfc19328ca3511251fa6d5f9c42baf230e32f8"
+  },
+  "sampleRate": 48000,
+  "lengthSeconds": 32,
+  "options": {
+    "destination": "/Users/example/Music/Signals & Sorcery Exports",
+    "name": "Example Song",
+    "mix": false,
+    "master": true,
+    "stems": true,
+    "editableStems": false,
+    "ableton": false,
+    "preset": "streaming",
+    "masterBitDepth": 24,
+    "stemBitDepth": 32,
+    "renderStale": true,
+    "pathFree": false
+  },
+  "name": "Example Song",
+  "tail": {
+    "mode": "auto",
+    "capSeconds": 10,
+    "floorDbfs": -90
+  },
+  "files": [
+    {
+      "kind": "stem",
+      "label": "Kick (verse)",
+      "file": "Stems/01 Kick (verse).wav",
+      "sha256": "c56c1f3397023bcad06da6aa7b55de71fe0609dd36131e289484e69859e5a589",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 32,
+      "peakDbfs": -3.21,
+      "layerIds": [
+        "t_a_kick"
+      ],
+      "startFrame": 0,
+      "latencyMs": 0
+    },
+    {
+      "kind": "stem",
+      "label": "Drums",
+      "file": "Stems/02 Drums.wav",
+      "sha256": "416edcf86e6dddde7f520e16e7b531ff7edf4f114eadf89786b97d5cf084353a",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 32,
+      "peakDbfs": -1.87,
+      "layerIds": [
+        "t_b_kick",
+        "t_c_perc"
+      ],
+      "startFrame": 0,
+      "latencyMs": 0
+    },
+    {
+      "kind": "master",
+      "label": "Master",
+      "file": "Example Song - Master (Streaming -14 LUFS, 24-bit).wav",
+      "sha256": "fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 24,
+      "peakDbfs": -1.12,
+      "startFrame": 0,
+      "latencyMs": 0
+    }
+  ],
+  "master": {
+    "elapsedMs": 1840,
+    "input": {
+      "path": "/Users/example/Music/Signals & Sorcery Exports/Example Song 2026-10-10 1412/Example Song - Mix (32f).wav",
+      "integratedLufs": -17.4,
+      "lra": 6.2,
+      "truePeakDbtp": -2.9,
+      "samplePeakDbfs": -3.3,
+      "plrDb": 9.1,
+      "durationS": 32,
+      "sampleRate": 48000,
+      "channels": 2,
+      "bitDepth": 32,
+      "sampleFormat": "float"
+    },
+    "output": {
+      "path": "/Users/example/Music/Signals & Sorcery Exports/Example Song 2026-10-10 1412/Example Song - Master (Streaming -14 LUFS, 24-bit).wav",
+      "integratedLufs": -14,
+      "lra": 6.2,
+      "truePeakDbtp": -1,
+      "samplePeakDbfs": -1.4,
+      "plrDb": 9.1,
+      "durationS": 32,
+      "sampleRate": 48000,
+      "channels": 2,
+      "bitDepth": 24,
+      "sampleFormat": "pcm"
+    },
+    "applied": {
+      "targetLufs": -14,
+      "ceilingDbtp": -1,
+      "preGainDb": 3.4,
+      "trimDb": 0,
+      "maxGainReductionDb": 1.6,
+      "meanGainReductionDb": 0.3,
+      "limitingTimePct": 4.2,
+      "iterations": 2,
+      "oversampling": 4,
+      "dither": "tpdf",
+      "seed": 1,
+      "releaseMode": "auto",
+      "releaseMs": 120,
+      "lookaheadMs": 2
+    },
+    "warnings": [],
+    "preset": "Streaming",
+    "resampled": null
+  },
+  "nullTest": {
+    "frames": 1536000,
+    "residualPeakDbfs": -98.4,
+    "residualRelativeDb": -121.7,
+    "mixPeakDbfs": -0.9,
+    "pass": true,
+    "thresholdDb": -60,
+    "mismatches": []
+  },
+  "monoContent": false,
+  "buses": [
+    {
+      "busKey": "scene-uuid|drums",
+      "fx": [
+        {
+          "name": "Compressor",
+          "pluginId": "example.vst3.compressor",
+          "enabled": true,
+          "version": "1.2.0"
+        }
+      ]
+    }
+  ],
+  "abletonBundle": null,
+  "staleStemsRendered": 0,
+  "warnings": []
+}

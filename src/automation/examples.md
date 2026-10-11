@@ -525,33 +525,45 @@ warnings. `sas arrangement export-cancel` stops a running export and
 removes its folder. See [Exporting your song](/arrange/#exporting-your-song)
 for what each file is.
 
-## 19. Even out the kick across the song
+Going to share the folder? Add `--path-free`: `export.json` then holds no
+absolute path, so nothing in it names your home folder. Every export's
+`export.json` follows a published format, so other tools can read the song's
+tempo, sections and files from it: see
+[the arrangement export format](/contract/arrangement-export/).
 
-The user says: *"The kick is louder in the chorus than in the verse. Even it
-out."*
+## 19. Match the scene levels
 
-`arrangement_normalize_kick_levels` is the arranger's **Normalize kick levels**
-button. Run it as a dry run first to see what it would do, then for real:
+The user says: *"The chorus is louder than the verse. Make every scene equally
+loud."*
+
+`arrangement_normalize_kick_levels` is the arranger's **Match scene levels**
+button: one level per scene, so every scene plays at the same perceived loudness
+with the balance inside each scene untouched. Run it as a dry run first to see
+what it would do, then for real:
 
 ```bash
 #!/bin/bash
 set -e
 
-# 1. Dry run: measure every scene's kick, change nothing.
+# 1. Dry run: measure every scene, change nothing.
 JOB=$(sas arrangement normalize-kicks --apply false --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 300 --json \
-  | jq '.data.result.changes | {status, summary, scenes: [.scenes[] | {scene, basis, kick_lufs, gain_db, flag}]}'
+  | jq '.data.result.changes | {status, summary, scenes: [.scenes[] | {scene, overall_lufs, gain_db, flag}]}'
 
 # 2. Apply it, leaving the intro exactly as it is.
 JOB=$(sas arrangement normalize-kicks --exclude Intro --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 300
 ```
 
-Each scene gets one level, so its kick hits as hard as in every other scene with
-a clear kick; scenes without one are matched on overall loudness
-(`"basis": "overall"`). The whole change is one undo step: `sas arrangement undo`
-takes it back. Running it again replaces the previous match instead of adding to
-it.
+Each scene gets one level (`gain_db`), as loud as they can all go without any
+scene peaking above the song's current ceiling. The whole change is one undo
+step: `sas arrangement undo` takes it back. Running it again replaces the
+previous match instead of adding to it.
+
+To match the kicks instead ("the kick is louder in the chorus than in the
+verse"), pass `--match-on kick`: every scene with a clear kick then hits equally
+hard, and scenes without one are matched on overall loudness
+(`"basis": "overall"`, `"flag": "no-kick"`).
 
 If it fails because a stem needs rendering while the song plays, stop playback
 (`sas arrangement stop`) and run it again. To set one scene's level by hand
@@ -562,3 +574,31 @@ sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-2
 ```
 
 A later match replaces a hand-set level, unless that scene is in `--exclude`.
+
+## 20. Sing the first verse again
+
+The user says: *"The last verse should sing the first verse's words again."*
+
+A vocal sung from lyrics with several verses is a set of **takes**, one per verse
+on the same melody, and each section sings the take of its position by itself:
+the first verse section sings take 1, the second take 2, starting over when there
+are more sections than takes. There is nothing to call after singing.
+`arrangement_assign_takes` changes that order:
+
+```bash
+#!/bin/bash
+set -e
+
+# Which take does each section sing? ("take 2/3" on the timeline lines, "picked" when pinned)
+sas arrangement get --json | jq '.data.changes.instances[] | {label, takes}'
+
+# Pin the last verse to take 1. The pin stays with the section when it moves.
+sas arrangement assign-takes --instance "the last verse" --take 1
+
+# Back to the normal order: clears every pin, one undo step.
+sas arrangement assign-takes
+```
+
+`--take auto` unpins one section. Pinning a section whose scene has no set of
+takes fails with `no_takes`. The arranger's **Takes in order** button does what
+the last call does.

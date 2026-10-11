@@ -1,0 +1,219 @@
+{
+  "rule": "A home layer with no lane (or no `play`) follows its section's `newLayers`: 'on' plays every bar, 'off' none.",
+  "spec": "SPEC.md#layers",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr",
+    "projectId": "p",
+    "name": "Arrangement",
+    "instances": {
+      "arr:i1": {
+        "id": "arr:i1",
+        "orderKey": "a0",
+        "variantId": "arr:v1"
+      },
+      "arr:i2": {
+        "id": "arr:i2",
+        "orderKey": "a1",
+        "variantId": "arr:v2"
+      }
+    },
+    "variants": {
+      "arr:v1": {
+        "id": "arr:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr:v2": {
+        "id": "arr:v2",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "off",
+        "layers": {}
+      }
+    }
+  },
+  "expected": {
+    "timing": {
+      "v": 1,
+      "sampleRate": 48000,
+      "bpm": 120,
+      "endFrame": 768000,
+      "sections": [
+        {
+          "id": "arr:i1",
+          "label": "verse 1",
+          "meter": "4/4",
+          "lengthBars": 4,
+          "startFrame": 0,
+          "lengthFrames": 384000
+        },
+        {
+          "id": "arr:i2",
+          "label": "verse 2",
+          "meter": "4/4",
+          "lengthBars": 4,
+          "startFrame": 384000,
+          "lengthFrames": 384000
+        }
+      ]
+    },
+    "timingHash": "3368092e465a4dc7c0680aa4ec3f6dd200a56dd152b83cd00cd31735281a2ec4",
+    "arrangement": {
+      "v": 1,
+      "timingHash": "3368092e465a4dc7c0680aa4ec3f6dd200a56dd152b83cd00cd31735281a2ec4",
+      "silent": [],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_kick",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_pad",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 0,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        }
+      ],
+      "treatments": []
+    },
+    "arrangementHash": "0f7b5b5172b61a03e497348b0f9aeb42bed8ae896ca88580515d96e771be0db0"
+  }
+}

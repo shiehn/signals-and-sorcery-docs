@@ -1,0 +1,787 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://signalsandsorcery.com/contract/arrangement-export/1.0.0/schema.json",
+  "title": "Signals & Sorcery arrangement export 1.0.0",
+  "description": "The export.json written beside an arrangement export's audio. Semantics: SPEC.md. Readers ignore properties they don't know, accept a higher minor version and refuse an unknown major.",
+  "type": "object",
+  "required": [
+    "schema",
+    "renderedAt",
+    "project",
+    "arrangement",
+    "contractVersion",
+    "engine",
+    "sampleRate",
+    "lengthSeconds",
+    "options",
+    "name",
+    "tail",
+    "files",
+    "master",
+    "nullTest",
+    "monoContent",
+    "buses",
+    "abletonBundle",
+    "staleStemsRendered",
+    "warnings"
+  ],
+  "properties": {
+    "schema": {
+      "const": "sas-arrangement-export/1"
+    },
+    "renderedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the export started (UTC)."
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "bpm"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local to the machine: a project imported elsewhere gets a new id."
+        },
+        "name": {
+          "type": "string"
+        },
+        "bpm": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Quarter notes per minute; constant over the song."
+        }
+      }
+    },
+    "arrangement": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "planId",
+        "instances"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string"
+        },
+        "planId": {
+          "type": "string",
+          "description": "A new id per render plan: never stable."
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A section: one instance on the timeline, in the export's `sampleRate` frames (SPEC.md \"Sections\").",
+            "required": [
+              "instanceId",
+              "label",
+              "startFrame",
+              "lengthFrames"
+            ],
+            "properties": {
+              "instanceId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Stable across saves and re-exports (and across a project import)."
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The instance label, or \"<scene name> <ordinal>\" (e.g. \"Chorus 2\")."
+              },
+              "startFrame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lengthFrames": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "description": "In timeline order: by (orderKey, id) in the arrangement."
+        }
+      }
+    },
+    "contractVersion": {
+      "type": "string",
+      "description": "The arranger semantics the export was made under. Informational: it moves for changes that never touch the export."
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "sha256"
+      ],
+      "properties": {
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "sampleRate": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The rate of every frame number in this file except files[].frames."
+    },
+    "lengthSeconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "The rendered length, tail included (the last bar ends earlier)."
+    },
+    "options": {
+      "type": "object",
+      "description": "The export request, as made.",
+      "required": [
+        "destination",
+        "mix",
+        "master",
+        "stems",
+        "editableStems",
+        "ableton",
+        "preset",
+        "masterBitDepth",
+        "stemBitDepth",
+        "renderStale"
+      ],
+      "properties": {
+        "destination": {
+          "type": "string",
+          "description": "Absolute folder the export was written into."
+        },
+        "name": {
+          "type": "string"
+        },
+        "tail": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "mode"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "auto"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": [
+                "mode",
+                "seconds"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "fixed"
+                },
+                "seconds": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 30
+                }
+              }
+            }
+          ]
+        },
+        "mix": {
+          "type": "boolean"
+        },
+        "master": {
+          "type": "boolean"
+        },
+        "stems": {
+          "type": "boolean"
+        },
+        "editableStems": {
+          "type": "boolean"
+        },
+        "ableton": {
+          "type": "boolean"
+        },
+        "preset": {
+          "enum": [
+            "streaming",
+            "loud",
+            "custom"
+          ]
+        },
+        "targetLufs": {
+          "type": "number"
+        },
+        "ceilingDbtp": {
+          "type": "number"
+        },
+        "masterBitDepth": {
+          "enum": [
+            16,
+            24,
+            32
+          ]
+        },
+        "stemBitDepth": {
+          "enum": [
+            24,
+            32
+          ]
+        },
+        "sampleRate": {
+          "enum": [
+            44100,
+            48000,
+            96000
+          ],
+          "description": "The master's delivery rate (the other files stay at the export's sampleRate)."
+        },
+        "renderStale": {
+          "type": "boolean"
+        }
+      }
+    },
+    "name": {
+      "type": "string"
+    },
+    "tail": {
+      "description": "How far the audio runs past the last bar (SPEC.md \"Tail\").",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "mode",
+            "capSeconds",
+            "floorDbfs"
+          ],
+          "properties": {
+            "mode": {
+              "const": "auto"
+            },
+            "capSeconds": {
+              "type": "number"
+            },
+            "floorDbfs": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "mode",
+            "seconds"
+          ],
+          "properties": {
+            "mode": {
+              "const": "fixed"
+            },
+            "seconds": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "label",
+          "file",
+          "sha256",
+          "frames",
+          "sampleRate",
+          "bitDepth",
+          "peakDbfs"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "mix",
+              "master",
+              "stem",
+              "editable"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Bundle-relative path."
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "Of the whole file (header included): the audio hash."
+          },
+          "frames": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "In the file's OWN sample rate."
+          },
+          "sampleRate": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bitDepth": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "peakDbfs": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Null when the file is silent."
+          }
+        }
+      }
+    },
+    "master": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "elapsedMs",
+            "input",
+            "output",
+            "applied",
+            "warnings",
+            "preset",
+            "resampled"
+          ],
+          "properties": {
+            "elapsedMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "input": {
+              "type": "object",
+              "required": [
+                "path",
+                "integratedLufs",
+                "lra",
+                "truePeakDbtp",
+                "samplePeakDbfs",
+                "plrDb",
+                "durationS",
+                "sampleRate",
+                "channels",
+                "bitDepth",
+                "sampleFormat"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Absolute path of the measured file."
+                },
+                "integratedLufs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "lra": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "truePeakDbtp": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "samplePeakDbfs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "plrDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "durationS": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "sampleRate": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "channels": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bitDepth": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "sampleFormat": {
+                  "enum": [
+                    "pcm",
+                    "float"
+                  ]
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": [
+                "path",
+                "integratedLufs",
+                "lra",
+                "truePeakDbtp",
+                "samplePeakDbfs",
+                "plrDb",
+                "durationS",
+                "sampleRate",
+                "channels",
+                "bitDepth",
+                "sampleFormat"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Absolute path of the measured file."
+                },
+                "integratedLufs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "lra": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "truePeakDbtp": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "samplePeakDbfs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "plrDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "durationS": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "sampleRate": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "channels": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "bitDepth": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "sampleFormat": {
+                  "enum": [
+                    "pcm",
+                    "float"
+                  ]
+                }
+              },
+              "description": "The master file's loudness: integratedLufs and truePeakDbtp are the output's."
+            },
+            "applied": {
+              "type": "object",
+              "required": [
+                "targetLufs",
+                "ceilingDbtp",
+                "iterations",
+                "oversampling",
+                "dither",
+                "seed",
+                "releaseMode"
+              ],
+              "properties": {
+                "targetLufs": {
+                  "type": "number"
+                },
+                "ceilingDbtp": {
+                  "type": "number"
+                },
+                "preGainDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "trimDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "maxGainReductionDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "meanGainReductionDb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "limitingTimePct": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "iterations": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "oversampling": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "dither": {
+                  "enum": [
+                    "tpdf",
+                    "none"
+                  ]
+                },
+                "seed": {
+                  "type": "integer"
+                },
+                "releaseMode": {
+                  "type": "string"
+                },
+                "releaseMs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "lookaheadMs": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "preset": {
+              "type": "string"
+            },
+            "resampled": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "fromRate",
+                    "toRate",
+                    "resampler"
+                  ],
+                  "properties": {
+                    "fromRate": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "toRate": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "resampler": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nullTest": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "description": "Σ stems − mix, when stems were rendered.",
+          "required": [
+            "frames",
+            "residualPeakDbfs",
+            "residualRelativeDb",
+            "mixPeakDbfs",
+            "pass",
+            "thresholdDb",
+            "mismatches"
+          ],
+          "properties": {
+            "frames": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "residualPeakDbfs": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "residualRelativeDb": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "mixPeakDbfs": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "pass": {
+              "type": "boolean"
+            },
+            "thresholdDb": {
+              "type": "number"
+            },
+            "mismatches": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "monoContent": {
+      "type": "boolean"
+    },
+    "buses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "busKey",
+          "fx"
+        ],
+        "properties": {
+          "busKey": {
+            "type": "string"
+          },
+          "fx": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "pluginId",
+                "enabled",
+                "version"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "pluginId": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "abletonBundle": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "staleStemsRendered": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -29,7 +29,7 @@ via `suggestedFix`, and the relationship to checkpoints.
 | Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`). While tracks are being frozen, Play returns `FREEZE_IN_PROGRESS` (retryable): wait for the freeze, then call it again |
 | Anything you might want to undo | Plan loop |
 | State-dependent change ("revise the bass darker") | Plan loop; the validator catches missing preconditions |
-| Arranging scenes into a song ("the chorus twice after the verse"), or evening out its kick ("the kick is louder in the chorus") | The [arrangement tools](./for-agents.md#arrangement-tools) directly (`arrangement_normalize_kick_levels` for the kick); they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
+| Arranging scenes into a song ("the chorus twice after the verse"), matching its scene levels ("the chorus is louder than the verse"), or choosing which take a section sings ("verse 3 should sing the first verse's words again") | The [arrangement tools](./for-agents.md#arrangement-tools) directly (`arrangement_normalize_kick_levels` for the levels, `arrangement_assign_takes` for a take; takes otherwise follow their section's position by themselves); they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
 
 The non-loop tools are still there. The loop is a *higher-leverage* path
 for changes the agent expects to think about: it forces a state check,

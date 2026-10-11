@@ -1,0 +1,233 @@
+{
+  "rule": "A lane's `gainEnvelope` is applied in the audio: dB points at section-local quarter notes, ADDED to the lane's gainDb (plus its scene's gain), linear in dB between points, held beyond the ends. It acts on the layer before its track fader and its panel bus effects.",
+  "spec": "SPEC.md#gain",
+  "misreading": "It is recorded, not applied.",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr",
+    "projectId": "p",
+    "name": "Arrangement",
+    "instances": {
+      "arr:i1": {
+        "id": "arr:i1",
+        "orderKey": "a0",
+        "variantId": "arr:v1"
+      }
+    },
+    "variants": {
+      "arr:v1": {
+        "id": "arr:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {
+          "t_a_bass": {
+            "gainDb": -2,
+            "gainEnvelope": [
+              {
+                "beat": 0,
+                "db": -6
+              },
+              {
+                "beat": 8,
+                "db": 0
+              }
+            ]
+          }
+        }
+      }
+    },
+    "sceneGains": {
+      "sc_a": {
+        "gainDb": 1,
+        "source": "manual"
+      }
+    }
+  },
+  "expected": {
+    "timing": {
+      "v": 1,
+      "sampleRate": 48000,
+      "bpm": 120,
+      "endFrame": 384000,
+      "sections": [
+        {
+          "id": "arr:i1",
+          "label": "verse 1",
+          "meter": "4/4",
+          "lengthBars": 4,
+          "startFrame": 0,
+          "lengthFrames": 384000
+        }
+      ]
+    },
+    "timingHash": "e2d4940ced7f8d719b928e1070c911433e5b3c691a4181f13cfb151974273024",
+    "arrangement": {
+      "v": 1,
+      "timingHash": "e2d4940ced7f8d719b928e1070c911433e5b3c691a4181f13cfb151974273024",
+      "silent": [],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": -1,
+              "gainPoints": [
+                {
+                  "beat": 0,
+                  "db": -6
+                },
+                {
+                  "beat": 8,
+                  "db": 0
+                },
+                {
+                  "beat": 16,
+                  "db": 0
+                }
+              ],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_kick",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 1,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_pad",
+          "runs": [
+            {
+              "section": "arr:i1",
+              "enterBar": 1,
+              "exitBar": null,
+              "offsetBeats": 0,
+              "gainDb": 1,
+              "gainPoints": [],
+              "fadeIn": {
+                "beats": 0,
+                "curve": "equalPower"
+              },
+              "fadeOut": {
+                "beats": 0,
+                "curve": "equalPower"
+              }
+            }
+          ]
+        }
+      ],
+      "treatments": []
+    },
+    "arrangementHash": "965b8d5f64dccafa756a4b051972482b57dae17a158f98013ec4bd8bf2f6f91d"
+  }
+}

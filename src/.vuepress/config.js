@@ -75,6 +75,10 @@ export default {
                         text: 'Plugin SDK',
                         link: '/plugin-sdk/',
                     },
+                    {
+                        text: 'Arrangement Export Format',
+                        link: '/contract/arrangement-export/',
+                    },
                 ],
             },
             {

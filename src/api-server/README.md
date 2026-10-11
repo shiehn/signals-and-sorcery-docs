@@ -45,9 +45,34 @@ Turn these on in the plugins panel when you want them:
 - **Mix Assets** - A palette of hits, risers and shots
 - **Text2Voice** - Paste some text and hear it sung over your scene
 - **Freesound** - Sounds from freesound.org that match the scene's key and BPM
-- **Synth V** - Vocal lines sung through Synthesizer V Studio 2 Pro (needs Synth V and an installed voice)
+- **Synth V** - Vocal lines sung through Synthesizer V Studio 2 Pro (needs Synth V and an installed voice); lyrics with several verses become one take per verse (see [Lyrics per verse](#lyrics-per-verse))
 
 Upcoming plugin integrations: **Splice**, **ElevenLabs**, **live coding**, and **agentic prompting**.
+
+### 🎤 Singing with Synth V
+
+The **Synth V** panel sings your words through Synthesizer V Studio 2 Pro: type or
+paste the lyrics, pick a style and press **Sing**. The melody and harmonies are
+composed to fit your scene, the take opens in Synth V, and once it is bounced each
+voice lands on its own lane in Signals & Sorcery.
+
+#### Lyrics per verse
+
+Write the lyrics as verses: leave a **blank line** between them, or start each with
+a line such as `[Verse 2]` (header lines are never sung). Press **Sing** and you get
+**one take per verse, all on the same melody**, in one Synth V project and one
+bounce: each verse's words on its own lanes, named **V1 Lead**, **V2 Lead** and so on
+(harmonies included), with a **Verse 1**, **Verse 2** header above each take's rows
+in the panel.
+
+The takes form a set of alternatives, so in [Arrange mode](/arrange/#takes) **each
+section sings its own verse** by its position: the first verse section sings verse 1,
+the second sings verse 2, with nothing to set. Right-click a section and open
+**Take ▸** to pin a different verse.
+
+- The verses times the voices, plus the scene's other Synth V lanes, must fit in 16 lanes. If they don't, Sing refuses before anything is created and gives the numbers: "3 verses × 6 voices = 18 lanes, but this scene has room for 16: use fewer verses or voices."
+- One verse behaves exactly as before: a single take, with the lanes named as they were.
+- After **✍ New words**, the next **Sing** sings the new words.
 
 ### 🎧 Audio Output
 
@@ -80,10 +105,10 @@ Free up CPU by turning a track's instrument and effects into audio:
 
 ### 🗂️ Bring Your Own Sounds
 
-- **Import your own sample libraries** — drop your WAV drum kits and instrument
+- **Import your own sample libraries**: drop your WAV drum kits and instrument
   samples into the drum and instrument generators; they sit alongside (or replace)
   the factory packs and feed generation and shuffle automatically
-- **Load your own instrument plugins** — put any VST3/AU synth or sampler on a synth track
+- **Load your own instrument plugins**: put any VST3/AU synth or sampler on a synth track
 - Imports are kept separate from shipped packs, copied safely, and easy to back up
 
 [Custom Sounds guide →](/custom-sounds/)

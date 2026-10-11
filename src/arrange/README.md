@@ -92,7 +92,8 @@ From left to right:
 - **⧉** and what is on the clipboard, after you copy something;
 - a small progress indicator while the arranger prepares audio (see [Preparing](#preparing-and-rendering));
 - the stem status: **● arrangement up to date**, or a **Render stale (N)** / **Render pending (N)** button;
-- **Normalize kick levels** (see [Kick levels](#kick-levels));
+- **Match scene levels** (see [Scene levels](#scene-levels));
+- **Takes in order**, only while a section has a pinned take (see [Takes](#takes));
 - the **sync badge** (see [Cloud sync and your phone](#cloud-sync-and-your-phone));
 - **◆ Save** when one section is selected (see [Saved sections](#saved-sections));
 - **↶** and **↷** for undo and redo;
@@ -172,9 +173,33 @@ empty name goes back to the default. **Double-click anywhere else on the section
 edit its scene in the composer.
 
 **Right-click a section** for its menu: **Rename**, **Edit this scene**, **Loop this
-section**, **Make unique** (linked sections), **Fade in section** and **Fade out
+section**, **Make unique** (linked sections), **Take ▸** (scenes with takes, see
+[Takes](#takes)), **Fade in section** and **Fade out
 section** (see [Fades](#fades-gain-and-the-wave-editor)), **Copy section name**,
 **Copy section ID**, and **Delete**.
+
+### Takes
+
+Some scenes hold **takes**: layers that are alternatives of one part, of which only
+one plays at a time. The Synth V panel makes a set of takes when your lyrics have
+several verses, one take per verse on the same melody (see
+[Lyrics per verse](/api-server/#lyrics-per-verse)); drum fills grouped as alternatives,
+and any layers an agent groups with `track_alternatives`, work the same way.
+
+In the arrangement **each section plays one take, by its position**: the first
+section of a scene plays take 1, the second plays take 2, and so on, starting over
+when there are more sections than takes. Verse 1 sings the first verse's words and
+verse 2 the second, with nothing to set. The take follows the section's number in
+the timeline, so moving sections re-numbers them, and a linked copy sings the take
+of its own position.
+
+- The takes resting in a section are drawn **faint and dashed** where they would play. They are kept, and you can still edit them; they are just silent there.
+- **Pin a take:** right-click the section and open **Take ▸**. **Auto (by position)** is the default and says which take that is; pick a take (**1**, **2**, …, each named after its layers) to pin the section to it, for example to sing the first verse's words again at the end. Each pin is one undo step, and it stays with its section when you move it. A scene with several sets of takes gets one **Take: …** menu per set.
+- **Takes in order**, in the header, clears every pin in one undo step. It only appears while a section is pinned.
+- On your phone, **Take ▸** is in a section's long-press menu.
+
+If an arrangement had a set of drum fills, every section used to play all of them;
+now each section plays one fill, in turn.
 
 ---
 
@@ -374,31 +399,30 @@ Fades, gain envelopes and settings belong to the section, so linked copies share
 
 ---
 
-## Kick levels
+## Scene levels
 
-When you compose scene by scene, the kick can end up louder in the chorus than in the
-verse. **Normalize kick levels**, in the arranger header, evens it out in one click:
+When you compose scene by scene, the chorus can end up louder than the verse. **Match
+scene levels**, in the arranger header, evens them out in one click:
 
-- It measures the kick in every scene from the layer stems, then gives each scene **one level** (a scene gain, on top of your faders and lane gains) so the kick hits **equally hard in every scene** that has a clear kick.
-- It makes them as loud as they can all go: no scene is raised more than 6 dB or lowered more than 12 dB, and no scene's peaks go above −1 dBTP (or above the loudest peak your song already has, if that is higher).
-- Scenes **without a kick**, or where it isn't clear which layer is the kick, are matched on their **overall loudness** instead.
-- The whole change is **one undo step**. The result appears next to the button, with **Details** and **Undo**. Running it again replaces the previous match; it never adds up.
+- It measures every scene from the layer stems, then gives each scene **one level** (a scene gain, on top of your faders and lane gains) so every scene plays at the **same perceived loudness**, exactly. The balance between the tracks inside a scene is never touched: you mixed that already.
+- It makes them as loud as they can all go: no scene is raised more than 6 dB or lowered more than 12 dB, and no scene's peaks go above −1 dBTP (or above the loudest peak your song already has, if that is higher). Nothing plays hotter than it does today.
+- The whole change is **one undo step**. The result appears next to the button, for example **Matched overall loudness: 6 scenes at −14.2 LUFS**, with **Details** and **Undo**. Running it again replaces the previous match; it never adds up.
 - Each scene's level shows on its sections' headers, such as **+2.0 dB**. Hover it to see how it was set.
 - Any out-of-date layer stems render first, and rendering waits for silence: if the song is playing, the button asks you to stop playback and press it again.
 
-**Details** opens a table with a row per scene: its kick layer, the kick's loudness
-(LUFS), the level it got, its headroom and a note (such as no kick, or the limit that
-stopped it). From there you can:
+**Details** opens a table with a row per scene: its loudness (LUFS), the level it got,
+its headroom and a note (such as the limit that stopped it). From there you can:
 
+- choose what to **Match on**: **Overall loudness** (the default) or **Kick**. Kick matches the kick's loudness instead, so the kick hits **equally hard in every scene** that has a clear kick; scenes without a kick, or where it isn't clear which layer is the kick, are matched on their overall loudness and flagged. The table then lists each scene's kick layer, and its level column reads **Kick** instead of **Loudness**;
 - tick **excl.** to leave a scene exactly as it is;
 - **reset** a scene's level;
 - change **Max boost** and **Max cut** (6 dB and 12 dB to start); the match runs again right away;
 - tick **Hear without** to play the song without the scene levels and compare. It changes only what you hear; the arrangement stays as it is.
 
-The levels apply wherever the arrangement plays, including exports and your phone, and a
-layer playing as a guest keeps its own scene's level. If some layers couldn't be
-measured, Details lists them. A loop from a scene you haven't opened since you opened
-the project isn't loaded yet: open that scene, then normalize again.
+The levels apply wherever the arrangement plays, including the bounce you export and
+your phone, and a layer playing as a guest keeps its own scene's level. If some layers
+couldn't be measured, Details lists them. A loop from a scene you haven't opened since
+you opened the project isn't loaded yet: open that scene, then match again.
 
 ---
 
@@ -601,7 +625,7 @@ earlier one: a second export with the same name in the same minute goes to
 - `<name> - Mix (32f).wav`
 - `<name> - Master (Streaming -14 LUFS, 24-bit).wav` (the name records the preset and format)
 - `Stems/01 Drums.wav`, `Stems/02 Bass.wav`, … and `Editable stems/…`
-- `<name> - export.json`: a record of the export (its name, the settings including the tail, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings)
+- `<name> - export.json`: a record of the export (its name, the settings including the tail, the song's tempo and sections, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings). Its format is published, so other tools (a visualizer, a game engine, your own scripts) can read it: see [The arrangement export format](/contract/arrangement-export/).
 
 A progress bar shows each step. **Cancel** stops the export and removes its folder, so
 nothing half-written is left behind, and an export that fails cleans up the same way.
@@ -721,7 +745,7 @@ account. Each project has its arrangement, the same one you see on the desktop.
 - **Scenes appear as your desktop prepares them.** One that isn't ready yet shows greyed out in the scene list.
 - **Reorder the rows:** tap a track's name and choose **Reorder rows…**, drag the rows by their **≡** handles, then tap **Done**.
 - **Extend or trim a clip:** tap it, then drag the grip at either end.
-- **Some things stay on the desktop:** levels (gains, gain envelopes and scene levels show on the phone, but you change them on the desktop, including **Normalize kick levels**), panel bus effects, reviewing new tracks, and exporting.
+- **Some things stay on the desktop:** levels (gains, gain envelopes and scene levels show on the phone, but you change them on the desktop, including **Match scene levels**), panel bus effects, reviewing new tracks, and exporting.
 
 Your phone's edits reach the desktop within seconds when both are online, and edits made
 offline are kept and sync when you reconnect.
@@ -779,7 +803,8 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 | Mute / solo a track | **M** / **S** beside its name; ⌥- or ⌘-click S to solo it alone (Alt- or Ctrl-click on Windows) |
 | Track menu (move, copy ID, restore) | Right-click the track's name |
 | Reorder rows | Drag a scene group's header or a track's name; **Move up** / **Move down** in their right-click menus; ⌥↑ / ⌥↓ moves the selected track, ⌥⇧↑ / ⌥⇧↓ its scene group |
-| Even out the kick | **Normalize kick levels** in the header |
+| Match the scene levels | **Match scene levels** in the header (**Details** to match on the kick instead) |
+| Pin a section's take | Right-click the section, **Take ▸**; **Takes in order** in the header clears every pin |
 | Undo / redo | ⌘Z / ⇧⌘Z, or ↶ ↷ |
 | Clear the selection | Escape |
 | Collapse a scene's lanes | Click its group header |
@@ -794,7 +819,9 @@ also available to agents and scripts, through the
 second chorus", "Kick"), and an agent's edit and a gesture in the timeline land in the
 same history, so you can undo either from either side. What an agent copies shows on
 the clipboard in the header, and an agent's export asks for your approval first. An agent
-can also even out the kick (`arrangement_normalize_kick_levels`, the same match as the
-button) or set one scene's level (`arrangement_set_scene_gain`). See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
+can also match the scene levels (`arrangement_normalize_kick_levels`, the same match as
+the button, with `matchOn` for the overall loudness or the kick), set one scene's level
+(`arrangement_set_scene_gain`), or pin which take a section sings
+(`arrangement_assign_takes`). See [Arrangement tools](/automation/for-agents.html#arrangement-tools)
 for the tool list, [`sas arrangement`](/automation/cli-reference.html#arrange-a-song-sas-arrangement)
 for the commands, and [the worked examples](/automation/examples.html#_15-arrange-a-song-from-your-scenes).

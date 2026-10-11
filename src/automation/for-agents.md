@@ -310,8 +310,8 @@ with. Tools marked **deferred** require `tool_search` to discover.
 [Arrange mode](/arrange/) is fully scriptable. The `arrangement_*` tools cover
 what the arranger does: build and play the song, loop part of it,
 place and copy sections, mute and solo tracks, switch layers on and off, copy
-and paste bars, split clips, fade, add effects, even out the kick across scenes,
-undo, and export. They are deferred, so find them with
+and paste bars, split clips, fade, add effects, choose which take a section
+sings, match the scene levels, undo, and export. They are deferred, so find them with
 `tool_search` (query `arrangement`), or call them by name. In the CLI they
 are the [`sas arrangement` group](./cli-reference.md#arrange-a-song-sas-arrangement).
 The in-app chat assistant uses the same tools.
@@ -335,7 +335,9 @@ How they behave:
   what does.
 - **Read first.** `arrangement_get` returns the timeline: `instances[]`
   (`index`, `instanceId`, `label`, `sceneName`, `lengthBars`, `meter`,
-  `startBar`, `startQn`, `linkedWith`), `variants[]` with each layer's state
+  `startBar`, `startQn`, `linkedWith`, and `takes[]` when the scene has a set
+  of takes: per group its `take` of `of`, `picked` when pinned, and the
+  `resting` layers), `variants[]` with each layer's state
   (`name`, `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades
   and their curves, gain, `gainEnvelope`, `splits`, `treatments`),
   `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
@@ -399,6 +401,14 @@ How they behave:
 | `arrangement_delete_instance` | `sas arrangement remove-section` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
 | `arrangement_resize_instance` | `sas arrangement resize` | Whole bars; longer loops the scene in phase | `instance`, `lengthBars`, `unlink` |
 | `arrangement_fade_section` | `sas arrangement fade-section` | Fade every layer in or out at a section's edge (equal-power); layers that carry on across the edge are skipped | `instance`, `edge` (`in` or `out`), `bars` or `beats` (0 removes) |
+| `arrangement_assign_takes` | `sas arrangement assign-takes` | Which take a section sings. A scene's takes (an alternatives group: one Synth V take per verse of the lyrics, or drum fills) play by themselves, one per section by its position (the second verse sings take 2, starting over when there are more sections than takes), so this is only for changing that: with a section and `take`, pin it to that take (the pin stays when sections move), or `auto` to unpin it; with no section, put every take in scope back in order (clears every pin). Not needed after singing, adding or moving sections. One undo step | `instance` (optional); `take` (1 to N, or `auto`); `scene` (optional); `track` (a layer of the takes group, when a scene has several); `apply` (default true; `false` previews) |
+
+`arrangement_get` lists each section's `takes[]`, and the timeline lines say
+`take 2/3` (`picked` when pinned). `arrangement_assign_takes` returns `status`
+(`applied`, `already-assigned`, `planned` for a preview, or `nothing-to-assign`
+when the scope has no takes) and `assignments[]` with every section's take;
+pinning a section whose scene has no set of two or more takes fails with
+`no_takes`.
 
 ### Tracks
 
@@ -452,11 +462,11 @@ and default):
   follows from it): hits and shots on a bar, risers that land at the end of
   their bar (`hit_beats` or `beats`, `gain_db`).
 
-### Scene levels and kick matching
+### Scene levels
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
-| `arrangement_normalize_kick_levels` | `sas arrangement normalize-kicks` | The arranger's **Normalize kick levels** button: measures each scene's kick from its layer stems and sets one level per scene (a scene gain, on top of faders and lane gains) so every scene with a clear kick hits equally hard; scenes without a clear kick are matched on overall loudness. One undo step; running it again replaces the previous match. **Async** | `apply` (default true; `false` is a dry run that measures and reports but changes nothing), `maxBoostDb` (default 6), `maxCutDb` (default 12, a positive number), `ceilingDbtp` (default −1), `exclude` (scene names or ids to leave exactly as they are) |
+| `arrangement_normalize_kick_levels` | `sas arrangement normalize-kicks` | The arranger's **Match scene levels** button: measures every scene from its layer stems and sets one level per scene (a scene gain, on top of faders and lane gains) so every scene plays at the same perceived loudness (`matchOn` `overall`, the default) or the same kick loudness (`kick`); the balance inside a scene is untouched. One undo step; running it again replaces the previous match (a run in the other mode is a new match). **Async** | `matchOn` (`overall`, the default, or `kick`), `apply` (default true; `false` is a dry run that measures and reports but changes nothing), `maxBoostDb` (default 6), `maxCutDb` (default 12, a positive number), `ceilingDbtp` (default −1), `exclude` (scene names or ids to leave exactly as they are) |
 | `arrangement_set_scene_gain` | `sas run arrangement_set_scene_gain` | Set one scene's level by hand: every layer of that scene, wherever it plays. One undo step | `scene` (name or id), `gainDb` (−24 to +24 dB in 0.1 dB steps, or `null` to clear it) |
 
 How they behave:
@@ -468,12 +478,16 @@ How they behave:
 - **The ceiling.** No scene's peaks go above `ceilingDbtp` before the master,
   or above the arrangement's loudest current peak if that is higher. No scene is
   raised more than `maxBoostDb` or lowered more than `maxCutDb`.
+- **Kick mode.** With `matchOn: "kick"`, scenes without a kick, or where it
+  isn't clear which layer is the kick, are matched on overall loudness instead
+  and flagged (`flag` `no-kick`); the kick target is `target_lufs`.
 - **The result** (`changes`): `status` is `applied`, `already-matched` (nothing
-  to change), `dry-run`, `no-kick` (no scene has a clear kick, so nothing
-  changed) or `empty`; then `summary`, `target_lufs`, `overall_target_lufs`,
-  `ceiling_dbtp` and `scenes[]` (`scene`, `scene_id`, `basis` as `kick`,
-  `overall` or `excluded`, `kick_tracks`, `kick_lufs`, `overall_lufs`,
-  `confidence`, `peak_dbtp`, `headroom_db`, `gain_db`, `flag`). When some
+  to change), `dry-run`, `no-kick` (kick mode: no scene has a clear kick, so
+  nothing changed) or `empty`; then `match_on`, `summary`, `target_lufs` (kick
+  mode), `overall_target_lufs`, `ceiling_dbtp` and `scenes[]` (`scene`,
+  `scene_id`, `basis` as `overall`, `kick` or `excluded`, `kick_tracks`,
+  `kick_lufs`, `overall_lufs`, `confidence`, `peak_dbtp`, `headroom_db`,
+  `gain_db`, `flag`). When some
   layers weren't heard, `not_measured[]` names them with a `reason`:
   `not-loaded` (a loop of a scene not opened since the project was opened:
   open that scene, then call again) or `no-stem` (its stem didn't render).
@@ -489,6 +503,10 @@ How they behave:
 JOB=$(sas arrangement normalize-kicks --apply false --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 300
 
+# Match the kicks instead of the overall loudness
+JOB=$(sas arrangement normalize-kicks --match-on kick --json | jq -r '.data.changes.jobId')
+sas job wait "$JOB" --timeout 300
+
 # Set the chorus 1.5 dB down by hand, then clear it again
 sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-1.5
 sas run arrangement_set_scene_gain --json-body '{"scene": "Chorus", "gainDb": null}'
@@ -500,7 +518,7 @@ sas run arrangement_set_scene_gain --json-body '{"scene": "Chorus", "gainDb": nu
 |---|---|---|---|
 | `arrangement_undo` | `sas arrangement undo` | Undo the last edit made on this computer (the arrangement's own history; changes synced in from another device are not undo steps, and a field another device changed later is kept, counted in `keptRemote`). `fromOtherDevice` reverts the latest batch of changes from another device instead (the note's "Undo these N"), as a new, undoable edit | `fromOtherDevice` |
 | `arrangement_redo` | `sas arrangement redo` | Redo | none |
-| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `name`, `tail` (`"auto"` or seconds, 0 to 30), `renderStale` |
+| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `name`, `tail` (`"auto"` or seconds, 0 to 30), `renderStale`, `pathFree` (default false) |
 | `arrangement_export_cancel` | `sas arrangement export-cancel` | Cancel the running export (nothing is written) | `jobId` |
 
 `arrangement_export` writes a new folder inside `path` (default
@@ -525,13 +543,20 @@ retry. Exports you start from the app's own Export dialog don't ask twice.
   default) rings out until silent, for up to 10 seconds; a number of seconds
   from 0 to 30 (such as `"1.0"`) ends every file exactly that long after the
   song. `export.json` records the name and the tail.
+- **`pathFree: true`** leaves every absolute path out of `export.json`, for a
+  folder you are going to share: no destination folder and no master file
+  paths, the Ableton bundle by its folder name only, and notes and warnings
+  written relative to the export folder, with the home folder as `~`. By
+  default (`false`) the file records where it was written.
 - **Ableton track order.** The Ableton hand-off lists its Live tracks in the
   order of the Arrange view's rows, as the user arranged them; the numbered
   files in `Stems/` keep their usual order. The cloud arranger's
   `arranger_export_ableton` orders its tracks the same way, from the project's
   own arrangement. With no custom order, both are exactly as before.
 
-See [Exporting your song](/arrange/#exporting-your-song) for what each output is.
+See [Exporting your song](/arrange/#exporting-your-song) for what each output is,
+and [the arrangement export format](/contract/arrangement-export/) for what
+`export.json` holds, field by field, with its JSON Schema.
 
 ### Cloud sync and the web
 
@@ -557,8 +582,9 @@ mode.
 See the worked examples [15](./examples.md#_15-arrange-a-song-from-your-scenes),
 [16](./examples.md#_16-add-an-effect-to-one-bar),
 [17](./examples.md#_17-copy-a-part-from-one-section-to-another),
-[18](./examples.md#_18-export-the-song) and
-[19](./examples.md#_19-even-out-the-kick-across-the-song).
+[18](./examples.md#_18-export-the-song),
+[19](./examples.md#_19-match-the-scene-levels) and
+[20](./examples.md#_20-sing-the-first-verse-again).
 
 ## Pattern: observe → reason → act
 
