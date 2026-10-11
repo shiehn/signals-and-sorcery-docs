@@ -8,25 +8,26 @@ description: The published, versioned format of a Signals & Sorcery arrangement 
 
 When you export a song from [Arrange mode](/arrange/#exporting-your-song), Signals & Sorcery
 writes a folder of audio files plus one JSON file, `<name> - export.json`, that describes them:
-the song's tempo, its sections down to the audio frame, which layers play where, and every
-file. That JSON is a **published, versioned format**. A visual tool, a game engine or an
-analysis script can read an export and cut, animate or analyse to the bar, without opening the
-project file and without knowing how the app works inside.
+the song's tempo, its bars and sections down to the audio frame, which layer plays when (and,
+if you ask for them, the notes each layer plays), and every file. That JSON is a **published,
+versioned format**. A visual tool, a game engine or an analysis script can read an export and
+cut, animate or analyse to the bar, without opening the project file and without knowing how
+the app works inside.
 
-- **Current version:** 1.1.0
-- **JSON Schemas:** [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json), which is always the latest 1.x (today 1.1.0)
+- **Current version:** 1.2.0
+- **JSON Schemas:** [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
 - **Changelog:** [what changed, version by version](/contract/arrangement-export/changelog.html)
 - **Source:** [github.com/shiehn/sas-arrangement-export-contract](https://github.com/shiehn/sas-arrangement-export-contract), with the specification, the schemas and the fixtures
 - **Licence:** MIT, for everything in the contract: the specification, the schemas and the fixtures
 
-Each schema is served at the URL in its `$id`, the same URL an export carries in `$schema`, so
-a validator can fetch it directly. `v1/schema.json` is a copy of the latest 1.x schema, so its
-`$id` names that version.
+Each schema is served at the URL in its `$id`. A version's URL is the one an export of that
+version carries in `$schema`, so a validator can fetch it directly; `v1/schema.json` always
+follows the latest 1.x.
 
 ## Get an export
 
-- **In the app:** **Export…** in the arranger header. See [Exporting your song](/arrange/#exporting-your-song).
-- **From an agent or a script:** `arrangement_export`, or `sas arrangement export`. See [Undo and export](/automation/for-agents.html#undo-and-export). Add `pathFree` (`--path-free`) to leave every absolute path out of the file (see [Privacy](#privacy)).
+- **In the app:** **Export…** in the arranger header. Tick **Include played notes (MIDI)** to add the notes each layer plays to the score. See [Exporting your song](/arrange/#exporting-your-song).
+- **From an agent or a script:** `arrangement_export`, or `sas arrangement export`. See [Undo and export](/automation/for-agents.html#undo-and-export). The [score](#score) is written by default (`score: false` leaves it out); `scoreNotes` (`--score-notes`) adds the notes; `pathFree` (`--path-free`) leaves every absolute path out of the file (see [Privacy](#privacy)).
 
 ## The specification, format 1.x
 
@@ -36,7 +37,7 @@ were made. This document says what every part of that JSON means, so a consumer 
 tool, a game engine, an analysis script) can read an export without opening the project file
 that made it.
 
-- The JSON Schemas: [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), [v1](/contract/arrangement-export/v1/schema.json) (the latest 1.x). One per format version.
+- The JSON Schemas: [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
 - What changed and when: [the changelog](/contract/arrangement-export/changelog.html).
 - Fixtures that prove each rule below through Signals & Sorcery's own arrangement code:
   linked from each rule, and all in the [contract repository](https://github.com/shiehn/sas-arrangement-export-contract).
@@ -49,13 +50,15 @@ Everything here is stated from the code that writes and plays the export, not fr
 
 - `schema` is always `"sas-arrangement-export/1"`. It names the format family.
 - `exportVersion` is the format's own [semantic version](https://semver.org). A file without
-  it is `1.0.0`; files written to this document carry `1.1.0`.
+  it is `1.0.0`; files written to this document carry `1.2.0`.
   - A **patch** clarifies wording only.
   - A **minor** adds optional fields; a reader for an older minor keeps working.
   - A **major** removes a field or changes a meaning. It is announced in the changelog first.
 - `$schema` (1.1) is the URL of the exact schema version the file was written against, e.g.
-  [`https://signalsandsorcery.com/contract/arrangement-export/1.1.0/schema.json`](/contract/arrangement-export/1.1.0/schema.json).
-  This site serves every version's schema at its URL.
+  [`https://signalsandsorcery.com/contract/arrangement-export/1.2.0/schema.json`](/contract/arrangement-export/1.2.0/schema.json).
+  signalsandsorcery.com serves every version's schema at its URL;
+  [`https://signalsandsorcery.com/contract/arrangement-export/v1/schema.json`](/contract/arrangement-export/v1/schema.json) is the latest 1.x.
+  The same files ship with the arrangement contract package, in `export/schema/`.
 - `contractVersion` is the version of Signals & Sorcery's internal arrangement semantics the
   export was made under. It is **informational**: it moves for internal changes that never
   touch this format. Use `exportVersion` to decide whether you can read a file.
@@ -82,7 +85,8 @@ added when a folder of that name already exists. Inside it:
 SHA-256, its length in frames (in its **own** sample rate), its rate, bit depth and peak.
 Find a file by `kind` and `sha256`, not by its name: a user may rename it.
 
-Plugin states, notes and the project's other data are never in the export.
+Plugin states and the project's other data are never in the export. A layer's notes are in
+it only when the user asks for them (1.2, [Score](#score)).
 
 ---
 
@@ -297,6 +301,131 @@ Each of these is a plausible reading of the arrangement data, and each is wrong:
 
 ---
 
+## Score
+
+`score` (1.2) is the arrangement resolved for a reader: everything this document describes,
+worked out by Signals & Sorcery's own code, in bars and frames. A consumer needs no rules of its
+own to follow the music. It is there when the export asked for it (`options.score`); its notes
+only with `options.scoreNotes`.
+
+```json
+{
+  "v": 1,
+  "noteFields": ["frame", "pitch", "velocity", "durationFrames"],
+  "tempoMap": [{ "bar": 1, "beat": 0, "frame": 0, "bpm": 120 }],
+  "meterMap": [{ "bar": 1, "beat": 0, "frame": 0, "numerator": 4, "denominator": 4 }],
+  "bars": [{ "index": 1, "startFrame": 0, "lengthFrames": 96000 }],
+  "sections": [{ "instanceId": "…", "sourceSceneId": "…", "firstBar": 1, "lengthBars": 4 }],
+  "layers": [
+    {
+      "layerId": "…", "name": "Kick", "role": "kicks", "bucket": "drums", "drumClass": "kick",
+      "spans": [{ "section": "…", "startBar": 1, "endBar": 5, "startFrame": 0, "endFrame": 384000, "gainDb": 0, "gainPoints": [] }],
+      "treatments": [],
+      "notes": [[0, 36, 100, 6000], [24000, 36, 100, 6000]]
+    }
+  ]
+}
+```
+
+In the score, `bar` is a song bar counted from 1, `beat` is quarter notes from the song start,
+and every frame follows [Timing](#timing).
+
+### Timing maps and bars
+
+- `tempoMap[]` lists where each tempo starts. The tempo is constant today: one entry at bar 1.
+  Read it as a list anyway, so a song that changes tempo later reads the same way.
+- `meterMap[]` has an entry at bar 1 and wherever a section's meter differs from the previous
+  section's. Each scene has its own meter, so the meter can change today.
+- `bars[]` is every bar of the song, contiguous. The last ends at `arrangement.endFrame`.
+
+### Sections in the score
+
+`sections[]` lists the sections in playing order, one per `arrangement.instances[]`:
+`firstBar`, `lengthBars`, and `sourceSceneId`, the scene the section plays (sections with the
+same scene play the same loops). `role`, the section's part in the song form (intro, verse,
+build, drop, peak, break, outro), is reserved: the arrangement doesn't carry one yet, so it is
+absent.
+
+### Layers in the score
+
+`layers[]`, sorted by `layerId`, holds every layer that plays somewhere, or would but is
+silenced.
+
+- `name` is the user's track name.
+- `role` is the instrument role, or `null` (e.g. an audio loop). The known roles are `kicks`,
+  `snares`, `hats`, `perc`, `cymbals`, `drums` (a whole kit), `bass`, `808s`, `keys`, `pads`,
+  `chords`, `strings`, `brass`, `winds`, `plucked`, `atmospheres`, `lead`, `arp`, `bells`,
+  `vocals`, `fx` and `unclassified`.
+- `bucket` is the layer's part of the band, by role:
+
+  | `bucket` | roles |
+  |---|---|
+  | `drums` | drums, kicks, snares, hats, perc, cymbals |
+  | `bass` | bass, 808s |
+  | `harmony` | keys, pads, chords, strings, brass, winds, plucked, atmospheres |
+  | `top` | lead, arp, bells, vocals, fx |
+  | `null` | any other role, or none |
+
+- `drumClass` marks a drum-kit piece: `kick`, `snare`, `hat`, `perc` or `cymbal`, from its role.
+  A whole kit on one layer (role `drums`) is `"kit"`, and with notes its `drumMap` gives each
+  played pitch's piece by General MIDI: 35–36 kick, 37–40 snare, 42/44/46 hat,
+  49/51/52/53/55/57/59 cymbal, any other 35–81 perc, anything else `unknown`. 808s are bass and
+  have no `drumClass`.
+- `silent: true`: the arrangement's [mute or solo](#mute-and-solo) silences the layer. It then
+  has no spans, treatments or notes.
+
+### Spans
+
+`spans[]` says where the layer sounds, one span per run of the arrangement payload
+([Change detection](#change-detection)), in song bars and frames. Masks, guest entries, phase
+segments, splits, takes and mute are already resolved: a span is sound.
+
+- `startBar` / `startFrame` start it, and `endBar` / `endFrame` are the first bar and frame
+  after it.
+- `continues: true`: the span carries on the previous section's span, the same
+  [run](#runs): no restart, no fade.
+- `gainDb` is the lane's gain plus its scene's gain. `gainPoints` is its envelope in frames,
+  dB on top of `gainDb` ([Gain](#gain)).
+- `fadeIn` / `fadeOut` are `{frames, curve}`, from the span's start and to its end
+  ([Fades](#fades)).
+- The track fader, pan and the mix bus's effects act after all of this and are not in the
+  score.
+
+### Effects in the score
+
+`treatments[]` lists each placed effect that sounds: its section, `type`, `bar` (in the
+section), `bars`, `params`, `gainDb`, and `startFrame` / `endFrame`: its bars, widened to where
+its audio sounds (a riser starts before its bar, a hit can ring past it).
+
+- `mode: "replace"`: the layer's own audio is replaced in those bars (fills, stutters,
+  reverses, gaps, filter sweeps, tape stops), and they carry no notes. A bar loop (`"loop"`)
+  replaces too, with an earlier window of the same layer, so its notes repeat there.
+- `mode: "add"`: it plays on top of whatever plays (crash washes, impacts, hits, risers).
+
+### Notes
+
+With `options.scoreNotes`, each layer that has MIDI carries `notes`: tuples
+`[frame, pitch, velocity, durationFrames]` (their order is `score.noteFields`), sorted by
+frame, then pitch. A layer without MIDI (an audio loop, a recording) has none.
+
+- They are the layer's loop MIDI wherever it plays, read through each span exactly as the
+  audio is ([Loop position](#loop-position)). A home layer re-anchors at each section, a guest
+  carries its position across sections, phase offsets and segments apply, and the loop wraps.
+- Only notes struck while the layer plays count: a note held from before a span starts is not
+  struck again. A note's length runs on into the spans it continues into, and stops where its
+  run ends.
+- `frame` is where the note sounds in the rendered audio. A loop's audio is a whole number of
+  frames, so over many repeats a note can drift a fraction of a frame per repeat from the ideal
+  beat grid: under a millisecond over a song. Use the frames.
+- Bars an effect replaces carry no notes; a bar loop repeats its window's notes.
+- `pitch` is 0–127 (MIDI; 60 is middle C) and `velocity` 1–127, as written. The span's level
+  and fades are not applied to them.
+
+Proof: [`fixtures/semantics/score-notes-follow-the-loop.json`](/contract/arrangement-export/fixtures/semantics/score-notes-follow-the-loop.json)
+and [`fixtures/semantics/score-effects-and-notes.json`](/contract/arrangement-export/fixtures/semantics/score-effects-and-notes.json).
+
+---
+
 ## Ids and stability
 
 | Id | Stable across |
@@ -336,11 +465,13 @@ Three hashes tell a consumer in one comparison what changed between two exports 
 | `timingHash` (1.1) | tempo, sample rate, the last bar's end, each section's id, label, meter, bar count and frames | none (it changing means: re-time everything) |
 | `arrangementHash` (1.1) | `timingHash`, plus what plays: every layer's runs (bars, loop position, level, gain envelope, fades), the placed effects that sound, and the silenced layers | refresh what reacts to layers; the timing is the same |
 | `files[].sha256` | each audio file, byte for byte | swap the audio; nothing about the arrangement moved |
+| `scoreHash` (1.2, with `score`) | `timingHash`, plus the score: the sections' scenes and roles, and every layer's role, bucket, drum class, silence, spans, effects and notes (names aside) | refresh what follows the layers or notes; the timing is the same |
 
 Each hash is the SHA-256, in lower-case hex, of the UTF-8 bytes of the **canonical JSON** of a
 payload. Canonical JSON has object keys sorted (by code unit) at every level, no whitespace,
 and non-ASCII characters left unescaped. The payloads are versioned (`"v": 1`). A later format
-version that hashes more (e.g. notes) adds a new hash rather than widening these.
+version that hashes more adds a new hash rather than widening these: 1.2's `scoreHash` covers
+the notes.
 
 Timing payload, version 1:
 
@@ -390,8 +521,29 @@ Arrangement payload, version 1:
 - `silent` lists muted or not-soloed layers; their runs are listed as if audible.
 - `treatments` are the placed effects that sound, in timeline order.
 
-Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract) carries both payloads and both
-hashes for its arrangement.
+Score payload, version 1 (1.2):
+
+```json
+{
+  "v": 1,
+  "timingHash": "…",
+  "sections": [{ "id": "<instanceId>", "sourceSceneId": "…", "role": null }],
+  "layers": [
+    {
+      "layerId": "…", "role": "kicks", "bucket": "drums", "drumClass": "kick", "drumMap": null,
+      "silent": false, "spans": [], "treatments": [], "notes": null
+    }
+  ]
+}
+```
+
+- `spans`, `treatments` and `notes` are the score's own. Absent fields are `null` (`silent`:
+  `false`), and names are left out.
+- The tempo map, meter map and bars derive from the timing, which `timingHash` covers.
+- `notes` is `null` when the export left notes out. **Compare `scoreHash` only between exports
+  made with the same `options.scoreNotes`.**
+
+Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract) carries its payloads and hashes.
 
 ---
 
@@ -410,6 +562,9 @@ With **`options.pathFree: true`** (1.1), the export leaves every absolute path o
 
 `files[].file` is always bundle-relative and, from 1.1, always uses `/` as separator. Plugin
 states are never exported. Stems are optional: an export may hold only the master.
+
+The score (1.2) holds no paths. Its notes are the layers' MIDI, written only when the user asks
+(`options.scoreNotes`). Like stems, they are optional.
 
 ---
 
@@ -445,6 +600,9 @@ addFormats(ajv);
 const validate = ajv.compile(schema); // the schema of the file's exportVersion
 if (!validate(exportJson)) console.log(validate.errors);
 ```
+
+The `v1` schema (`…/v1/schema.json`) is the latest 1.x. A file of any 1.x version validates
+against it, so a reader can use it without picking the file's minor.
 
 Signals & Sorcery's own tests validate the exports it writes against the schema of the
 version they declare.

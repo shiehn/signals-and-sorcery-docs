@@ -585,8 +585,10 @@ Tick any of:
 | **Stems (one per panel)** | One file per panel bus, plus one per layer that isn't on a panel bus |
 | **Editable stems (pre-bus)** | Each bussed layer on its own, before its panel's bus effects |
 | **Ableton hand-off** | Stems ready to open in Ableton Live's Arrangement view |
+| **Include played notes (MIDI)** | Adds the notes each layer plays to the score in `export.json` (see below), for visual and analysis tools. No extra files |
 
-The **Mix** and the **Master** are ticked to start with.
+The **Mix** and the **Master** are ticked to start with; **Include played notes (MIDI)**
+is off.
 
 The export **follows what you hear**: tracks muted (or left out by soloing others) in
 the arranger are not in the Mix and get no stems. The dialog lists
@@ -625,7 +627,7 @@ earlier one: a second export with the same name in the same minute goes to
 - `<name> - Mix (32f).wav`
 - `<name> - Master (Streaming -14 LUFS, 24-bit).wav` (the name records the preset and format)
 - `Stems/01 Drums.wav`, `Stems/02 Bass.wav`, … and `Editable stems/…`
-- `<name> - export.json`: a record of the export (its name, the settings including the tail, the song's tempo and sections, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings). Its format is published, so other tools (a visualizer, a game engine, your own scripts) can read it: see [The arrangement export format](/contract/arrangement-export/).
+- `<name> - export.json`: a record of the export (its name, the settings including the tail, the song's tempo and sections, every file with its checksum and peak, the loudness report, the stems check, the bus effects used and any warnings). It also holds the song's **score**: its bars and sections, and which layer plays when, with its level, fades and placed effects; with **Include played notes (MIDI)** ticked, the notes each layer plays too. Its format is published, so other tools (a visualizer, a game engine, your own scripts) can read it: see [The arrangement export format](/contract/arrangement-export/).
 
 A progress bar shows each step. **Cancel** stops the export and removes its folder, so
 nothing half-written is left behind, and an export that fails cleans up the same way.

@@ -11,6 +11,27 @@ Releases of Signals & Sorcery's arrangement semantics (`contractVersion`) are li
 format version that was current then, with what they changed in an export's audio or meaning,
 or "nothing".
 
+## 1.2.0
+
+Optional fields only, so 1.0 and 1.1 readers keep working.
+
+Added:
+- `score`: the arrangement resolved for a reader. It holds:
+  - the tempo map, the meter map and the bar grid;
+  - the sections with their scenes;
+  - per layer: its role, bucket and drum piece, where it sounds (spans with level and fades),
+    the effects placed on it, and, when asked, its notes in frames.
+
+  See [Score](/contract/arrangement-export/#score).
+- `scoreHash`: SHA-256 of the score's payload. It changes with what the layers play, notes
+  included. See [Change detection](/contract/arrangement-export/#change-detection).
+- `options.score` and `options.scoreNotes`: whether the export wrote the score, and whether the
+  score includes the notes.
+- The schema for 1.2.0, and `v1/schema.json`: the latest 1.x, which every 1.x file validates
+  against.
+
+Changed: nothing. `timingHash` and `arrangementHash` cover exactly what they did.
+
 ## 1.1.0
 
 Optional fields only, so a 1.0 reader keeps working.
@@ -36,7 +57,7 @@ Changed:
 Documented for the first time (no behaviour change): [the specification](/contract/arrangement-export/), the JSON Schemas for 1.0.0 and
 1.1.0, and fixtures for every rule in SPEC.md.
 
-Arrangement releases while 1.1.0 is current:
+Arrangement releases while 1.1.0 was current:
 - **0.11.0** (2026-10-10): alternatives groups (a vocal reading's takes, a kit's fills) play one
   unit per section, by the section's position or picked; the others rest. A scene's fills,
   which played in every section, now rotate. The format didn't change; `arrangementHash`

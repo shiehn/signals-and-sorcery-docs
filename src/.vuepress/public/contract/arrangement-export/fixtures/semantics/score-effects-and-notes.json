@@ -1,0 +1,1590 @@
+{
+  "rule": "Placed effects are listed with their windows. Bars an effect replaces carry no notes; a bar loop replays its window's notes; hits and risers play on top (a riser starts before its bar).",
+  "spec": "SPEC.md#score",
+  "bpm": 113,
+  "sampleRate": 44100,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      },
+      {
+        "id": "t_a_crash",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "cymbals",
+        "name": "crash1"
+      },
+      {
+        "id": "t_b_impact",
+        "homeSceneId": "sc_b",
+        "panelId": "mix-assets",
+        "role": null,
+        "name": "impact1",
+        "assetKind": "hit"
+      },
+      {
+        "id": "t_b_riser",
+        "homeSceneId": "sc_b",
+        "panelId": "mix-assets",
+        "role": null,
+        "name": "riser1",
+        "assetKind": "riser"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr-treatments",
+    "projectId": "proj-literal",
+    "name": "treatments",
+    "instances": {
+      "arr-treatments:chorus2": {
+        "id": "arr-treatments:chorus2",
+        "orderKey": "a3",
+        "variantId": "arr-treatments:v2"
+      },
+      "arr-treatments:i1": {
+        "id": "arr-treatments:i1",
+        "orderKey": "a0",
+        "variantId": "arr-treatments:v1"
+      },
+      "arr-treatments:i2": {
+        "id": "arr-treatments:i2",
+        "orderKey": "a1",
+        "variantId": "arr-treatments:v2"
+      },
+      "arr-treatments:i3": {
+        "id": "arr-treatments:i3",
+        "orderKey": "a2",
+        "variantId": "arr-treatments:v3"
+      }
+    },
+    "variants": {
+      "arr-treatments:v1": {
+        "id": "arr-treatments:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {
+          "t_a_bass": {
+            "gainDb": -2,
+            "treatments": [
+              {
+                "id": "b1",
+                "type": "reverse_bar",
+                "bar": 4
+              },
+              {
+                "id": "b2",
+                "type": "gap",
+                "bar": 8,
+                "params": {
+                  "beats": 1.5
+                }
+              }
+            ]
+          },
+          "t_a_crash": {
+            "play": "off",
+            "treatments": [
+              {
+                "id": "c1",
+                "type": "crash_wash",
+                "bar": 1
+              }
+            ]
+          },
+          "t_a_kick": {
+            "treatments": [
+              {
+                "id": "k1",
+                "type": "gap",
+                "bar": 2,
+                "params": {
+                  "beats": 4
+                }
+              },
+              {
+                "id": "k2",
+                "type": "fill_roll8",
+                "bar": 4
+              },
+              {
+                "id": "k3",
+                "type": "stutter",
+                "bar": 6,
+                "params": {
+                  "repeats": 6
+                }
+              },
+              {
+                "id": "k4",
+                "type": "fill_accel",
+                "bar": 8
+              }
+            ]
+          },
+          "t_a_pad": {
+            "treatments": [
+              {
+                "id": "p1",
+                "type": "hp_sweep",
+                "bar": 3,
+                "params": {
+                  "bars": 4,
+                  "end_hz": 900,
+                  "start_hz": 40
+                }
+              }
+            ]
+          },
+          "t_b_riser": {
+            "treatments": [
+              {
+                "id": "r1",
+                "type": "asset_riser",
+                "bar": 8,
+                "params": {
+                  "beats": 6
+                }
+              }
+            ]
+          }
+        }
+      },
+      "arr-treatments:v2": {
+        "id": "arr-treatments:v2",
+        "sceneId": "sc_b",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {
+          "t_a_crash": {
+            "treatments": [
+              {
+                "id": "i1",
+                "type": "impact_hit",
+                "bar": 1,
+                "params": {
+                  "taps": 2
+                }
+              }
+            ]
+          },
+          "t_b_chords": {
+            "treatments": [
+              {
+                "id": "c1",
+                "type": "loop",
+                "bar": 3,
+                "params": {
+                  "bars": 2,
+                  "window_bars": 1
+                }
+              },
+              {
+                "id": "c2",
+                "type": "lp_sweep",
+                "bar": 7,
+                "params": {
+                  "bars": 4
+                }
+              }
+            ]
+          },
+          "t_b_impact": {
+            "play": "off",
+            "treatments": [
+              {
+                "id": "h1",
+                "type": "asset_hit",
+                "bar": 1,
+                "params": {
+                  "gain_db": -3
+                }
+              }
+            ]
+          },
+          "t_b_kick": {
+            "treatments": [
+              {
+                "id": "k1",
+                "type": "fill_roll16",
+                "bar": 8
+              }
+            ]
+          },
+          "t_b_lead": {
+            "treatments": [
+              {
+                "id": "l1",
+                "type": "tape_stop",
+                "bar": 8,
+                "params": {
+                  "beats": 1
+                }
+              }
+            ]
+          },
+          "t_b_riser": {
+            "play": "off"
+          }
+        }
+      },
+      "arr-treatments:v3": {
+        "id": "arr-treatments:v3",
+        "sceneId": "sc_c",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {
+          "t_c_bell": {
+            "treatments": [
+              {
+                "id": "b1",
+                "type": "gap",
+                "bar": 2
+              },
+              {
+                "id": "b2",
+                "type": "reverse_bar",
+                "bar": 4
+              }
+            ]
+          },
+          "t_c_perc": {
+            "treatments": [
+              {
+                "id": "p1",
+                "type": "fill_roll8",
+                "bar": 4
+              },
+              {
+                "id": "p2",
+                "type": "stutter",
+                "bar": 5,
+                "params": {
+                  "repeats": 3
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tracks": {
+    "t_b_chords": {
+      "role": "chords",
+      "notes": [
+        {
+          "startTime": 0,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 1,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 2,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 3,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 4,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 5,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 6,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 7,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 8,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 9,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 10,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 11,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 12,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 13,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 14,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 15,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 16,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 17,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 18,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 19,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 20,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 21,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 22,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 23,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 24,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 25,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 26,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 27,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 28,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 29,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 30,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        },
+        {
+          "startTime": 31,
+          "duration": 0.25,
+          "pitch": 60,
+          "velocity": 100
+        }
+      ]
+    },
+    "t_c_bell": {
+      "role": "keys",
+      "notes": [
+        {
+          "startTime": 0,
+          "duration": 1,
+          "pitch": 72,
+          "velocity": 90
+        },
+        {
+          "startTime": 3,
+          "duration": 1,
+          "pitch": 74,
+          "velocity": 90
+        }
+      ]
+    },
+    "t_a_crash": {
+      "role": "cymbals"
+    },
+    "t_b_riser": {
+      "role": null
+    },
+    "t_b_impact": {
+      "role": null
+    }
+  },
+  "expected": {
+    "timingHash": "0f0458041ffda5ca9ebc0a0851b385b968fa7c5a7217aea48a565179fcfdc68e",
+    "score": {
+      "v": 1,
+      "tempoMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "bpm": 113
+        }
+      ],
+      "meterMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        {
+          "bar": 17,
+          "beat": 64,
+          "frame": 1498619,
+          "numerator": 3,
+          "denominator": 4
+        },
+        {
+          "bar": 21,
+          "beat": 76,
+          "frame": 1779611,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "bars": [
+        {
+          "index": 1,
+          "startFrame": 0,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 2,
+          "startFrame": 93664,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 3,
+          "startFrame": 187327,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 4,
+          "startFrame": 280991,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 5,
+          "startFrame": 374655,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 6,
+          "startFrame": 468319,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 7,
+          "startFrame": 561982,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 8,
+          "startFrame": 655646,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 9,
+          "startFrame": 749310,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 10,
+          "startFrame": 842973,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 11,
+          "startFrame": 936637,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 12,
+          "startFrame": 1030301,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 13,
+          "startFrame": 1123965,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 14,
+          "startFrame": 1217628,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 15,
+          "startFrame": 1311292,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 16,
+          "startFrame": 1404956,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 17,
+          "startFrame": 1498619,
+          "lengthFrames": 70248
+        },
+        {
+          "index": 18,
+          "startFrame": 1568867,
+          "lengthFrames": 70248
+        },
+        {
+          "index": 19,
+          "startFrame": 1639115,
+          "lengthFrames": 70248
+        },
+        {
+          "index": 20,
+          "startFrame": 1709363,
+          "lengthFrames": 70248
+        },
+        {
+          "index": 21,
+          "startFrame": 1779611,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 22,
+          "startFrame": 1873274,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 23,
+          "startFrame": 1966938,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 24,
+          "startFrame": 2060602,
+          "lengthFrames": 93663
+        },
+        {
+          "index": 25,
+          "startFrame": 2154265,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 26,
+          "startFrame": 2247929,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 27,
+          "startFrame": 2341593,
+          "lengthFrames": 93664
+        },
+        {
+          "index": 28,
+          "startFrame": 2435257,
+          "lengthFrames": 93663
+        }
+      ],
+      "sections": [
+        {
+          "instanceId": "arr-treatments:i1",
+          "sourceSceneId": "sc_a",
+          "firstBar": 1,
+          "lengthBars": 8
+        },
+        {
+          "instanceId": "arr-treatments:i2",
+          "sourceSceneId": "sc_b",
+          "firstBar": 9,
+          "lengthBars": 8
+        },
+        {
+          "instanceId": "arr-treatments:i3",
+          "sourceSceneId": "sc_c",
+          "firstBar": 17,
+          "lengthBars": 4
+        },
+        {
+          "instanceId": "arr-treatments:chorus2",
+          "sourceSceneId": "sc_b",
+          "firstBar": 21,
+          "lengthBars": 8
+        }
+      ],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "name": "bass1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i1",
+              "startBar": 1,
+              "endBar": 9,
+              "startFrame": 0,
+              "endFrame": 749310,
+              "gainDb": -2,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i1",
+              "type": "reverse_bar",
+              "bar": 4,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 280991,
+              "endFrame": 374655,
+              "params": {},
+              "gainDb": -2
+            },
+            {
+              "section": "arr-treatments:i1",
+              "type": "gap",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 655646,
+              "endFrame": 749310,
+              "params": {
+                "beats": 1.5
+              },
+              "gainDb": -2
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_crash",
+          "name": "crash1",
+          "role": "cymbals",
+          "bucket": "drums",
+          "spans": [],
+          "treatments": [
+            {
+              "section": "arr-treatments:i1",
+              "type": "crash_wash",
+              "bar": 1,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 0,
+              "endFrame": 93664,
+              "params": {},
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i2",
+              "type": "impact_hit",
+              "bar": 1,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 749310,
+              "endFrame": 842973,
+              "params": {
+                "taps": 2
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "impact_hit",
+              "bar": 1,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 1779611,
+              "endFrame": 1873274,
+              "params": {
+                "taps": 2
+              },
+              "gainDb": 0
+            }
+          ],
+          "drumClass": "cymbal"
+        },
+        {
+          "layerId": "t_a_kick",
+          "name": "kick1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i1",
+              "startBar": 1,
+              "endBar": 9,
+              "startFrame": 0,
+              "endFrame": 749310,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i1",
+              "type": "gap",
+              "bar": 2,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 93664,
+              "endFrame": 187327,
+              "params": {
+                "beats": 4
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i1",
+              "type": "fill_roll8",
+              "bar": 4,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 280991,
+              "endFrame": 374655,
+              "params": {},
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i1",
+              "type": "stutter",
+              "bar": 6,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 468319,
+              "endFrame": 561983,
+              "params": {
+                "repeats": 6
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i1",
+              "type": "fill_accel",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 655646,
+              "endFrame": 749310,
+              "params": {},
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_a_pad",
+          "name": "pad1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i1",
+              "startBar": 1,
+              "endBar": 9,
+              "startFrame": 0,
+              "endFrame": 749310,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i1",
+              "type": "hp_sweep",
+              "bar": 3,
+              "bars": 4,
+              "mode": "replace",
+              "startFrame": 187327,
+              "endFrame": 561982,
+              "params": {
+                "bars": 4,
+                "end_hz": 900,
+                "start_hz": 40
+              },
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_chords",
+          "name": "chord1",
+          "role": "chords",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "arr-treatments:i2",
+              "startBar": 9,
+              "endBar": 17,
+              "startFrame": 749310,
+              "endFrame": 1498619,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "startBar": 21,
+              "endBar": 29,
+              "startFrame": 1779611,
+              "endFrame": 2528920,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i2",
+              "type": "loop",
+              "bar": 3,
+              "bars": 2,
+              "mode": "replace",
+              "startFrame": 936637,
+              "endFrame": 1123965,
+              "params": {
+                "bars": 2,
+                "window_bars": 1
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i2",
+              "type": "lp_sweep",
+              "bar": 7,
+              "bars": 2,
+              "mode": "replace",
+              "startFrame": 1311292,
+              "endFrame": 1498619,
+              "params": {
+                "bars": 2
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "loop",
+              "bar": 3,
+              "bars": 2,
+              "mode": "replace",
+              "startFrame": 1966938,
+              "endFrame": 2154265,
+              "params": {
+                "bars": 2,
+                "window_bars": 1
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "lp_sweep",
+              "bar": 7,
+              "bars": 2,
+              "mode": "replace",
+              "startFrame": 2341593,
+              "endFrame": 2528920,
+              "params": {
+                "bars": 2
+              },
+              "gainDb": 0
+            }
+          ],
+          "notes": [
+            [
+              749310,
+              60,
+              100,
+              5854
+            ],
+            [
+              772726,
+              60,
+              100,
+              5854
+            ],
+            [
+              796142,
+              60,
+              100,
+              5854
+            ],
+            [
+              819558,
+              60,
+              100,
+              5854
+            ],
+            [
+              842974,
+              60,
+              100,
+              5854
+            ],
+            [
+              866390,
+              60,
+              100,
+              5854
+            ],
+            [
+              889806,
+              60,
+              100,
+              5854
+            ],
+            [
+              913222,
+              60,
+              100,
+              5854
+            ],
+            [
+              936637,
+              60,
+              100,
+              5854
+            ],
+            [
+              960053,
+              60,
+              100,
+              5854
+            ],
+            [
+              983469,
+              60,
+              100,
+              5854
+            ],
+            [
+              1006885,
+              60,
+              100,
+              5854
+            ],
+            [
+              1030301,
+              60,
+              100,
+              5854
+            ],
+            [
+              1053717,
+              60,
+              100,
+              5854
+            ],
+            [
+              1077133,
+              60,
+              100,
+              5854
+            ],
+            [
+              1100549,
+              60,
+              100,
+              5854
+            ],
+            [
+              1123965,
+              60,
+              100,
+              5854
+            ],
+            [
+              1147381,
+              60,
+              100,
+              5854
+            ],
+            [
+              1170797,
+              60,
+              100,
+              5854
+            ],
+            [
+              1194213,
+              60,
+              100,
+              5854
+            ],
+            [
+              1217629,
+              60,
+              100,
+              5854
+            ],
+            [
+              1241045,
+              60,
+              100,
+              5854
+            ],
+            [
+              1264460,
+              60,
+              100,
+              5854
+            ],
+            [
+              1287876,
+              60,
+              100,
+              5854
+            ],
+            [
+              1779611,
+              60,
+              100,
+              5854
+            ],
+            [
+              1803027,
+              60,
+              100,
+              5854
+            ],
+            [
+              1826443,
+              60,
+              100,
+              5854
+            ],
+            [
+              1849859,
+              60,
+              100,
+              5854
+            ],
+            [
+              1873275,
+              60,
+              100,
+              5854
+            ],
+            [
+              1896691,
+              60,
+              100,
+              5854
+            ],
+            [
+              1920107,
+              60,
+              100,
+              5854
+            ],
+            [
+              1943523,
+              60,
+              100,
+              5854
+            ],
+            [
+              1966938,
+              60,
+              100,
+              5854
+            ],
+            [
+              1990354,
+              60,
+              100,
+              5854
+            ],
+            [
+              2013770,
+              60,
+              100,
+              5854
+            ],
+            [
+              2037186,
+              60,
+              100,
+              5854
+            ],
+            [
+              2060602,
+              60,
+              100,
+              5854
+            ],
+            [
+              2084018,
+              60,
+              100,
+              5854
+            ],
+            [
+              2107434,
+              60,
+              100,
+              5854
+            ],
+            [
+              2130850,
+              60,
+              100,
+              5854
+            ],
+            [
+              2154265,
+              60,
+              100,
+              5854
+            ],
+            [
+              2177681,
+              60,
+              100,
+              5854
+            ],
+            [
+              2201097,
+              60,
+              100,
+              5854
+            ],
+            [
+              2224513,
+              60,
+              100,
+              5854
+            ],
+            [
+              2247929,
+              60,
+              100,
+              5854
+            ],
+            [
+              2271345,
+              60,
+              100,
+              5854
+            ],
+            [
+              2294760,
+              60,
+              100,
+              5854
+            ],
+            [
+              2318176,
+              60,
+              100,
+              5854
+            ]
+          ]
+        },
+        {
+          "layerId": "t_b_impact",
+          "name": "impact1",
+          "role": null,
+          "bucket": null,
+          "spans": [],
+          "treatments": [
+            {
+              "section": "arr-treatments:i2",
+              "type": "asset_hit",
+              "bar": 1,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 749310,
+              "endFrame": 936637,
+              "params": {
+                "gain_db": -3
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "asset_hit",
+              "bar": 1,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 1779611,
+              "endFrame": 1966938,
+              "params": {
+                "gain_db": -3
+              },
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_kick",
+          "name": "kick2",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i2",
+              "startBar": 9,
+              "endBar": 17,
+              "startFrame": 749310,
+              "endFrame": 1498619,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "startBar": 21,
+              "endBar": 29,
+              "startFrame": 1779611,
+              "endFrame": 2528920,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i2",
+              "type": "fill_roll16",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 1404956,
+              "endFrame": 1498619,
+              "params": {},
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "fill_roll16",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 2435257,
+              "endFrame": 2528920,
+              "params": {},
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_lead",
+          "name": "lead1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i2",
+              "startBar": 9,
+              "endBar": 17,
+              "startFrame": 749310,
+              "endFrame": 1498619,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "startBar": 21,
+              "endBar": 29,
+              "startFrame": 1779611,
+              "endFrame": 2528920,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i2",
+              "type": "tape_stop",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 1404956,
+              "endFrame": 1498619,
+              "params": {
+                "beats": 1
+              },
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:chorus2",
+              "type": "tape_stop",
+              "bar": 8,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 2435257,
+              "endFrame": 2528920,
+              "params": {
+                "beats": 1
+              },
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_b_riser",
+          "name": "riser1",
+          "role": null,
+          "bucket": null,
+          "spans": [],
+          "treatments": [
+            {
+              "section": "arr-treatments:i1",
+              "type": "asset_riser",
+              "bar": 8,
+              "bars": 1,
+              "mode": "add",
+              "startFrame": 608814,
+              "endFrame": 749310,
+              "params": {
+                "beats": 6
+              },
+              "gainDb": 0
+            }
+          ]
+        },
+        {
+          "layerId": "t_c_bell",
+          "name": "bell1",
+          "role": "keys",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "arr-treatments:i3",
+              "startBar": 17,
+              "endBar": 21,
+              "startFrame": 1498619,
+              "endFrame": 1779611,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i3",
+              "type": "gap",
+              "bar": 2,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 1568867,
+              "endFrame": 1639115,
+              "params": {},
+              "gainDb": 0
+            },
+            {
+              "section": "arr-treatments:i3",
+              "type": "reverse_bar",
+              "bar": 4,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 1709363,
+              "endFrame": 1779611,
+              "params": {},
+              "gainDb": 0
+            }
+          ],
+          "notes": [
+            [
+              1498619,
+              72,
+              90,
+              23416
+            ]
+          ]
+        },
+        {
+          "layerId": "t_c_perc",
+          "name": "perc1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-treatments:i3",
+              "startBar": 17,
+              "endBar": 21,
+              "startFrame": 1498619,
+              "endFrame": 1779611,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [
+            {
+              "section": "arr-treatments:i3",
+              "type": "fill_roll8",
+              "bar": 4,
+              "bars": 1,
+              "mode": "replace",
+              "startFrame": 1709363,
+              "endFrame": 1779611,
+              "params": {},
+              "gainDb": 0
+            }
+          ]
+        }
+      ],
+      "noteFields": [
+        "frame",
+        "pitch",
+        "velocity",
+        "durationFrames"
+      ]
+    },
+    "scoreHash": "5595ef2797d66fe3bbbed3b8fffec0b9a535a27c375abeaf5a8e9d4e6f271d49"
+  }
+}

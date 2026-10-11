@@ -1,0 +1,1277 @@
+{
+  "rule": "A layer's notes are its loop's MIDI read where it plays: a guest carried across sections (and a 3/4 one) keeps its loop position, a home layer re-anchors at each section, a phase override and a mid-section guest entry read from where the arrangement says.",
+  "spec": "SPEC.md#score",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr-guest-run",
+    "projectId": "proj-literal",
+    "name": "guest-run",
+    "instances": {
+      "arr-guest-run:i1": {
+        "id": "arr-guest-run:i1",
+        "orderKey": "a0",
+        "variantId": "arr-guest-run:v1"
+      },
+      "arr-guest-run:i2": {
+        "id": "arr-guest-run:i2",
+        "orderKey": "a1",
+        "variantId": "arr-guest-run:v2"
+      },
+      "arr-guest-run:i3": {
+        "id": "arr-guest-run:i3",
+        "orderKey": "a2",
+        "variantId": "arr-guest-run:v3"
+      },
+      "arr-guest-run:i4": {
+        "id": "arr-guest-run:i4",
+        "orderKey": "a3",
+        "variantId": "arr-guest-run:v4"
+      }
+    },
+    "variants": {
+      "arr-guest-run:v1": {
+        "id": "arr-guest-run:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 6,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-guest-run:v2": {
+        "id": "arr-guest-run:v2",
+        "sceneId": "sc_b",
+        "lengthBars": 6,
+        "newLayers": "on",
+        "layers": {
+          "t_a_kick": {
+            "play": "on"
+          },
+          "t_a_pad": {
+            "play": {
+              "mask": "000111"
+            }
+          }
+        }
+      },
+      "arr-guest-run:v3": {
+        "id": "arr-guest-run:v3",
+        "sceneId": "sc_b",
+        "lengthBars": 7,
+        "newLayers": "on",
+        "layers": {
+          "t_a_kick": {
+            "play": "on"
+          },
+          "t_b_chords": {
+            "phase": "run"
+          }
+        }
+      },
+      "arr-guest-run:v4": {
+        "id": "arr-guest-run:v4",
+        "sceneId": "sc_c",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {
+          "t_a_kick": {
+            "play": "on"
+          },
+          "t_c_bell": {
+            "play": "off"
+          }
+        }
+      }
+    }
+  },
+  "tracks": {
+    "t_a_kick": {
+      "role": "kicks",
+      "notes": [
+        {
+          "startTime": 0,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 1,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 2,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 3,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 4,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 5,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 6,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 7,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 8,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 9,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 10,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 11,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 12,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 13,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 14,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        },
+        {
+          "startTime": 15,
+          "duration": 0.25,
+          "pitch": 36,
+          "velocity": 100
+        }
+      ]
+    },
+    "t_a_pad": {
+      "role": "pads",
+      "notes": [
+        {
+          "startTime": 0,
+          "duration": 4,
+          "pitch": 60,
+          "velocity": 70
+        }
+      ]
+    },
+    "t_b_chords": {
+      "role": "chords",
+      "notes": [
+        {
+          "startTime": 0,
+          "duration": 2,
+          "pitch": 64,
+          "velocity": 80
+        },
+        {
+          "startTime": 16,
+          "duration": 2,
+          "pitch": 67,
+          "velocity": 80
+        }
+      ]
+    },
+    "t_b_lead": {
+      "role": "lead",
+      "notes": [
+        {
+          "startTime": 2.5,
+          "duration": 0.5,
+          "pitch": 76,
+          "velocity": 96
+        }
+      ]
+    }
+  },
+  "expected": {
+    "timingHash": "83ed077f554d7e39e328e7abd46314d67345b664f81431d8c574853aa9c6d4dc",
+    "score": {
+      "v": 1,
+      "tempoMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "bpm": 120
+        }
+      ],
+      "meterMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        {
+          "bar": 20,
+          "beat": 76,
+          "frame": 1824000,
+          "numerator": 3,
+          "denominator": 4
+        }
+      ],
+      "bars": [
+        {
+          "index": 1,
+          "startFrame": 0,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 2,
+          "startFrame": 96000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 3,
+          "startFrame": 192000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 4,
+          "startFrame": 288000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 5,
+          "startFrame": 384000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 6,
+          "startFrame": 480000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 7,
+          "startFrame": 576000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 8,
+          "startFrame": 672000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 9,
+          "startFrame": 768000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 10,
+          "startFrame": 864000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 11,
+          "startFrame": 960000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 12,
+          "startFrame": 1056000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 13,
+          "startFrame": 1152000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 14,
+          "startFrame": 1248000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 15,
+          "startFrame": 1344000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 16,
+          "startFrame": 1440000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 17,
+          "startFrame": 1536000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 18,
+          "startFrame": 1632000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 19,
+          "startFrame": 1728000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 20,
+          "startFrame": 1824000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 21,
+          "startFrame": 1896000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 22,
+          "startFrame": 1968000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 23,
+          "startFrame": 2040000,
+          "lengthFrames": 72000
+        }
+      ],
+      "sections": [
+        {
+          "instanceId": "arr-guest-run:i1",
+          "sourceSceneId": "sc_a",
+          "firstBar": 1,
+          "lengthBars": 6
+        },
+        {
+          "instanceId": "arr-guest-run:i2",
+          "sourceSceneId": "sc_b",
+          "firstBar": 7,
+          "lengthBars": 6
+        },
+        {
+          "instanceId": "arr-guest-run:i3",
+          "sourceSceneId": "sc_b",
+          "firstBar": 13,
+          "lengthBars": 7
+        },
+        {
+          "instanceId": "arr-guest-run:i4",
+          "sourceSceneId": "sc_c",
+          "firstBar": 20,
+          "lengthBars": 4
+        }
+      ],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "name": "bass1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-guest-run:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 0,
+              "endFrame": 576000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_a_kick",
+          "name": "kick1",
+          "role": "kicks",
+          "bucket": "drums",
+          "spans": [
+            {
+              "section": "arr-guest-run:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 0,
+              "endFrame": 576000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-guest-run:i2",
+              "startBar": 7,
+              "endBar": 13,
+              "startFrame": 576000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            },
+            {
+              "section": "arr-guest-run:i3",
+              "startBar": 13,
+              "endBar": 20,
+              "startFrame": 1152000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            },
+            {
+              "section": "arr-guest-run:i4",
+              "startBar": 20,
+              "endBar": 24,
+              "startFrame": 1824000,
+              "endFrame": 2112000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": [],
+          "drumClass": "kick",
+          "notes": [
+            [
+              0,
+              36,
+              100,
+              6000
+            ],
+            [
+              24000,
+              36,
+              100,
+              6000
+            ],
+            [
+              48000,
+              36,
+              100,
+              6000
+            ],
+            [
+              72000,
+              36,
+              100,
+              6000
+            ],
+            [
+              96000,
+              36,
+              100,
+              6000
+            ],
+            [
+              120000,
+              36,
+              100,
+              6000
+            ],
+            [
+              144000,
+              36,
+              100,
+              6000
+            ],
+            [
+              168000,
+              36,
+              100,
+              6000
+            ],
+            [
+              192000,
+              36,
+              100,
+              6000
+            ],
+            [
+              216000,
+              36,
+              100,
+              6000
+            ],
+            [
+              240000,
+              36,
+              100,
+              6000
+            ],
+            [
+              264000,
+              36,
+              100,
+              6000
+            ],
+            [
+              288000,
+              36,
+              100,
+              6000
+            ],
+            [
+              312000,
+              36,
+              100,
+              6000
+            ],
+            [
+              336000,
+              36,
+              100,
+              6000
+            ],
+            [
+              360000,
+              36,
+              100,
+              6000
+            ],
+            [
+              384000,
+              36,
+              100,
+              6000
+            ],
+            [
+              408000,
+              36,
+              100,
+              6000
+            ],
+            [
+              432000,
+              36,
+              100,
+              6000
+            ],
+            [
+              456000,
+              36,
+              100,
+              6000
+            ],
+            [
+              480000,
+              36,
+              100,
+              6000
+            ],
+            [
+              504000,
+              36,
+              100,
+              6000
+            ],
+            [
+              528000,
+              36,
+              100,
+              6000
+            ],
+            [
+              552000,
+              36,
+              100,
+              6000
+            ],
+            [
+              576000,
+              36,
+              100,
+              6000
+            ],
+            [
+              600000,
+              36,
+              100,
+              6000
+            ],
+            [
+              624000,
+              36,
+              100,
+              6000
+            ],
+            [
+              648000,
+              36,
+              100,
+              6000
+            ],
+            [
+              672000,
+              36,
+              100,
+              6000
+            ],
+            [
+              696000,
+              36,
+              100,
+              6000
+            ],
+            [
+              720000,
+              36,
+              100,
+              6000
+            ],
+            [
+              744000,
+              36,
+              100,
+              6000
+            ],
+            [
+              768000,
+              36,
+              100,
+              6000
+            ],
+            [
+              792000,
+              36,
+              100,
+              6000
+            ],
+            [
+              816000,
+              36,
+              100,
+              6000
+            ],
+            [
+              840000,
+              36,
+              100,
+              6000
+            ],
+            [
+              864000,
+              36,
+              100,
+              6000
+            ],
+            [
+              888000,
+              36,
+              100,
+              6000
+            ],
+            [
+              912000,
+              36,
+              100,
+              6000
+            ],
+            [
+              936000,
+              36,
+              100,
+              6000
+            ],
+            [
+              960000,
+              36,
+              100,
+              6000
+            ],
+            [
+              984000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1008000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1032000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1056000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1080000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1104000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1128000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1152000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1176000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1200000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1224000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1248000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1272000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1296000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1320000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1344000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1368000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1392000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1416000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1440000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1464000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1488000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1512000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1536000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1560000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1584000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1608000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1632000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1656000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1680000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1704000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1728000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1752000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1776000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1800000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1824000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1848000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1872000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1896000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1920000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1944000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1968000,
+              36,
+              100,
+              6000
+            ],
+            [
+              1992000,
+              36,
+              100,
+              6000
+            ],
+            [
+              2016000,
+              36,
+              100,
+              6000
+            ],
+            [
+              2040000,
+              36,
+              100,
+              6000
+            ],
+            [
+              2064000,
+              36,
+              100,
+              6000
+            ],
+            [
+              2088000,
+              36,
+              100,
+              6000
+            ]
+          ]
+        },
+        {
+          "layerId": "t_a_pad",
+          "name": "pad1",
+          "role": "pads",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "arr-guest-run:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 0,
+              "endFrame": 576000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-guest-run:i2",
+              "startBar": 10,
+              "endBar": 13,
+              "startFrame": 864000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [],
+          "notes": [
+            [
+              0,
+              60,
+              70,
+              96000
+            ],
+            [
+              384000,
+              60,
+              70,
+              96000
+            ],
+            [
+              864000,
+              60,
+              70,
+              96000
+            ]
+          ]
+        },
+        {
+          "layerId": "t_b_chords",
+          "name": "chord1",
+          "role": "chords",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "arr-guest-run:i2",
+              "startBar": 7,
+              "endBar": 13,
+              "startFrame": 576000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-guest-run:i3",
+              "startBar": 13,
+              "endBar": 20,
+              "startFrame": 1152000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": [],
+          "notes": [
+            [
+              576000,
+              64,
+              80,
+              48000
+            ],
+            [
+              960000,
+              67,
+              80,
+              48000
+            ],
+            [
+              1344000,
+              64,
+              80,
+              48000
+            ],
+            [
+              1728000,
+              67,
+              80,
+              48000
+            ]
+          ]
+        },
+        {
+          "layerId": "t_b_kick",
+          "name": "kick2",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-guest-run:i2",
+              "startBar": 7,
+              "endBar": 13,
+              "startFrame": 576000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-guest-run:i3",
+              "startBar": 13,
+              "endBar": 20,
+              "startFrame": 1152000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_lead",
+          "name": "lead1",
+          "role": "lead",
+          "bucket": "top",
+          "spans": [
+            {
+              "section": "arr-guest-run:i2",
+              "startBar": 7,
+              "endBar": 13,
+              "startFrame": 576000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-guest-run:i3",
+              "startBar": 13,
+              "endBar": 20,
+              "startFrame": 1152000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": [],
+          "notes": [
+            [
+              636000,
+              76,
+              96,
+              12000
+            ],
+            [
+              1212000,
+              76,
+              96,
+              12000
+            ]
+          ]
+        },
+        {
+          "layerId": "t_c_perc",
+          "name": "perc1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-guest-run:i4",
+              "startBar": 20,
+              "endBar": 24,
+              "startFrame": 1824000,
+              "endFrame": 2112000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        }
+      ],
+      "noteFields": [
+        "frame",
+        "pitch",
+        "velocity",
+        "durationFrames"
+      ]
+    },
+    "scoreHash": "298f67c69bd7487ffab75024e245e5a946ed183245e3a15319227cb39be493d1"
+  }
+}

@@ -518,7 +518,7 @@ sas run arrangement_set_scene_gain --json-body '{"scene": "Chorus", "gainDb": nu
 |---|---|---|---|
 | `arrangement_undo` | `sas arrangement undo` | Undo the last edit made on this computer (the arrangement's own history; changes synced in from another device are not undo steps, and a field another device changed later is kept, counted in `keptRemote`). `fromOtherDevice` reverts the latest batch of changes from another device instead (the note's "Undo these N"), as a new, undoable edit | `fromOtherDevice` |
 | `arrangement_redo` | `sas arrangement redo` | Redo | none |
-| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `name`, `tail` (`"auto"` or seconds, 0 to 30), `renderStale`, `pathFree` (default false) |
+| `arrangement_export` | `sas arrangement export` | Render the song offline: the Mix, a Master, stems, editable stems, an Ableton hand-off. **Async** | `outputs` (or `stems` / `editableStems` / `ableton`), `preset` (`streaming`, `loud`, `custom`), `targetLufs`, `ceilingDbtp`, `bitDepth` (16, 24, 32), `stemBitDepth` (24, 32), `sampleRate` (master only: 44100, 48000, 96000), `path`, `name`, `tail` (`"auto"` or seconds, 0 to 30), `renderStale`, `pathFree` (default false), `score` (default true), `scoreNotes` (default false) |
 | `arrangement_export_cancel` | `sas arrangement export-cancel` | Cancel the running export (nothing is written) | `jobId` |
 
 `arrangement_export` writes a new folder inside `path` (default
@@ -548,6 +548,12 @@ retry. Exports you start from the app's own Export dialog don't ask twice.
   paths, the Ableton bundle by its folder name only, and notes and warnings
   written relative to the export folder, with the home folder as `~`. By
   default (`false`) the file records where it was written.
+- **`score`** (default `true`) writes the resolved score into `export.json`:
+  the tempo and meter maps, the bar grid, the sections, and every layer as it
+  plays (where it sounds, its fades, gains and placed effects); `false` leaves
+  it out. **`scoreNotes: true`** adds the notes each layer plays, in audio
+  frames (off by default, as in the app's **Include played notes (MIDI)**).
+  See [Score](/contract/arrangement-export/#score).
 - **Ableton track order.** The Ableton hand-off lists its Live tracks in the
   order of the Arrange view's rows, as the user arranged them; the numbered
   files in `Stems/` keep their usual order. The cloud arranger's

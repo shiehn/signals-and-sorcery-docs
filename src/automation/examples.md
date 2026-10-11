@@ -526,10 +526,12 @@ removes its folder. See [Exporting your song](/arrange/#exporting-your-song)
 for what each file is.
 
 Going to share the folder? Add `--path-free`: `export.json` then holds no
-absolute path, so nothing in it names your home folder. Every export's
-`export.json` follows a published format, so other tools can read the song's
-tempo, sections and files from it: see
-[the arrangement export format](/contract/arrangement-export/).
+absolute path, so nothing in it names your home folder. Driving visuals from
+the song? Add `--score-notes`: `export.json`'s score, which already says where
+every bar and section starts and which layer plays when, then lists the notes
+each layer plays too, in audio frames. Every export's `export.json` follows a
+published format, so other tools can read the song's tempo, sections and files
+from it: see [the arrangement export format](/contract/arrangement-export/).
 
 ## 19. Match the scene levels
 

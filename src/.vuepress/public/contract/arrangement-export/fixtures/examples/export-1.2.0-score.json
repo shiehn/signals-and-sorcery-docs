@@ -1,0 +1,1449 @@
+{
+  "$schema": "https://signalsandsorcery.com/contract/arrangement-export/1.2.0/schema.json",
+  "exportVersion": "1.2.0",
+  "exportId": "6f1d3a52-8c4e-4b7a-9f0e-2d5c7b8a1e34",
+  "schema": "sas-arrangement-export/1",
+  "renderedAt": "2026-10-10T19:12:41.512Z",
+  "project": {
+    "id": "b7e2c9d4-1f3a-4e6b-8c5d-0a9f8e7d6c5b",
+    "name": "Example Song",
+    "bpm": 120
+  },
+  "arrangement": {
+    "id": "arr",
+    "name": "Example Song",
+    "planId": "3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f",
+    "instances": [
+      {
+        "instanceId": "arr:i1",
+        "label": "verse 1",
+        "startFrame": 0,
+        "lengthFrames": 384000
+      },
+      {
+        "instanceId": "arr:i2",
+        "label": "chorus 1",
+        "startFrame": 384000,
+        "lengthFrames": 768000
+      },
+      {
+        "instanceId": "arr:i3",
+        "label": "bridge 1",
+        "startFrame": 1152000,
+        "lengthFrames": 288000
+      }
+    ],
+    "revision": {
+      "seq": 41,
+      "docHash": "82105f2c77129e385b430840a5cf5ef80dc264ae2ba4034659a9ab95cf3a9cdc"
+    },
+    "endFrame": 1440000
+  },
+  "contractVersion": "0.11.0",
+  "timingHash": "0eeb40f19f5b50d35d679c3e5126e56ec8c84b524625800209c933366906cf35",
+  "arrangementHash": "1a75f83a2982ea859a397cf33061d186cbaca544ee8cc43d6b69684ce511ecfd",
+  "scoreHash": "2ed682245f8a6f71459bb804b589e4af604547b9d990dbf5f9f301a5947b2411",
+  "score": {
+    "v": 1,
+    "tempoMap": [
+      {
+        "bar": 1,
+        "beat": 0,
+        "frame": 0,
+        "bpm": 120
+      }
+    ],
+    "meterMap": [
+      {
+        "bar": 1,
+        "beat": 0,
+        "frame": 0,
+        "numerator": 4,
+        "denominator": 4
+      },
+      {
+        "bar": 13,
+        "beat": 48,
+        "frame": 1152000,
+        "numerator": 3,
+        "denominator": 4
+      }
+    ],
+    "bars": [
+      {
+        "index": 1,
+        "startFrame": 0,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 2,
+        "startFrame": 96000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 3,
+        "startFrame": 192000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 4,
+        "startFrame": 288000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 5,
+        "startFrame": 384000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 6,
+        "startFrame": 480000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 7,
+        "startFrame": 576000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 8,
+        "startFrame": 672000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 9,
+        "startFrame": 768000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 10,
+        "startFrame": 864000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 11,
+        "startFrame": 960000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 12,
+        "startFrame": 1056000,
+        "lengthFrames": 96000
+      },
+      {
+        "index": 13,
+        "startFrame": 1152000,
+        "lengthFrames": 72000
+      },
+      {
+        "index": 14,
+        "startFrame": 1224000,
+        "lengthFrames": 72000
+      },
+      {
+        "index": 15,
+        "startFrame": 1296000,
+        "lengthFrames": 72000
+      },
+      {
+        "index": 16,
+        "startFrame": 1368000,
+        "lengthFrames": 72000
+      }
+    ],
+    "sections": [
+      {
+        "instanceId": "arr:i1",
+        "sourceSceneId": "sc_a",
+        "firstBar": 1,
+        "lengthBars": 4
+      },
+      {
+        "instanceId": "arr:i2",
+        "sourceSceneId": "sc_b",
+        "firstBar": 5,
+        "lengthBars": 8
+      },
+      {
+        "instanceId": "arr:i3",
+        "sourceSceneId": "sc_c",
+        "firstBar": 13,
+        "lengthBars": 4
+      }
+    ],
+    "layers": [
+      {
+        "layerId": "t_a_bass",
+        "name": "bass1",
+        "role": "bass",
+        "bucket": "bass",
+        "spans": [
+          {
+            "section": "arr:i1",
+            "startBar": 1,
+            "endBar": 5,
+            "startFrame": 0,
+            "endFrame": 384000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "notes": [
+          [
+            0,
+            40,
+            96,
+            36000
+          ],
+          [
+            72000,
+            40,
+            96,
+            36000
+          ],
+          [
+            144000,
+            43,
+            96,
+            36000
+          ],
+          [
+            192000,
+            45,
+            96,
+            36000
+          ],
+          [
+            264000,
+            45,
+            96,
+            36000
+          ],
+          [
+            336000,
+            47,
+            96,
+            36000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_a_kick",
+        "name": "kick1",
+        "role": "kicks",
+        "bucket": "drums",
+        "spans": [
+          {
+            "section": "arr:i1",
+            "startBar": 1,
+            "endBar": 5,
+            "startFrame": 0,
+            "endFrame": 384000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "drumClass": "kick",
+        "notes": [
+          [
+            0,
+            36,
+            100,
+            6000
+          ],
+          [
+            24000,
+            36,
+            100,
+            6000
+          ],
+          [
+            48000,
+            36,
+            100,
+            6000
+          ],
+          [
+            72000,
+            36,
+            100,
+            6000
+          ],
+          [
+            96000,
+            36,
+            100,
+            6000
+          ],
+          [
+            120000,
+            36,
+            100,
+            6000
+          ],
+          [
+            144000,
+            36,
+            100,
+            6000
+          ],
+          [
+            168000,
+            36,
+            100,
+            6000
+          ],
+          [
+            192000,
+            36,
+            100,
+            6000
+          ],
+          [
+            216000,
+            36,
+            100,
+            6000
+          ],
+          [
+            240000,
+            36,
+            100,
+            6000
+          ],
+          [
+            264000,
+            36,
+            100,
+            6000
+          ],
+          [
+            288000,
+            36,
+            100,
+            6000
+          ],
+          [
+            312000,
+            36,
+            100,
+            6000
+          ],
+          [
+            336000,
+            36,
+            100,
+            6000
+          ],
+          [
+            360000,
+            36,
+            100,
+            6000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_a_pad",
+        "name": "pad1",
+        "role": "pads",
+        "bucket": "harmony",
+        "spans": [
+          {
+            "section": "arr:i1",
+            "startBar": 1,
+            "endBar": 5,
+            "startFrame": 0,
+            "endFrame": 384000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "notes": [
+          [
+            0,
+            60,
+            72,
+            192000
+          ],
+          [
+            0,
+            64,
+            72,
+            192000
+          ],
+          [
+            0,
+            67,
+            72,
+            192000
+          ],
+          [
+            192000,
+            60,
+            72,
+            192000
+          ],
+          [
+            192000,
+            64,
+            72,
+            192000
+          ],
+          [
+            192000,
+            67,
+            72,
+            192000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_b_chords",
+        "name": "chord1",
+        "role": "chords",
+        "bucket": "harmony",
+        "spans": [
+          {
+            "section": "arr:i2",
+            "startBar": 5,
+            "endBar": 13,
+            "startFrame": 384000,
+            "endFrame": 1152000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "notes": [
+          [
+            384000,
+            57,
+            80,
+            180000
+          ],
+          [
+            384000,
+            60,
+            80,
+            180000
+          ],
+          [
+            384000,
+            64,
+            80,
+            180000
+          ],
+          [
+            576000,
+            53,
+            80,
+            180000
+          ],
+          [
+            576000,
+            57,
+            80,
+            180000
+          ],
+          [
+            576000,
+            60,
+            80,
+            180000
+          ],
+          [
+            768000,
+            55,
+            80,
+            180000
+          ],
+          [
+            768000,
+            59,
+            80,
+            180000
+          ],
+          [
+            768000,
+            62,
+            80,
+            180000
+          ],
+          [
+            960000,
+            52,
+            80,
+            180000
+          ],
+          [
+            960000,
+            55,
+            80,
+            180000
+          ],
+          [
+            960000,
+            59,
+            80,
+            180000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_b_kick",
+        "name": "kick2",
+        "role": "drums",
+        "bucket": "drums",
+        "spans": [
+          {
+            "section": "arr:i2",
+            "startBar": 5,
+            "endBar": 13,
+            "startFrame": 384000,
+            "endFrame": 1152000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "drumClass": "kit",
+        "notes": [
+          [
+            384000,
+            36,
+            100,
+            6000
+          ],
+          [
+            384000,
+            42,
+            70,
+            3000
+          ],
+          [
+            396000,
+            42,
+            70,
+            3000
+          ],
+          [
+            408000,
+            36,
+            100,
+            6000
+          ],
+          [
+            408000,
+            38,
+            90,
+            6000
+          ],
+          [
+            408000,
+            42,
+            70,
+            3000
+          ],
+          [
+            420000,
+            42,
+            70,
+            3000
+          ],
+          [
+            432000,
+            36,
+            100,
+            6000
+          ],
+          [
+            432000,
+            42,
+            70,
+            3000
+          ],
+          [
+            444000,
+            42,
+            70,
+            3000
+          ],
+          [
+            456000,
+            36,
+            100,
+            6000
+          ],
+          [
+            456000,
+            38,
+            90,
+            6000
+          ],
+          [
+            456000,
+            42,
+            70,
+            3000
+          ],
+          [
+            468000,
+            42,
+            70,
+            3000
+          ],
+          [
+            480000,
+            36,
+            100,
+            6000
+          ],
+          [
+            480000,
+            42,
+            70,
+            3000
+          ],
+          [
+            492000,
+            42,
+            70,
+            3000
+          ],
+          [
+            504000,
+            36,
+            100,
+            6000
+          ],
+          [
+            504000,
+            38,
+            90,
+            6000
+          ],
+          [
+            504000,
+            42,
+            70,
+            3000
+          ],
+          [
+            516000,
+            42,
+            70,
+            3000
+          ],
+          [
+            528000,
+            36,
+            100,
+            6000
+          ],
+          [
+            528000,
+            42,
+            70,
+            3000
+          ],
+          [
+            540000,
+            42,
+            70,
+            3000
+          ],
+          [
+            552000,
+            36,
+            100,
+            6000
+          ],
+          [
+            552000,
+            38,
+            90,
+            6000
+          ],
+          [
+            552000,
+            42,
+            70,
+            3000
+          ],
+          [
+            564000,
+            42,
+            70,
+            3000
+          ],
+          [
+            576000,
+            36,
+            100,
+            6000
+          ],
+          [
+            576000,
+            42,
+            70,
+            3000
+          ],
+          [
+            588000,
+            42,
+            70,
+            3000
+          ],
+          [
+            600000,
+            36,
+            100,
+            6000
+          ],
+          [
+            600000,
+            38,
+            90,
+            6000
+          ],
+          [
+            600000,
+            42,
+            70,
+            3000
+          ],
+          [
+            612000,
+            42,
+            70,
+            3000
+          ],
+          [
+            624000,
+            36,
+            100,
+            6000
+          ],
+          [
+            624000,
+            42,
+            70,
+            3000
+          ],
+          [
+            636000,
+            42,
+            70,
+            3000
+          ],
+          [
+            648000,
+            36,
+            100,
+            6000
+          ],
+          [
+            648000,
+            38,
+            90,
+            6000
+          ],
+          [
+            648000,
+            42,
+            70,
+            3000
+          ],
+          [
+            660000,
+            42,
+            70,
+            3000
+          ],
+          [
+            672000,
+            36,
+            100,
+            6000
+          ],
+          [
+            672000,
+            42,
+            70,
+            3000
+          ],
+          [
+            684000,
+            42,
+            70,
+            3000
+          ],
+          [
+            696000,
+            36,
+            100,
+            6000
+          ],
+          [
+            696000,
+            38,
+            90,
+            6000
+          ],
+          [
+            696000,
+            42,
+            70,
+            3000
+          ],
+          [
+            708000,
+            42,
+            70,
+            3000
+          ],
+          [
+            720000,
+            36,
+            100,
+            6000
+          ],
+          [
+            720000,
+            42,
+            70,
+            3000
+          ],
+          [
+            732000,
+            42,
+            70,
+            3000
+          ],
+          [
+            744000,
+            36,
+            100,
+            6000
+          ],
+          [
+            744000,
+            38,
+            90,
+            6000
+          ],
+          [
+            744000,
+            42,
+            70,
+            3000
+          ],
+          [
+            756000,
+            42,
+            70,
+            3000
+          ],
+          [
+            768000,
+            36,
+            100,
+            6000
+          ],
+          [
+            768000,
+            42,
+            70,
+            3000
+          ],
+          [
+            780000,
+            42,
+            70,
+            3000
+          ],
+          [
+            792000,
+            36,
+            100,
+            6000
+          ],
+          [
+            792000,
+            38,
+            90,
+            6000
+          ],
+          [
+            792000,
+            42,
+            70,
+            3000
+          ],
+          [
+            804000,
+            42,
+            70,
+            3000
+          ],
+          [
+            816000,
+            36,
+            100,
+            6000
+          ],
+          [
+            816000,
+            42,
+            70,
+            3000
+          ],
+          [
+            828000,
+            42,
+            70,
+            3000
+          ],
+          [
+            840000,
+            36,
+            100,
+            6000
+          ],
+          [
+            840000,
+            38,
+            90,
+            6000
+          ],
+          [
+            840000,
+            42,
+            70,
+            3000
+          ],
+          [
+            852000,
+            42,
+            70,
+            3000
+          ],
+          [
+            864000,
+            36,
+            100,
+            6000
+          ],
+          [
+            864000,
+            42,
+            70,
+            3000
+          ],
+          [
+            876000,
+            42,
+            70,
+            3000
+          ],
+          [
+            888000,
+            36,
+            100,
+            6000
+          ],
+          [
+            888000,
+            38,
+            90,
+            6000
+          ],
+          [
+            888000,
+            42,
+            70,
+            3000
+          ],
+          [
+            900000,
+            42,
+            70,
+            3000
+          ],
+          [
+            912000,
+            36,
+            100,
+            6000
+          ],
+          [
+            912000,
+            42,
+            70,
+            3000
+          ],
+          [
+            924000,
+            42,
+            70,
+            3000
+          ],
+          [
+            936000,
+            36,
+            100,
+            6000
+          ],
+          [
+            936000,
+            38,
+            90,
+            6000
+          ],
+          [
+            936000,
+            42,
+            70,
+            3000
+          ],
+          [
+            948000,
+            42,
+            70,
+            3000
+          ],
+          [
+            960000,
+            36,
+            100,
+            6000
+          ],
+          [
+            960000,
+            42,
+            70,
+            3000
+          ],
+          [
+            972000,
+            42,
+            70,
+            3000
+          ],
+          [
+            984000,
+            36,
+            100,
+            6000
+          ],
+          [
+            984000,
+            38,
+            90,
+            6000
+          ],
+          [
+            984000,
+            42,
+            70,
+            3000
+          ],
+          [
+            996000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1008000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1008000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1020000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1032000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1032000,
+            38,
+            90,
+            6000
+          ],
+          [
+            1032000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1044000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1056000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1056000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1068000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1080000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1080000,
+            38,
+            90,
+            6000
+          ],
+          [
+            1080000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1092000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1104000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1104000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1116000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1128000,
+            36,
+            100,
+            6000
+          ],
+          [
+            1128000,
+            38,
+            90,
+            6000
+          ],
+          [
+            1128000,
+            42,
+            70,
+            3000
+          ],
+          [
+            1140000,
+            42,
+            70,
+            3000
+          ]
+        ],
+        "drumMap": {
+          "36": "kick",
+          "38": "snare",
+          "42": "hat"
+        }
+      },
+      {
+        "layerId": "t_b_lead",
+        "name": "lead1",
+        "role": "lead",
+        "bucket": "top",
+        "spans": [
+          {
+            "section": "arr:i2",
+            "startBar": 5,
+            "endBar": 13,
+            "startFrame": 384000,
+            "endFrame": 1152000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "notes": [
+          [
+            384000,
+            72,
+            100,
+            24000
+          ],
+          [
+            420000,
+            74,
+            100,
+            24000
+          ],
+          [
+            456000,
+            76,
+            100,
+            24000
+          ],
+          [
+            492000,
+            79,
+            100,
+            24000
+          ],
+          [
+            528000,
+            76,
+            100,
+            24000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_c_bell",
+        "name": "bell1",
+        "role": "keys",
+        "bucket": "harmony",
+        "spans": [
+          {
+            "section": "arr:i3",
+            "startBar": 13,
+            "endBar": 17,
+            "startFrame": 1152000,
+            "endFrame": 1440000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "notes": [
+          [
+            1152000,
+            84,
+            64,
+            72000
+          ],
+          [
+            1296000,
+            81,
+            64,
+            72000
+          ]
+        ]
+      },
+      {
+        "layerId": "t_c_perc",
+        "name": "perc1",
+        "role": "perc",
+        "bucket": "drums",
+        "spans": [
+          {
+            "section": "arr:i3",
+            "startBar": 13,
+            "endBar": 17,
+            "startFrame": 1152000,
+            "endFrame": 1440000,
+            "gainDb": 0,
+            "gainPoints": []
+          }
+        ],
+        "treatments": [],
+        "drumClass": "perc"
+      }
+    ],
+    "noteFields": [
+      "frame",
+      "pitch",
+      "velocity",
+      "durationFrames"
+    ]
+  },
+  "engine": {
+    "sha256": "ed9f6f25068608efd412958da4dfc19328ca3511251fa6d5f9c42baf230e32f8"
+  },
+  "sampleRate": 48000,
+  "lengthSeconds": 32,
+  "options": {
+    "destination": "/Users/example/Music/Signals & Sorcery Exports",
+    "name": "Example Song",
+    "mix": false,
+    "master": true,
+    "stems": true,
+    "editableStems": false,
+    "ableton": false,
+    "preset": "streaming",
+    "masterBitDepth": 24,
+    "stemBitDepth": 32,
+    "renderStale": true,
+    "pathFree": false,
+    "score": true,
+    "scoreNotes": true
+  },
+  "name": "Example Song",
+  "tail": {
+    "mode": "auto",
+    "capSeconds": 10,
+    "floorDbfs": -90
+  },
+  "files": [
+    {
+      "kind": "stem",
+      "label": "Kick (verse)",
+      "file": "Stems/01 Kick (verse).wav",
+      "sha256": "c56c1f3397023bcad06da6aa7b55de71fe0609dd36131e289484e69859e5a589",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 32,
+      "peakDbfs": -3.21,
+      "layerIds": [
+        "t_a_kick"
+      ],
+      "startFrame": 0,
+      "latencyMs": 0
+    },
+    {
+      "kind": "stem",
+      "label": "Drums",
+      "file": "Stems/02 Drums.wav",
+      "sha256": "416edcf86e6dddde7f520e16e7b531ff7edf4f114eadf89786b97d5cf084353a",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 32,
+      "peakDbfs": -1.87,
+      "layerIds": [
+        "t_b_kick",
+        "t_c_perc"
+      ],
+      "startFrame": 0,
+      "latencyMs": 0
+    },
+    {
+      "kind": "master",
+      "label": "Master",
+      "file": "Example Song - Master (Streaming -14 LUFS, 24-bit).wav",
+      "sha256": "fc613b4dfd6736a7bd268c8a0e74ed0d1c04a959f59dd74ef2874983fd443fc9",
+      "frames": 1536000,
+      "sampleRate": 48000,
+      "bitDepth": 24,
+      "peakDbfs": -1.12,
+      "startFrame": 0,
+      "latencyMs": 0
+    }
+  ],
+  "master": {
+    "elapsedMs": 1840,
+    "input": {
+      "path": "/Users/example/Music/Signals & Sorcery Exports/Example Song 2026-10-10 1412/Example Song - Mix (32f).wav",
+      "integratedLufs": -17.4,
+      "lra": 6.2,
+      "truePeakDbtp": -2.9,
+      "samplePeakDbfs": -3.3,
+      "plrDb": 9.1,
+      "durationS": 32,
+      "sampleRate": 48000,
+      "channels": 2,
+      "bitDepth": 32,
+      "sampleFormat": "float"
+    },
+    "output": {
+      "path": "/Users/example/Music/Signals & Sorcery Exports/Example Song 2026-10-10 1412/Example Song - Master (Streaming -14 LUFS, 24-bit).wav",
+      "integratedLufs": -14,
+      "lra": 6.2,
+      "truePeakDbtp": -1,
+      "samplePeakDbfs": -1.4,
+      "plrDb": 9.1,
+      "durationS": 32,
+      "sampleRate": 48000,
+      "channels": 2,
+      "bitDepth": 24,
+      "sampleFormat": "pcm"
+    },
+    "applied": {
+      "targetLufs": -14,
+      "ceilingDbtp": -1,
+      "preGainDb": 3.4,
+      "trimDb": 0,
+      "maxGainReductionDb": 1.6,
+      "meanGainReductionDb": 0.3,
+      "limitingTimePct": 4.2,
+      "iterations": 2,
+      "oversampling": 4,
+      "dither": "tpdf",
+      "seed": 1,
+      "releaseMode": "auto",
+      "releaseMs": 120,
+      "lookaheadMs": 2
+    },
+    "warnings": [],
+    "preset": "Streaming",
+    "resampled": null
+  },
+  "nullTest": {
+    "frames": 1536000,
+    "residualPeakDbfs": -98.4,
+    "residualRelativeDb": -121.7,
+    "mixPeakDbfs": -0.9,
+    "pass": true,
+    "thresholdDb": -60,
+    "mismatches": []
+  },
+  "monoContent": false,
+  "buses": [
+    {
+      "busKey": "scene-uuid|drums",
+      "fx": [
+        {
+          "name": "Compressor",
+          "pluginId": "example.vst3.compressor",
+          "enabled": true,
+          "version": "1.2.0"
+        }
+      ]
+    }
+  ],
+  "abletonBundle": null,
+  "staleStemsRendered": 0,
+  "warnings": []
+}

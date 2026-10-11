@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://signalsandsorcery.com/contract/arrangement-export/1.1.0/schema.json",
-  "title": "Signals & Sorcery arrangement export 1.1.0",
+  "$id": "https://signalsandsorcery.com/contract/arrangement-export/v1/schema.json",
+  "title": "Signals & Sorcery arrangement export 1.x (latest: 1.2.0)",
   "description": "The export.json written beside an arrangement export's audio. Semantics: SPEC.md. Readers ignore properties they don't know, accept a higher minor version and refuse an unknown major.",
   "type": "object",
   "required": [
@@ -50,6 +50,425 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$",
       "description": "SPEC.md \"Change detection\"."
+    },
+    "scoreHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SPEC.md \"Change detection\"; present with score."
+    },
+    "score": {
+      "type": "object",
+      "description": "The resolved score (SPEC.md \"Score\"): the timing maps, the bar grid, the sections and every layer as it plays.",
+      "required": [
+        "v",
+        "tempoMap",
+        "meterMap",
+        "bars",
+        "sections",
+        "layers"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "noteFields": {
+          "const": [
+            "frame",
+            "pitch",
+            "velocity",
+            "durationFrames"
+          ],
+          "description": "Present when the score includes notes: the order of a note tuple."
+        },
+        "tempoMap": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "bar",
+              "beat",
+              "frame",
+              "bpm"
+            ],
+            "properties": {
+              "bar": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "beat": {
+                "type": "number",
+                "minimum": 0
+              },
+              "frame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "bpm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          }
+        },
+        "meterMap": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "bar",
+              "beat",
+              "frame",
+              "numerator",
+              "denominator"
+            ],
+            "properties": {
+              "bar": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "beat": {
+                "type": "number",
+                "minimum": 0
+              },
+              "frame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "numerator": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "denominator": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "bars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "index",
+              "startFrame",
+              "lengthFrames"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "startFrame": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lengthFrames": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "instanceId",
+              "sourceSceneId",
+              "firstBar",
+              "lengthBars"
+            ],
+            "properties": {
+              "instanceId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "= arrangement.instances[].instanceId."
+              },
+              "sourceSceneId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "firstBar": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "lengthBars": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "role": {
+                "type": "string",
+                "description": "The section's role in the song form; absent until the arrangement carries one."
+              }
+            }
+          }
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "layerId",
+              "name",
+              "role",
+              "bucket",
+              "spans",
+              "treatments"
+            ],
+            "properties": {
+              "layerId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The catalog track id (= files[].layerIds)."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bucket": {
+                "enum": [
+                  "drums",
+                  "bass",
+                  "harmony",
+                  "top",
+                  null
+                ]
+              },
+              "drumClass": {
+                "enum": [
+                  "kick",
+                  "snare",
+                  "hat",
+                  "perc",
+                  "cymbal",
+                  "unknown",
+                  "kit"
+                ]
+              },
+              "drumMap": {
+                "type": "object",
+                "propertyNames": {
+                  "pattern": "^[0-9]{1,3}$"
+                },
+                "additionalProperties": {
+                  "enum": [
+                    "kick",
+                    "snare",
+                    "hat",
+                    "perc",
+                    "cymbal",
+                    "unknown"
+                  ]
+                }
+              },
+              "silent": {
+                "const": true
+              },
+              "spans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "section",
+                    "startBar",
+                    "endBar",
+                    "startFrame",
+                    "endFrame",
+                    "gainDb",
+                    "gainPoints"
+                  ],
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "startBar": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "endBar": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "startFrame": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "endFrame": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "continues": {
+                      "const": true
+                    },
+                    "gainDb": {
+                      "type": "number"
+                    },
+                    "gainPoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "frame",
+                          "db"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "db": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "fadeIn": {
+                      "type": "object",
+                      "required": [
+                        "frames",
+                        "curve"
+                      ],
+                      "properties": {
+                        "frames": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "curve": {
+                          "type": "string",
+                          "description": "SPEC.md \"Fades\": equalPower (default; also any unknown name), linear, exponential, sCurve."
+                        }
+                      }
+                    },
+                    "fadeOut": {
+                      "type": "object",
+                      "required": [
+                        "frames",
+                        "curve"
+                      ],
+                      "properties": {
+                        "frames": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "curve": {
+                          "type": "string",
+                          "description": "SPEC.md \"Fades\": equalPower (default; also any unknown name), linear, exponential, sCurve."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "treatments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "section",
+                    "type",
+                    "bar",
+                    "bars",
+                    "mode",
+                    "startFrame",
+                    "endFrame",
+                    "params",
+                    "gainDb"
+                  ],
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "bar": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "bars": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "mode": {
+                      "enum": [
+                        "replace",
+                        "add"
+                      ]
+                    },
+                    "startFrame": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "endFrame": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "params": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      }
+                    },
+                    "gainDb": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "notes": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 127
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 127
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  ],
+                  "minItems": 4,
+                  "maxItems": 4,
+                  "description": "[frame, pitch, velocity, durationFrames] (noteFields)."
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "schema": {
       "const": "sas-arrangement-export/1"
@@ -306,6 +725,14 @@
         "pathFree": {
           "type": "boolean",
           "description": "Absolute paths were left out (SPEC.md \"Privacy\")."
+        },
+        "score": {
+          "type": "boolean",
+          "description": "The resolved `score` was asked for (SPEC.md \"Score\"). Absent = false."
+        },
+        "scoreNotes": {
+          "type": "boolean",
+          "description": "The score includes the notes. Absent = false."
         }
       }
     },
