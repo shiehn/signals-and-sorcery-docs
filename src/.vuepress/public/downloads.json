@@ -1,9 +1,19 @@
 {
   "latest": {
-    "version": "5.0.0",
-    "date": "2026-10-09T16:17:30.860Z"
+    "version": "5.1.0",
+    "date": "2026-10-17T01:39:05.245Z"
   },
   "versions": [
+    {
+      "version": "5.1.0",
+      "date": "2026-10-17T01:39:05.247Z",
+      "downloads": {
+        "mac": {
+          "arm64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-5_1_0-arm64.dmg"
+        }
+      },
+      "changelog": "Version 5.1.0 release"
+    },
     {
       "version": "5.0.0",
       "date": "2026-10-09T16:17:30.860Z",
@@ -93,25 +103,15 @@
         }
       },
       "changelog": "Version 3.18.0 release"
-    },
-    {
-      "version": "3.17.0",
-      "date": "2026-07-27T04:36:17.366Z",
-      "downloads": {
-        "mac": {
-          "arm64": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_17_0-arm64.dmg"
-        }
-      },
-      "changelog": "Version 3.17.0 release"
     }
   ],
   "platforms": {
     "mac": {
       "arm64": {
-        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-5_0_0-arm64.dmg",
-        "version": "5.0.0",
-        "size": "852.9 MB",
-        "date": "2026-10-09T16:17:30.860Z"
+        "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-5_1_0-arm64.dmg",
+        "version": "5.1.0",
+        "size": "852.3 MB",
+        "date": "2026-10-17T01:39:05.247Z"
       },
       "x64": {
         "url": "https://storage.googleapis.com/docs-assets/signals-and-sorcery-3_14_0-x64.dmg",
