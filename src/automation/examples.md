@@ -127,6 +127,10 @@ sas export_audio \
 ```
 
 Path tilde is expanded; `.wav` is auto-appended if missing.
+`--scene-name` takes the scene's name as the app shows it, or its id, and
+matches only this project's scenes; leave it out to export the active scene.
+A name that matches no scene fails with `scene_not_found`, and
+`changes.availableScenes` lists the project's scenes.
 
 To export **one track** on its own, use `export_track_audio`. It renders only
 that track, from its own scene (not necessarily the active one), at that

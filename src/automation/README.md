@@ -105,8 +105,8 @@ CLI and the MCP server wrap.
   (older tools: a `suggestion`) with the reason and the fix, and where it
   matters a `retryable` flag that says whether the same call is worth making
   again. A
-  busy moment, such as Play while tracks are being frozen, is retryable; a
-  lost race for the audio output is not. See
+  busy moment, such as Play while tracks are being frozen or audio is
+  rendering, is retryable; a lost race for the audio output is not. See
   [When a tool fails](./for-agents.md#when-a-tool-fails).
 - **[Async-by-default execution](./status-and-jobs.md)**: every
   state-mutating tool returns a `jobId` immediately and finishes in the

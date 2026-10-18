@@ -615,7 +615,7 @@ interface ExportTrackAudioResult {
   path: string;       // a WAV in the app's temporary folder
   bpm: number;
   durationMs: number;
-  fromCopyFastPath?: boolean;
+  fromCopyFastPath?: boolean; // deprecated: always undefined
 }
 ```
 
@@ -1632,6 +1632,26 @@ Audition an audio file without creating a track. A new `previewSample` call repl
 previewSample(filePath: string): Promise<void>
 stopPreview(): Promise<void>
 ```
+
+While the composition is playing, the preview starts on the next bar line, so it
+drops in on the beat. `previewSample` resolves as soon as that start is armed, and
+`stopPreview` (or another `previewSample`) cancels a start that is still waiting.
+
+While the audio engine is rendering (a freeze, an export, a rendered preview or a
+stem), nothing can start playing, and that includes a sample preview:
+
+- A preview that starts at once throws a `PluginError` with code `ENGINE_ERROR` and
+  `details: { reason: 'RENDER_IN_PROGRESS', retryable: true }`. Nothing started:
+  preview it again once the render has finished.
+- A preview waiting for the next bar has already resolved, so it can't throw. If the
+  engine refuses its start, the app shows the user a short notice instead of failing
+  silently.
+
+While the audio engine is briefly busy (loading a plugin, for example), a preview that
+starts at once throws `ENGINE_ERROR` with `retryable: true` as well, and
+`details.reason` holds the engine's busy code.
+
+**Errors:** `FILE_NOT_FOUND` (no `filePath`), `ENGINE_ERROR`
 
 ---
 

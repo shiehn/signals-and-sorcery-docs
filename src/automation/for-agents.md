@@ -369,7 +369,8 @@ How they behave:
   composition and the arrangement never play at the same time: starting one
   stops the other. If a deck Play started after this Play was asked for, the
   deck keeps the output and Play fails with `PLAY_SUPERSEDED`; while tracks are
-  being frozen it fails with `FREEZE_IN_PROGRESS` (see
+  being frozen it fails with `FREEZE_IN_PROGRESS`, and while audio is rendering
+  with remediation `render_in_progress` (see
   [When a tool fails](#when-a-tool-fails)).
 - **Mute and solo are per view.** In the arrangement, only the arranger's
   own M and S (per track, for the whole arrangement) decide what plays and
@@ -651,6 +652,15 @@ Example:
 Agents read the `suggestion`, adjust, and retry. No guesswork, no
 round-trips to `get_status`.
 
+**Scenes resolve within the project.** A tool that takes a scene accepts the
+name the app shows (`"Verse"`) or the scene's id, and matches only this
+project's scenes. That includes `export_audio` (`sceneName`),
+`sas_render_preview`, `sas_audition` and `dsl_generate_fill` (`sceneId`), and
+`deck_load_scene` (`scene`). A name that matches several scenes returns a
+clarification to pick from; a name that matches none fails with
+`scene_not_found`, and `changes.availableScenes` lists the project's scenes.
+`scene_get_all` and `sas inspect` list the same scenes.
+
 **Some calls wait for the composition to stop.** Opening the editor of an
 instrument on a frozen track while the composition plays
 (`instrument_open_editor`) returns `deferred_until_stop` with remediation
@@ -670,6 +680,16 @@ scene, from its first track to its last), Play is refused: `dsl_play`,
 `FREEZE_IN_PROGRESS`, and the remediation has `retryable: true`. Nothing was
 started or changed. Wait for the freeze to finish, then make the same call
 again; the message says how far the freeze has got.
+
+**Play waits while audio renders.** While the audio engine is rendering (a
+freeze, an export, a rendered preview or a stem), nothing can start playing:
+`dsl_play`, `deck_play`, `play_scene`, `arrangement_play`, `audio_test_tone`
+and `sample_preview` fail with remediation category `render_in_progress` and
+`retryable: true`. Nothing was started or changed. The engine is busy, not
+broken: wait a few seconds, then make the same call again. Check
+`remediation.category`, not `error`, which differs from tool to tool. A
+`sample_preview` that waits for the next bar has already returned when its
+start is refused, so the app shows the user a notice instead.
 
 **One output: the newest Play wins.** The composition's decks and the
 arrangement share one output, so when two Plays race, the later one keeps it:
