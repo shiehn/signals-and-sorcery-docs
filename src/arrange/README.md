@@ -86,7 +86,7 @@ section's scene for editing reopens the composer.
 
 From left to right:
 
-- **Arrangement** and **Cloud** tabs (see [The Cloud tab](#the-cloud-tab));
+- **Arrangement**, **Cloud** and **Lyrics** tabs (see [The Cloud tab](#the-cloud-tab) and [Lyrics](#lyrics));
 - **Arrange** / **Arranging**: switches arrange mode on and off;
 - **Play** / **Stop**, and the position;
 - **⧉** and what is on the clipboard, after you copy something;
@@ -181,7 +181,7 @@ section** (see [Fades](#fades-gain-and-the-wave-editor)), **Copy section name**,
 ### Takes
 
 Some scenes hold **takes**: layers that are alternatives of one part, of which only
-one plays at a time. The Synth V panel makes a set of takes when your lyrics have
+one plays at a time. The Synth V panel makes a set of takes when a scene sings
 several verses, one take per verse on the same melody (see
 [Lyrics per verse](/api-server/#lyrics-per-verse)); drum fills grouped as alternatives,
 and any layers an agent groups with `track_alternatives`, work the same way.
@@ -200,6 +200,24 @@ of its own position.
 
 If an arrangement had a set of drum fills, every section used to play all of them;
 now each section plays one fill, in turn.
+
+### Lyrics
+
+The **Lyrics** tab in the arranger header holds the song's words in song order, one
+card per section. Each card shows the section's name, its role in the song (verse,
+chorus, bridge; type your own) and where its words stand: **empty**, **written**,
+**take stale** or **rendered**. Click a card's name to select the section on the
+timeline.
+
+- **Write the words** in a card, one line per sung phrase, and lock a line so a rewrite keeps it.
+- **Rewrite one section:** type a note ("darker", "mention the river") and press **Rewrite this section** (when no song writer is available, the button reads **Save note** and keeps the note for the next write).
+- **Repeat a section's words:** **Repeat** followed by an earlier section's name gives this section the words of an earlier placement of its scene, for a chorus that comes back. **Own words** gives it words of its own again.
+- **Write the whole song:** describe it in the box at the top (*What is the song about?*) and press **✍ Write the song's lyrics**. Every vocal section is written at once, in order, from the description and the [lyric context](/api-server/#lyric-context); a chorus that comes back keeps its words.
+- **Sections without a voice** are greyed and say **No vocals here**; **+ add vocals** opens the section's scene in Compose, where its Synth V panel adds one.
+- **After the words change**, the tab counts the scenes that need **Re-render**; re-render each one in its Synth V panel to hear the new words.
+
+The Synth V panel of a placed scene shows and edits the same words, one verse tab per
+placement (see [Song lyrics](/api-server/#song-lyrics)).
 
 ---
 
@@ -404,9 +422,9 @@ Fades, gain envelopes and settings belong to the section, so linked copies share
 When you compose scene by scene, the chorus can end up louder than the verse. **Match
 scene levels**, in the arranger header, evens them out in one click:
 
-- It measures every scene from the layer stems, then gives each scene **one level** (a scene gain, on top of your faders and lane gains) so every scene plays at the **same perceived loudness**, exactly. The balance between the tracks inside a scene is never touched: you mixed that already.
+- It measures every scene from the layer stems, then sets each scene's **level** (the same level as the fader on its scene card, heard wherever the scene plays, on top of your track faders and lane gains) so every scene plays at the **same perceived loudness**, exactly. The balance between the tracks inside a scene is never touched: you mixed that already.
 - It makes them as loud as they can all go: no scene is raised more than 6 dB or lowered more than 12 dB, and no scene's peaks go above −1 dBTP (or above the loudest peak your song already has, if that is higher). Nothing plays hotter than it does today.
-- The whole change is **one undo step**. The result appears next to the button, for example **Matched overall loudness: 6 scenes at −14.2 LUFS**, with **Details** and **Undo**. Running it again replaces the previous match; it never adds up.
+- It is not an undo step: like moving a fader, it replaces each matched scene's level, including one you set by hand. The result appears next to the button, for example **Matched overall loudness: 6 scenes at −14.2 LUFS**, with **Details**. Running it again replaces the previous match; it never adds up.
 - Each scene's level shows on its sections' headers, such as **+2.0 dB**. Hover it to see how it was set.
 - Any out-of-date layer stems render first, and rendering waits for silence: if the song is playing, the button asks you to stop playback and press it again.
 
@@ -797,7 +815,7 @@ Share links, so anyone can listen to your latest synced mix, are on the way.
 | Nudge gain | ⌥ + mouse wheel over a cell |
 | Edit a placed effect | Click it for its settings; drag it to move it; Delete removes the selected one |
 | Zoom | ⌘ + mouse wheel |
-| Play / stop | Space, or the Play button |
+| Play / stop | Space (it plays the row you last clicked in: here, the arrangement; a quick double Space plays the selected scene instead), or the Play button |
 | Jump | Click the ruler |
 | Loop on or off | L, or **⟲ Loop** in the corner |
 | Set a loop | Drag across the ruler, or drag the loop markers |
