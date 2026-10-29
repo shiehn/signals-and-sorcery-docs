@@ -31,7 +31,7 @@
       }
     ]
   },
-  "contractVersion": "0.11.0",
+  "contractVersion": "0.14.0",
   "engine": {
     "sha256": "ed9f6f25068608efd412958da4dfc19328ca3511251fa6d5f9c42baf230e32f8"
   },

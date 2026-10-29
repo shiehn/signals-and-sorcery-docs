@@ -9,13 +9,13 @@ description: The published, versioned format of a Signals & Sorcery arrangement 
 When you export a song from [Arrange mode](/arrange/#exporting-your-song), Signals & Sorcery
 writes a folder of audio files plus one JSON file, `<name> - export.json`, that describes them:
 the song's tempo, its bars and sections down to the audio frame, which layer plays when (and,
-if you ask for them, the notes each layer plays), and every file. That JSON is a **published,
+if you ask for them, the notes each layer plays), the words sung in each section, and every file. That JSON is a **published,
 versioned format**. A visual tool, a game engine or an analysis script can read an export and
 cut, animate or analyse to the bar, without opening the project file and without knowing how
 the app works inside.
 
-- **Current version:** 1.2.0
-- **JSON Schemas:** [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
+- **Current version:** 1.4.0
+- **JSON Schemas:** [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
 - **Changelog:** [what changed, version by version](/contract/arrangement-export/changelog.html)
 - **Source:** [github.com/shiehn/sas-arrangement-export-contract](https://github.com/shiehn/sas-arrangement-export-contract), with the specification, the schemas and the [fixtures](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures)
 - **Reader:** [the reference reader](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader) (TypeScript) and its `sas-export` command, which checks an export against its version's schema and recomputes its `timingHash` and `scoreHash` (see [Validating](#validating))
@@ -39,7 +39,7 @@ were made. This document says what every part of that JSON means, so a consumer 
 tool, a game engine, an analysis script) can read an export without opening the project file
 that made it.
 
-- The JSON Schemas: [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
+- The JSON Schemas: [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
 - What changed and when: [the changelog](/contract/arrangement-export/changelog.html).
 - Fixtures that prove each rule below through Signals & Sorcery's own arrangement code:
   [`fixtures/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures).
@@ -52,12 +52,12 @@ Everything here is stated from the code that writes and plays the export, not fr
 
 - `schema` is always `"sas-arrangement-export/1"`. It names the format family.
 - `exportVersion` is the format's own [semantic version](https://semver.org). A file without
-  it is `1.0.0`; files written to this document carry `1.2.0`.
+  it is `1.0.0`; files written to this document carry `1.4.0`.
   - A **patch** clarifies wording only.
   - A **minor** adds optional fields; a reader for an older minor keeps working.
   - A **major** removes a field or changes a meaning. It is announced in the changelog first.
 - `$schema` (1.1) is the URL of the exact schema version the file was written against, e.g.
-  [`https://signalsandsorcery.com/contract/arrangement-export/1.2.0/schema.json`](/contract/arrangement-export/1.2.0/schema.json).
+  [`https://signalsandsorcery.com/contract/arrangement-export/1.4.0/schema.json`](/contract/arrangement-export/1.4.0/schema.json).
   signalsandsorcery.com serves every version's schema at its URL;
   [`https://signalsandsorcery.com/contract/arrangement-export/v1/schema.json`](/contract/arrangement-export/v1/schema.json) is the latest 1.x.
   The same files ship with the arrangement contract package, in `export/schema/`.
@@ -103,6 +103,9 @@ quarter note. For a position `beat` quarter notes after the song start:
 ```
 frame(beat) = floor(beat × 60 × sampleRate / bpm + 0.5)
 ```
+
+The song starts at its first heard beat, frame 0: the first section's downbeat, or, when the
+song has [pickup bars](#pickup-bars) (1.3), the first of them.
 
 A section's `startFrame` is `frame` of its first downbeat, and its `lengthFrames` is
 `frame(its end) − frame(its start)`. Sections are therefore contiguous. Rounding is done on the
@@ -170,6 +173,35 @@ instance of a scene in the arrangement.
   The editor shows an unlabelled section as "Chorus (2)"; the export keeps the form without
   parentheses.
 
+## Pickup bars
+
+`arrangement.pickup` (1.3) is there when the song starts before its first section's downbeat:
+`bars` pickup bars that lead in to it, "start the song on bar 7 of the verse". It is absent
+when the song has none, and the rest of this document reads as it always did.
+
+```json
+"pickup": { "bars": 2, "startFrame": 0, "lengthFrames": 192000, "instanceId": "<instances[0].instanceId>" }
+```
+
+- The pickup bars come first: frame 0 to `lengthFrames`. `instances[0].startFrame` is
+  `lengthFrames`, and every section after it starts that much later. The audio files start
+  with them too: no leading silence.
+- They are in the first section's meter, and they are song bars **0, −1, −2 …** counting back
+  from its downbeat, which stays bar 1. Bar numbers from 1 on don't move when pickup bars are
+  added or removed.
+- They play the first section's own loop, up to its downbeat: each layer that sounds at that
+  downbeat starts at frame 0, `bars` bars earlier in its loop, and carries straight on into the
+  section, so two pickup bars before an 8-bar scene play its bars 7 and 8. A layer silent at the
+  downbeat is silent in the pickup. Its fade-in, if it has one, is at frame 0, no longer than
+  the pickup. No effects are placed there.
+- `instanceId` names the section they lead in to, always the first. They belong to the song, not
+  to that section: whichever section comes first fills them.
+- In the arrangement payload a pickup run's `section` is `"pickup"`; in the score, see
+  [Pickup bars in the score](#pickup-bars-in-the-score).
+
+Proof: [`fixtures/semantics/pickup-bars-lead-in.json`](/contract/arrangement-export/fixtures/semantics/pickup-bars-lead-in.json)
+(two pickup bars before an 8-bar chorus).
+
 ---
 
 ## Layers
@@ -202,6 +234,11 @@ A **run** is a layer's continuous playing bars. A run **carries on across a sect
 when the layer plays the last bar of one section and the first bar of the next: no restart, no
 fade, no gap. Fades and a guest's loop position follow runs, not sections.
 
+Since arrangement release 0.12.0 a run can also start or stop **on a beat inside a bar** (the
+meter's beat: eighths in 6/8). It still names the bars it touches; where inside them it starts
+and stops is in its frames (a score span's `startFrame` / `endFrame`). A run that stops before
+a section's last beat, or starts after its first, doesn't carry on across that boundary.
+
 ### Loop position
 
 Each layer loops its own scene's loop (`loopBars` bars in its home meter). At every downbeat a
@@ -227,12 +264,24 @@ A lane's **`splits`** are bar numbers where the editor starts a new clip: select
 pieces of a run. **They have no effect on what plays**: no restart, no fade, no gap.
 Proof: [`fixtures/semantics/splits-have-no-audio-effect.json`](/contract/arrangement-export/fixtures/semantics/splits-have-no-audio-effect.json).
 
+Since arrangement release 0.13.0 a clip can have **its own fades and level** (below). A fade, or a
+change of level, at a split makes that split a real edge: the run is cut there and its loop
+position carries on. A split alone still changes nothing.
+
 ### Fades
 
 - Fades belong to **runs**. A run's fade-in is the `fadeInBeats` of the lane in the section
   where the run **starts**. Its fade-out is the `fadeOutBeats` of the lane in the section where
   it **ends**. There is no fade where a run crosses a section boundary.
 - Lengths are in quarter notes, from the run's start and to its end, never longer than the run.
+- **Each clip's own fades** (arrangement release 0.13.0): a lane's `clips` list holds entries at
+  clip edges (a 1-based `bar` and `atBeats` quarter notes after its downbeat; the section's end is
+  `bar` = its length + 1 at 0). An entry's `fadeInBeats` / `fadeInCurve` are the fade-in of the
+  clip that starts there; its `fadeOutBeats` / `fadeOutCurve` the fade-out of the clip that ends
+  there. What an entry doesn't set falls back to the lane's fades at a run's own start and end,
+  and to no fade at a clip edge inside the audio. A fade at a clip edge inside the audio, or at a
+  section boundary a run plays through, cuts the run there (its loop position carries on). So
+  every pasted copy of a clip keeps its own fades: changing one changes no other.
 - Curves (`fadeInCurve`, `fadeOutCurve`), as gain at t ∈ [0, 1] of the fade:
   - `"equalPower"` (the default, and what an unknown name plays): sin(tπ/2) in, cos(tπ/2) out
   - `"linear"`: t in, 1 − t out
@@ -244,6 +293,11 @@ Proof: [`fixtures/semantics/fades-follow-runs-across-sections.json`](/contract/a
 ### Gain
 
 - A lane's **`gainDb`** sets the layer's level in that section.
+- **Each clip's own level** (arrangement release 0.13.0): a `clips` entry's `gainDb` is the level
+  of the clip starting there, instead of the lane's. It holds on through the continuous audio
+  after it, so a split hands both halves the level it had; a run's own start begins at the lane's
+  `gainDb`. Where two clips inside the audio play at different levels the run is cut there. A
+  placed effect plays at the level of the clip its bar starts in.
 - A scene's gain (the arrangement's `sceneGains`, e.g. from "Match scene levels", which matches
   the scenes' overall loudness by default, or their kicks) adds to every lane of every layer
   whose **home** is that scene, wherever it plays.
@@ -299,7 +353,9 @@ Each of these is a plausible reading of the arrangement data, and each is wrong:
 | A phase segment restarts the loop at 0, or adds to `phaseOffsetBeats`. | It **sets** the position to its `offsetBeats` at `fromBar`, replacing the anchor and `phaseOffsetBeats`. | [`phase-segment-replaces-anchor`](/contract/arrangement-export/fixtures/semantics/phase-segment-replaces-anchor.json) |
 | Fades apply per section. | They apply per **run**, and runs carry on across section boundaries. | [`fades-follow-runs-across-sections`](/contract/arrangement-export/fixtures/semantics/fades-follow-runs-across-sections.json) |
 | `splits` restart or fade the loop. | They change nothing that plays. | [`splits-have-no-audio-effect`](/contract/arrangement-export/fixtures/semantics/splits-have-no-audio-effect.json) |
+| A lane's fades are every clip's fades (0.13.0). | Only where a clip has none of its own: a `clips` entry gives one clip its own fades and level, and changes no other. | `fixtures/literal/clip-fades`, `fixtures/literal/clip-gains` |
 | Every take (or every fill) of a scene plays in every section. | One unit of an alternatives group plays per section, by position or picked; the others rest. | [`alternatives-play-one-take-per-section`](/contract/arrangement-export/fixtures/semantics/alternatives-play-one-take-per-section.json) |
+| A section without `lyrics` is instrumental, or a scene's words are the same wherever it plays (1.4). | When the song has words, **every** section has `lyrics`, and an instrumental one has `"lines": []`. Words belong to each section, so verse 2 can differ from verse 1 on the same scene. | [`score-lyrics-per-section`](/contract/arrangement-export/fixtures/semantics/score-lyrics-per-section.json) |
 
 ---
 
@@ -339,14 +395,63 @@ and every frame follows [Timing](#timing).
 - `meterMap[]` has an entry at bar 1 and wherever a section's meter differs from the previous
   section's. Each scene has its own meter, so the meter can change today.
 - `bars[]` is every bar of the song, contiguous. The last ends at `arrangement.endFrame`.
+  With pickup bars (1.3) the song starts with them: the maps' first entries and the first bars
+  are at song bar `1 − pickup.bars` (0, −1 …), frame 0.
+
+### Pickup bars in the score
+
+`score.pickup` (1.3), when the song has [pickup bars](#pickup-bars): `firstBar` (1 − `bars`),
+`bars`, `instanceId` (the section they lead in to) and `sourceSceneId` (whose loop they play).
+They are not a section: `sections[]` still lists one entry per instance, from bar 1. A layer
+that plays there has a span with `section: "pickup"` from `firstBar` to 1, and its span in the
+first section carries it on (`continues: true`).
 
 ### Sections in the score
 
 `sections[]` lists the sections in playing order, one per `arrangement.instances[]`:
 `firstBar`, `lengthBars`, and `sourceSceneId`, the scene the section plays (sections with the
-same scene play the same loops). `role`, the section's part in the song form (intro, verse,
-build, drop, peak, break, outro), is reserved: the arrangement doesn't carry one yet, so it is
-absent.
+same scene play the same loops).
+
+- `role` (1.4) is the section's part in the song form: `verse`, `chorus`, `bridge`, `intro`,
+  `outro` and so on. Signals & Sorcery reads it from the section's label when it writes the
+  song's words, and the user can change it. It is free text, trimmed and lower-case; treat a
+  value you don't know as no role. It is absent when the song gives none, which includes every
+  file before 1.4.
+- `lyrics` (1.4) holds the words sung in the section: see [Lyrics](#lyrics).
+
+### Lyrics
+
+`score.sections[].lyrics` (1.4) holds the song's words, placed where they are sung:
+
+```json
+"sections": [
+  { "instanceId": "…:i1", "sourceSceneId": "sc_a", "firstBar": 1, "lengthBars": 4, "role": "verse",
+    "lyrics": { "lines": ["Lights come on along the river", "Every window holds a name"] } },
+  { "instanceId": "…:i2", "sourceSceneId": "sc_b", "firstBar": 5, "lengthBars": 8, "role": "chorus",
+    "lyrics": { "lines": ["So let it rise, let it rise", "Over the roofs and the wires", "Let it rise"] } },
+  { "instanceId": "…:i5", "sourceSceneId": "sc_c", "firstBar": 25, "lengthBars": 4, "role": "bridge",
+    "lyrics": { "lines": [] } }
+]
+```
+
+- The words belong to the **section**, not to the scene. A scene that plays twice (verse 1 and
+  verse 2) can sing different words in each place.
+- `lines` is one line per sung phrase, in the order they are sung, as the user or the writer
+  wrote them.
+- A section that repeats another's words, such as a chorus, carries those words in full. You
+  never follow a reference.
+- **When the song has words, every section has `lyrics`.** A section where nothing is sung has
+  `"lines": []`.
+- **When the song has no words, no section has `lyrics`.** So a missing `lyrics` means "this
+  song has no words in the export", never "an instrumental section".
+- The words don't say when each syllable is sung within a section; that may be added later.
+  Nor do they name the layer that sings them: look for the layers whose `role` is `vocals`.
+- The words are not timing and not what plays: `timingHash`, `arrangementHash` and `scoreHash`
+  leave them out. `lyricsHash` covers them (see [Change detection](#change-detection)).
+- Like the rest of the score, the words are there only when the export wrote a score
+  (`options.score`).
+
+Proof: [`fixtures/semantics/score-lyrics-per-section.json`](/contract/arrangement-export/fixtures/semantics/score-lyrics-per-section.json).
 
 ### Layers in the score
 
@@ -383,7 +488,9 @@ silenced.
 segments, splits, takes and mute are already resolved: a span is sound.
 
 - `startBar` / `startFrame` start it, and `endBar` / `endFrame` are the first bar and frame
-  after it.
+  after it. `startBar` is the bar it starts in and `endBar` the bar after the one it ends in: a
+  span edited at beat resolution (0.12.0) can start or stop inside those bars, and its frames
+  say exactly where.
 - `continues: true`: the span carries on the previous section's span, the same
   [run](#runs): no restart, no fade.
 - `gainDb` is the lane's gain plus its scene's gain. `gainPoints` is its envelope in frames,
@@ -460,14 +567,15 @@ instruments or a mix change. That's what `files[].sha256` is for.
 
 ## Change detection
 
-Three hashes tell a consumer in one comparison what changed between two exports of a song:
+These hashes tell a consumer in one comparison what changed between two exports of a song:
 
 | Hash | Covers | When only this one changed |
 |---|---|---|
-| `timingHash` (1.1) | tempo, sample rate, the last bar's end, each section's id, label, meter, bar count and frames | none (it changing means: re-time everything) |
+| `timingHash` (1.1) | tempo, sample rate, the last bar's end, each section's id, label, meter, bar count and frames, and the pickup bars (1.3) | none (it changing means: re-time everything) |
 | `arrangementHash` (1.1) | `timingHash`, plus what plays: every layer's runs (bars, loop position, level, gain envelope, fades), the placed effects that sound, and the silenced layers | refresh what reacts to layers; the timing is the same |
 | `files[].sha256` | each audio file, byte for byte | swap the audio; nothing about the arrangement moved |
 | `scoreHash` (1.2, with `score`) | `timingHash`, plus the score: the sections' scenes and roles, and every layer's role, bucket, drum class, silence, spans, effects and notes (names aside) | refresh what follows the layers or notes; the timing is the same |
+| `lyricsHash` (1.4, when the score has [lyrics](#lyrics)) | each section's words, by section id | refresh the words (captions, a lyric sheet); nothing else moved |
 
 Each hash is the SHA-256, in lower-case hex, of the UTF-8 bytes of the **canonical JSON** of a
 payload. Canonical JSON has object keys sorted (by code unit) at every level, no whitespace,
@@ -488,6 +596,10 @@ Timing payload, version 1:
   ]
 }
 ```
+
+With [pickup bars](#pickup-bars) (1.3) the timing payload also has
+`"pickup": { "bars": 2, "meter": "4/4", "lengthFrames": 192000 }`. Without them it has no
+`pickup` key, so every earlier `timingHash` stands.
 
 Arrangement payload, version 1:
 
@@ -518,6 +630,10 @@ Arrangement payload, version 1:
   of a section where the layer plays: `enterBar` is its first bar, `exitBar` the first bar it
   doesn't play (`null`: to the section's end), and `offsetBeats` the loop position at its first
   downbeat.
+- A run that starts or stops inside a bar (0.12.0) also has `enterInsetBeats` (quarter notes
+  after `enterBar`'s downbeat where it starts) and `exitInsetBeats` (quarter notes before its
+  end where it stops). They are absent on every other run, so every earlier `arrangementHash`
+  stands, and a trim by a beat is a change to what plays.
 - `gainDb` includes the scene's gain. `gainPoints` is the envelope over the run in
   section-relative quarter notes, dB on top of `gainDb`.
 - `silent` lists muted or not-soloed layers; their runs are listed as if audible.
@@ -544,6 +660,21 @@ Score payload, version 1 (1.2):
 - The tempo map, meter map and bars derive from the timing, which `timingHash` covers.
 - `notes` is `null` when the export left notes out. **Compare `scoreHash` only between exports
   made with the same `options.scoreNotes`.**
+- A section's `role` is `null` when it has none. A 1.4 file that fills it changes `scoreHash`;
+  a file with no roles hashes exactly as before.
+
+Lyrics payload, version 1 (1.4), present only when the score has [lyrics](#lyrics):
+
+```json
+{
+  "v": 1,
+  "sections": [{ "id": "<instanceId>", "lines": ["…", "…"] }, { "id": "<instanceId>", "lines": [] }]
+}
+```
+
+- Every section of the score, in playing order, with its `lyrics.lines`.
+- It doesn't include the timing. Retiming a song with the same words keeps the `lyricsHash`;
+  `timingHash` tells you the sections moved.
 
 Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures/semantics) carries its payloads and hashes.
 
@@ -595,7 +726,7 @@ The schemas give every field's type and whether it is required.
 
 The reference reader and its `sas-export` command, in [`reader/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader), check a file
 against the schema of its version and recompute the hashes it carries that its content covers
-(`timingHash`, and `scoreHash` with a score):
+(`timingHash`, `scoreHash` with a score, and `lyricsHash` with words):
 
 ```sh
 cd reader && npm install && npm run build

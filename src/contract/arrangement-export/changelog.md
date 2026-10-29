@@ -11,6 +11,47 @@ Releases of Signals & Sorcery's arrangement semantics (`contractVersion`) are li
 format version that was current then, with what they changed in an export's audio or meaning,
 or "nothing".
 
+## 1.4.0
+
+Optional fields only, present only when the song has words or roles, so 1.0–1.3 readers keep
+working on every export.
+
+Added:
+- `score.sections[].lyrics.lines`: the words sung in each section, one line per phrase. When the
+  song has words every section carries them, and an instrumental section has `[]`. A repeated
+  chorus carries its words in full. See [Lyrics](/contract/arrangement-export/#lyrics).
+- `score.sections[].role` is filled: the section's part in the song form (`verse`, `chorus`,
+  `bridge` …), free text, lower-case. It was reserved and always absent before.
+- `lyricsHash`: SHA-256 of the lyrics payload (each section's words by id), present with
+  words. `timingHash`, `arrangementHash` and `scoreHash` leave the words out.
+- The schema for 1.4.0, where `role` must be non-empty; `v1/schema.json` is now 1.4.0.
+
+Changed: nothing for a song without words or roles, hashes included. A file whose sections
+carry a `role` has a different `scoreHash`, since that payload always covered the role.
+
+Arrangement releases while 1.4.0 was current: none yet (0.14.0 still).
+
+## 1.3.0
+
+Optional fields only, present only when a song has pickup bars, so 1.0–1.2 readers keep working
+on every other export.
+
+Added:
+- `arrangement.pickup`: bars before the first section's downbeat that lead in to it, from frame
+  0. See [Pickup bars](/contract/arrangement-export/#pickup-bars).
+- `score.pickup`, and spans in section `"pickup"`. With pickup bars, song bars before 1 (0, −1 …)
+  appear in `score.bars`, `tempoMap` and `meterMap`, and a span's `startBar` can be 0 or below.
+- The timing payload's `pickup` (only with pickup bars; `timingHash` covers it), and pickup runs
+  (section `"pickup"`) in the arrangement payload.
+- The schema for 1.3.0; `v1/schema.json` is now 1.3.0.
+
+Changed: nothing for a song without pickup bars. With them, `instances[0].startFrame` is the
+pickup's length, not 0.
+
+Arrangement releases while 1.3.0 was current:
+- **0.14.0**: songs can start on pickup bars (above). Arrangements without them export exactly as
+  before, hashes included.
+
 ## 1.2.0
 
 Optional fields only, so 1.0 and 1.1 readers keep working.
@@ -31,6 +72,25 @@ Added:
   against.
 
 Changed: nothing. `timingHash` and `arrangementHash` cover exactly what they did.
+
+Arrangement releases while 1.2.0 was current:
+- **0.13.0** (2026-10-24): every clip can have its own fades and level. A fade on one pasted copy
+  of a clip no longer moves the others. The format didn't change: a run that a clip's own fade or
+  level cuts inside a section is simply two runs, butt-joined, each with its own `fadeIn` /
+  `fadeOut` and level, and `arrangementHash` covers them as it covers any run. Arrangements
+  without clip settings export exactly as before, hashes included.
+- **0.12.0** (2026-10-20): audio regions can be trimmed, cut, copied and pasted by the beat (the
+  meter's beat: eighths in 6/8), not only by the bar. The format didn't change. A score span or
+  run that starts or stops inside a bar keeps the bars it touches (`startBar` is the bar it
+  starts in, `endBar` the bar after the one it ends in); its `startFrame` / `endFrame` say
+  exactly where inside them. `arrangementHash` covers that: such a run carries
+  `enterInsetBeats` / `exitInsetBeats` in the arrangement payload. Arrangements without beat
+  edits export exactly as before, hashes included.
+- **0.11.1** (2026-10-18): a layer that jumps to another loop position where one section meets
+  the next (a pasted run, or a phase change on the section's first bar) now plays from that
+  position. It used to keep the earlier position's sample offset, which put its loop seams in
+  the wrong place, and some such arrangements could not be played or exported at all. The
+  format didn't change. The audio of those arrangements changes.
 
 ## 1.1.0
 
@@ -61,8 +121,7 @@ Arrangement releases while 1.1.0 was current:
 - **0.11.0** (2026-10-10): alternatives groups (a vocal reading's takes, a kit's fills) play one
   unit per section, by the section's position or picked; the others rest. A scene's fills,
   which played in every section, now rotate. The format didn't change; `arrangementHash`
-  changes for arrangements with groups, because what plays changed. See
-  [Alternatives (takes)](/contract/arrangement-export/#alternatives-takes).
+  changes for arrangements with groups, because what plays changed. See [Alternatives (takes)](/contract/arrangement-export/#alternatives-takes).
 
 ## 1.0.0 (2026-10-04)
 

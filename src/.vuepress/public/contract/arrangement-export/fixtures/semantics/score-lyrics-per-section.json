@@ -1,0 +1,647 @@
+{
+  "rule": "When the song has words, every section of the score carries the words sung there (lyrics.lines, one line per phrase), and a section the song repeats (a chorus) carries them in full; a section with no words has none ([]). role is the section's part in the song form. The words are not timing and not what plays: timingHash, arrangementHash and scoreHash ignore them; lyricsHash covers them.",
+  "spec": "SPEC.md#lyrics",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr-words",
+    "projectId": "proj-literal",
+    "name": "Arrangement",
+    "instances": {
+      "arr-words:i1": {
+        "id": "arr-words:i1",
+        "orderKey": "a0",
+        "variantId": "arr-words:v1"
+      },
+      "arr-words:i2": {
+        "id": "arr-words:i2",
+        "orderKey": "a1",
+        "variantId": "arr-words:v2"
+      },
+      "arr-words:i3": {
+        "id": "arr-words:i3",
+        "orderKey": "a2",
+        "variantId": "arr-words:v3"
+      },
+      "arr-words:i4": {
+        "id": "arr-words:i4",
+        "orderKey": "a3",
+        "variantId": "arr-words:v4"
+      },
+      "arr-words:i5": {
+        "id": "arr-words:i5",
+        "orderKey": "a4",
+        "variantId": "arr-words:v5"
+      }
+    },
+    "variants": {
+      "arr-words:v1": {
+        "id": "arr-words:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-words:v2": {
+        "id": "arr-words:v2",
+        "sceneId": "sc_b",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-words:v3": {
+        "id": "arr-words:v3",
+        "sceneId": "sc_a",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-words:v4": {
+        "id": "arr-words:v4",
+        "sceneId": "sc_b",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-words:v5": {
+        "id": "arr-words:v5",
+        "sceneId": "sc_c",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      }
+    }
+  },
+  "tracks": {
+    "t_a_kick": {
+      "role": "kicks"
+    },
+    "t_b_lead": {
+      "role": "vocals"
+    }
+  },
+  "sections": {
+    "arr-words:i1": {
+      "role": "verse",
+      "lyrics": [
+        "Lights come on along the river",
+        "Every window holds a name"
+      ]
+    },
+    "arr-words:i2": {
+      "role": "chorus",
+      "lyrics": [
+        "So let it rise, let it rise",
+        "Over the roofs and the wires",
+        "Let it rise"
+      ]
+    },
+    "arr-words:i3": {
+      "role": "verse",
+      "lyrics": [
+        "Morning finds me at the corner",
+        "Counting what the night forgot"
+      ]
+    },
+    "arr-words:i4": {
+      "role": "chorus",
+      "lyrics": [
+        "So let it rise, let it rise",
+        "Over the roofs and the wires",
+        "Let it rise"
+      ]
+    },
+    "arr-words:i5": {
+      "role": "bridge",
+      "lyrics": []
+    }
+  },
+  "expected": {
+    "timingHash": "53281eaaad2331f68c99f0e7a659f15b207032d3cbaee93f469fffc1f82fc934",
+    "score": {
+      "v": 1,
+      "tempoMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "bpm": 120
+        }
+      ],
+      "meterMap": [
+        {
+          "bar": 1,
+          "beat": 0,
+          "frame": 0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        {
+          "bar": 25,
+          "beat": 96,
+          "frame": 2304000,
+          "numerator": 3,
+          "denominator": 4
+        }
+      ],
+      "bars": [
+        {
+          "index": 1,
+          "startFrame": 0,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 2,
+          "startFrame": 96000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 3,
+          "startFrame": 192000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 4,
+          "startFrame": 288000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 5,
+          "startFrame": 384000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 6,
+          "startFrame": 480000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 7,
+          "startFrame": 576000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 8,
+          "startFrame": 672000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 9,
+          "startFrame": 768000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 10,
+          "startFrame": 864000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 11,
+          "startFrame": 960000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 12,
+          "startFrame": 1056000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 13,
+          "startFrame": 1152000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 14,
+          "startFrame": 1248000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 15,
+          "startFrame": 1344000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 16,
+          "startFrame": 1440000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 17,
+          "startFrame": 1536000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 18,
+          "startFrame": 1632000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 19,
+          "startFrame": 1728000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 20,
+          "startFrame": 1824000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 21,
+          "startFrame": 1920000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 22,
+          "startFrame": 2016000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 23,
+          "startFrame": 2112000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 24,
+          "startFrame": 2208000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 25,
+          "startFrame": 2304000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 26,
+          "startFrame": 2376000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 27,
+          "startFrame": 2448000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 28,
+          "startFrame": 2520000,
+          "lengthFrames": 72000
+        }
+      ],
+      "sections": [
+        {
+          "instanceId": "arr-words:i1",
+          "sourceSceneId": "sc_a",
+          "firstBar": 1,
+          "lengthBars": 4,
+          "role": "verse",
+          "lyrics": {
+            "lines": [
+              "Lights come on along the river",
+              "Every window holds a name"
+            ]
+          }
+        },
+        {
+          "instanceId": "arr-words:i2",
+          "sourceSceneId": "sc_b",
+          "firstBar": 5,
+          "lengthBars": 8,
+          "role": "chorus",
+          "lyrics": {
+            "lines": [
+              "So let it rise, let it rise",
+              "Over the roofs and the wires",
+              "Let it rise"
+            ]
+          }
+        },
+        {
+          "instanceId": "arr-words:i3",
+          "sourceSceneId": "sc_a",
+          "firstBar": 13,
+          "lengthBars": 4,
+          "role": "verse",
+          "lyrics": {
+            "lines": [
+              "Morning finds me at the corner",
+              "Counting what the night forgot"
+            ]
+          }
+        },
+        {
+          "instanceId": "arr-words:i4",
+          "sourceSceneId": "sc_b",
+          "firstBar": 17,
+          "lengthBars": 8,
+          "role": "chorus",
+          "lyrics": {
+            "lines": [
+              "So let it rise, let it rise",
+              "Over the roofs and the wires",
+              "Let it rise"
+            ]
+          }
+        },
+        {
+          "instanceId": "arr-words:i5",
+          "sourceSceneId": "sc_c",
+          "firstBar": 25,
+          "lengthBars": 4,
+          "role": "bridge",
+          "lyrics": {
+            "lines": []
+          }
+        }
+      ],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "name": "bass1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i1",
+              "startBar": 1,
+              "endBar": 5,
+              "startFrame": 0,
+              "endFrame": 384000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i3",
+              "startBar": 13,
+              "endBar": 17,
+              "startFrame": 1152000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_a_kick",
+          "name": "kick1",
+          "role": "kicks",
+          "bucket": "drums",
+          "spans": [
+            {
+              "section": "arr-words:i1",
+              "startBar": 1,
+              "endBar": 5,
+              "startFrame": 0,
+              "endFrame": 384000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i3",
+              "startBar": 13,
+              "endBar": 17,
+              "startFrame": 1152000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": [],
+          "drumClass": "kick"
+        },
+        {
+          "layerId": "t_a_pad",
+          "name": "pad1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i1",
+              "startBar": 1,
+              "endBar": 5,
+              "startFrame": 0,
+              "endFrame": 384000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i3",
+              "startBar": 13,
+              "endBar": 17,
+              "startFrame": 1152000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_chords",
+          "name": "chord1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i2",
+              "startBar": 5,
+              "endBar": 13,
+              "startFrame": 384000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i4",
+              "startBar": 17,
+              "endBar": 25,
+              "startFrame": 1536000,
+              "endFrame": 2304000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_kick",
+          "name": "kick2",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i2",
+              "startBar": 5,
+              "endBar": 13,
+              "startFrame": 384000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i4",
+              "startBar": 17,
+              "endBar": 25,
+              "startFrame": 1536000,
+              "endFrame": 2304000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_lead",
+          "name": "lead1",
+          "role": "vocals",
+          "bucket": "top",
+          "spans": [
+            {
+              "section": "arr-words:i2",
+              "startBar": 5,
+              "endBar": 13,
+              "startFrame": 384000,
+              "endFrame": 1152000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-words:i4",
+              "startBar": 17,
+              "endBar": 25,
+              "startFrame": 1536000,
+              "endFrame": 2304000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_c_bell",
+          "name": "bell1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i5",
+              "startBar": 25,
+              "endBar": 29,
+              "startFrame": 2304000,
+              "endFrame": 2592000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_c_perc",
+          "name": "perc1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-words:i5",
+              "startBar": 25,
+              "endBar": 29,
+              "startFrame": 2304000,
+              "endFrame": 2592000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        }
+      ],
+      "noteFields": [
+        "frame",
+        "pitch",
+        "velocity",
+        "durationFrames"
+      ]
+    },
+    "scoreHash": "38699ed6a76f6fbf11a320103303097712466884b6b62296a2357ca1905954cd",
+    "lyricsHash": "169082e30fc2ce678944d383486942f304bfa5e8a773756e8fcf30218ed3e15a"
+  }
+}

@@ -39,7 +39,7 @@
     },
     "endFrame": 1440000
   },
-  "contractVersion": "0.11.0",
+  "contractVersion": "0.14.0",
   "timingHash": "0eeb40f19f5b50d35d679c3e5126e56ec8c84b524625800209c933366906cf35",
   "arrangementHash": "1a75f83a2982ea859a397cf33061d186cbaca544ee8cc43d6b69684ce511ecfd",
   "engine": {
