@@ -90,8 +90,8 @@ CLI and the MCP server wrap.
   Every mutation begins life as a typed JSON Plan the agent can read,
   edit, and validate before touching the engine. Mutations are reversible
   via auto-saved checkpoints.
-- **~280 typed tools**: scene/track CRUD, FX, MIDI generation, transport,
-  composition, arrangement, rendering, samples, export. Every tool has a
+- **More than 300 typed tools**: scene/track CRUD, FX, MIDI generation, transport,
+  composition, arrangement, lyrics, rendering, samples, export, goals. Every tool has a
   4-section description (`WHEN TO USE` / `WHEN NOT TO USE` / `INPUTS` /
   `OUTPUTS`) the agent reads to pick the right one.
 - **Composite tools** that wrap multi-step flows: `compose_scene`,
@@ -101,6 +101,23 @@ CLI and the MCP server wrap.
   `arrangement_*` tools lay your scenes out as a song, edit it, mute and
   solo its tracks, add effects, match its scene levels, loop it, play it,
   export it and sync it, the same things you do in [Arrange mode](/arrange/).
+- **[Goals and memory](./for-agents.md#goals-and-memory)**: a request that
+  takes many steps becomes a goal kept with the project (the user's words, what
+  "done" means, the decisions made, what to remember), so any agent can pick it
+  up later from a short briefing.
+- **[Measure and verify](./for-agents.md#measure-and-verify)**: `sas_measure`
+  reads a scene's tempo, key, loudness, clipping and parts from an honest
+  render, and `sas_verify_outcome` checks the work against the user's request
+  before the agent says it's done.
+- **[Visible commands](./for-agents.md#visible-commands)**: the `ui_*` tools
+  have the app do things on screen the way a click does (select a scene, move a
+  fader, press Play), so you can watch an agent work.
+- **[Song lyrics](./for-agents.md#song-lyrics)**: the `lyrics_*` tools read and
+  write the song's words section by section, the same words the arrangement's
+  Lyrics tab shows.
+- **[Runs and the intent log](./for-agents.md#runs-and-the-intent-log)**: every
+  change records who made it, and a run collects an agent's work into one
+  timeline you can review.
 - **Failures that say what to do**: a refused call carries a `remediation`
   (older tools: a `suggestion`) with the reason and the fix, and where it
   matters a `retryable` flag that says whether the same call is worth making
@@ -184,7 +201,7 @@ Then either:
 - **[CLI reference](./cli-reference.md)**: `sas` install, flags, exit
   codes, argument conventions, every verb.
 - **[Capability tools](./capability-tools.md)**: filesystem + shell
-  access from the agent, gated by per-call user consent.
+  access from the agent, gated by per-call user consent and consent classes.
 - **[Examples](./examples.md)**: worked bash scripts for common flows.
 - **[For agents](./for-agents.md)**: integration notes for Claude Code,
   OpenClaw, Cursor, Claude Desktop, and custom MCP clients.

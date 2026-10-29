@@ -301,16 +301,24 @@ with. Tools marked **deferred** require `tool_search` to discover.
 | **Export** *(deferred)* | `export_audio` (a whole scene), `export_track_audio` (exactly one track, rendered from its own scene at that scene's length and time signature, with its fader, pan and effects; the app asks for approval first, as it does for `export_audio`) |
 | **Composites** | `compose_scene`, `compose_contract`, `add_instrument`, `generate_track`, `play_scene`, `render_to_performance` |
 | **Preset shuffle** | `dsl_shuffle_preset`: re-roll the Surge XT preset on a track without touching MIDI (agent parity with the UI 🎲 button) |
-| **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call pops a per-action consent dialog on the user's machine. |
+| **Capability tools** (consent-gated) | `fs_list_directory`, `fs_read_file`, `fs_search`, `fs_write_file`, `shell_exec`. See [Capability tools](./capability-tools.md). Every call asks the user first, in a consent dialog on their machine. |
 | **Discovery** | `tool_search` (always visible; finds any registered tool, deferred or not) |
+| **Scene level** | `scene_set_level`: one level per scene, heard wherever the scene plays. See [Scene levels](#scene-levels) |
 | **Arrangement** *(deferred)* | The `arrangement_*` tools that build, edit, play, export and sync a song from the project's scenes. See [Arrangement tools](#arrangement-tools) |
+| **Song lyrics** *(deferred)* | `lyrics_get`, `lyrics_set_section`, `lyrics_set_description`, `lyrics_pin_takes`. See [Song lyrics](#song-lyrics) |
+| **Measure and verify** | `sas_measure`, `sas_verify_outcome`. See [Measure and verify](#measure-and-verify) |
+| **Goals and memory** *(deferred)* | `goal_create`, `goal_update`, `goal_list`, `goal_show`, `goal_current`, `goal_briefing`, `goal_activate`, `goal_park`, `goal_abandon`, `goal_decide`, `goal_rebuild`, `memory_write`, `memory_query`, `memory_retire`. See [Goals and memory](#goals-and-memory) |
+| **Runs** *(deferred)* | `run_start`, `run_end`, `run_get`, `run_list`. See [Runs and the intent log](#runs-and-the-intent-log) |
+| **Visible commands** *(deferred)* | The `ui_*` tools: the app performs a command on screen the way a click does (`ui_scene_select`, `ui_track_fader_set`, `ui_transport_toggle`, …), plus `ui_view_state`, `ui_find`, `ui_screenshot`. See [Visible commands](#visible-commands) |
+| **Skills** *(deferred)* | `skill_search`, `skill_load`: the app's how-to notes (terms, recipes). See [Skills](#skills) |
 
 ## Arrangement tools
 
 [Arrange mode](/arrange/) is fully scriptable. The `arrangement_*` tools cover
 what the arranger does: build and play the song, loop part of it,
-place and copy sections, mute and solo tracks, switch layers on and off, copy
-and paste bars, split clips, fade, add effects, choose which take a section
+place and copy sections, start the song with pickup bars, mute and solo tracks,
+switch layers on and off, copy and paste bars or beats, split and trim clips,
+fade a section, a layer or one clip, add effects, choose which take a section
 sings, match the scene levels, undo, and export. They are deferred, so find them with
 `tool_search` (query `arrangement`), or call them by name. In the CLI they
 are the [`sas arrangement` group](./cli-reference.md#arrange-a-song-sas-arrangement).
@@ -339,8 +347,10 @@ How they behave:
   of takes: per group its `take` of `of`, `picked` when pinned, and the
   `resting` layers), `variants[]` with each layer's state
   (`name`, `home`, `play` as `on`, `off` or a bar mask like `00001111`, fades
-  and their curves, gain, `gainEnvelope`, `splits`, `treatments`),
-  `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
+  and their curves, gain, `gainEnvelope`, `splits`, `treatments`, `subBar`
+  when the layer starts, stops or splits inside a bar, and `clips` for the
+  clips that have fades or a level of their own),
+  `pickupBars` and `pickupQn` (see below), `scenes[]`, the arranger's track mute and solo states (`rowStates[]`), and
   every track you don't hear (`silentRows[]`), each with its `reasons`:
   `row-muted` or `other-row-soloed` (the arranger's own M and S, the only
   things that silence a track here).
@@ -352,6 +362,19 @@ How they behave:
   "guest" from another scene keeps its own fader, pan and its own scene's
   panel bus), but always on its own lane. Pasted bars land on the lanes they
   came from.
+- **Bars, and beats when you need them.** Every region, clip, split and paste
+  takes bars; add a beat to work inside a bar: `fromBeat` / `toBeat` on a
+  region, `beat` on a clip, a run or a split, and `at.beat` on a paste. Beats
+  are 1-based and count the meter's beat (quarter notes in 4/4, eighths in
+  6/8). A call with bars only works on whole bars, exactly as before. A copy
+  that starts or ends inside a bar pastes beat for beat.
+- **Pickup bars.** A song can start before bar 1: `arrangement_set_pickup`
+  adds lead-in bars (0, −1, …) that play the first section's loop up to its
+  downbeat, so the song starts inside its loop instead of with silence. Song
+  bar 1 stays the first section's downbeat, so `startBar` never moves;
+  quarter-note positions (`startQn`, `totalQn`, the loop's beats) count from
+  the very start, pickup included. While the playhead is in the pickup,
+  `arrangement_status` reports bar 0, −1, and so on.
 - **Results.** Every edit returns `timeline` (compact lines like
   `#0 Verse (8 bars)`), `canUndo` / `canRedo`, and `dropped` or `notes` for
   anything that could not apply as asked. A change that changes nothing
@@ -402,6 +425,7 @@ How they behave:
 | `arrangement_delete_instance` | `sas arrangement remove-section` | Remove a section; the song gets shorter (the scene is untouched) | `instance` |
 | `arrangement_resize_instance` | `sas arrangement resize` | Whole bars; longer loops the scene in phase | `instance`, `lengthBars`, `unlink` |
 | `arrangement_fade_section` | `sas arrangement fade-section` | Fade every layer in or out at a section's edge (equal-power); layers that carry on across the edge are skipped | `instance`, `edge` (`in` or `out`), `bars` or `beats` (0 removes) |
+| `arrangement_set_pickup` | `sas arrangement pickup` | The editor's **+ Bar** / **−** left of bar 1: pickup bars before the first section, playing its loop up to its downbeat in phase (a layer silent at that downbeat stays silent there). They belong to the song, so whichever section comes first fills them. Returns `pickupBars`, `pickupQn` and `leadsInto` (the first section's label). One undo step | `bars` (0 to 64; 0 removes them) |
 | `arrangement_assign_takes` | `sas arrangement assign-takes` | Which take a section sings. A scene's takes (an alternatives group: one Synth V take per verse of the lyrics, or drum fills) play by themselves, one per section by its position (the second verse sings take 2, starting over when there are more sections than takes), so this is only for changing that: with a section and `take`, pin it to that take (the pin stays when sections move), or `auto` to unpin it; with no section, put every take in scope back in order (clears every pin). Not needed after singing, adding or moving sections. One undo step | `instance` (optional); `take` (1 to N, or `auto`); `scene` (optional); `track` (a layer of the takes group, when a scene has several); `apply` (default true; `false` previews) |
 
 `arrangement_get` lists each section's `takes[]`, and the timeline lines say
@@ -410,6 +434,46 @@ How they behave:
 when the scope has no takes) and `assignments[]` with every section's take;
 pinning a section whose scene has no set of two or more takes fails with
 `no_takes`.
+
+### Song lyrics
+
+A song keeps one set of words: the arrangement's lyric document, one section
+per placement of a scene, in song order. The arrangement's **Lyrics** tab, these
+tools and the panels (through the Plugin SDK's song-lyrics API) all read and
+write the same document. It is saved with the project (a `.sas` file carries
+it) but stays on this computer: cloud sync and the web arranger don't carry the
+words. The song export does: each section of the score can carry its words and
+its role (see [the export format](/contract/arrangement-export/)). A removed
+section's words move to `spare`, never lost.
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `lyrics_get` | `sas lyrics get` | Read-only: the song's description, then every section in song order: `instanceId`, `label`, `scene`, `startBar`, `bars`, `role` (verse, chorus, bridge, as the model or the user set it; never guessed), `lines` (one per sung phrase; a repeat's words filled in), `locks`, `hints`, `sameAs`, `take`, `voiceTrackDbId` (`null` = instrumental) and `status` (`empty`, `written`, `take-stale` or `rendered`). Also `spare` (words whose section was removed) and `songWriters` (the tools that write the whole song) | none |
+| `lyrics_set_section` | `sas lyrics set-section` | Write one section. Only the fields you pass change; `null` clears `role`, `sameAs`, `take` and `renderedSig`. Setting a `role` applies the chorus rule: later placements of the same scene with the same role and no words of their own repeat this one (`vary: true` skips that). Writing a section that others repeat rewrites them too | `instanceId`, `index` or `instance` (a label or a position, as in the arrangement tools); any of `lines`, `locks`, `hints`, `role`, `sameAs`, `take`, `renderedSig`, `voiceTrackDbId`; `vary` |
+| `lyrics_set_description` | `sas lyrics set-description` | Set what the whole song is about, in a sentence or two; the song writer reads it for every section. `''` clears it | `description` (at most 2000 characters) |
+| `lyrics_pin_takes` | `sas lyrics pin-takes` | Make the words follow their sections: pin every section whose take is known to that take, in one undo step ("Song lyrics: takes"), so moving sections moves their words. It runs by itself after a vocal render records takes; call it after a reorder if a section sings the wrong verse. Sections it can't pin are listed in `skipped` | none |
+
+- **Caps.** At most 64 lines of 300 characters per section. A `sameAs` must
+  name a placement of the same scene and can't loop. A section that repeats
+  another can't take `lines` until you clear its `sameAs` in the same call.
+- **Writing is not singing.** The words are sung by one **Sing** in each vocal
+  scene's Synth V panel; a section whose words changed after its render reads
+  `take-stale`.
+- **Two ways to count takes.** `take` here is 0-based (the vocal reading's
+  take index, recorded by the panel after a render); `arrangement_assign_takes`
+  counts takes from 1.
+- A write that changes nothing fails with `no_change` and emits no event.
+  Writes emit `lyrics:changed`.
+
+```bash
+# The words of every section
+sas lyrics get --json | jq '.data.changes.sections[] | {label, role, status, lines}'
+
+# The last chorus gets its own words instead of repeating the first one
+sas run lyrics_set_section -p instance="the last chorus" -p sameAs=null
+sas run lyrics_set_section -p instance="the last chorus" -p lines="first line
+second line"
+```
 
 ### Tracks
 
@@ -424,12 +488,17 @@ pinning a section whose scene has no set of two or more takes fails with
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
 | `arrangement_set_layer` | `sas arrangement layer` | One layer in one section: on or off, enter or leave at a bar, fades and their shape, gain, a gain envelope | `instance`; `track` (+ `scene`); `play` (`on`, `off`, `default`, or a 0/1 bar mask); `fromBar` / `toBar`; `fadeInBeats` / `fadeOutBeats`; `fadeInCurve` / `fadeOutCurve` (`equalPower`, `linear`, `exponential`, `sCurve`, or `default`); `gainDb` (±24); `gainEnvelope` (a list of `{beat, db}` points, see below) |
-| `arrangement_copy` | `sas arrangement copy` | Copy to the shared clipboard: a `region` of bars, a layer's whole `run`, one `clip`, or `sections` | one of `region`, `run`, `clip`, `sections` |
-| `arrangement_paste` | `sas arrangement paste` | Paste bars onto their own lanes from a bar, or sections after a section; pasted bars **replace** what was there | `at` (`{instance, bar}` or `{bar}`) or `afterSection`; `linked` |
-| `arrangement_delete_region` | `sas arrangement silence` | Silence bars (the song does **not** get shorter; to remove a section use `arrangement_delete_instance`) | `instance`, `track` or `tracks`, `fromBar`, `toBar`; or `clip` |
+| `arrangement_copy` | `sas arrangement copy` | Copy to the shared clipboard: a `region` of bars (or beats), a layer's whole `run`, one `clip`, or `sections` | one of `region`, `run`, `clip`, `sections` |
+| `arrangement_paste` | `sas arrangement paste` | Paste bars onto their own lanes from a bar (or a beat), or sections after a section; pasted bars **replace** what was there | `at` (`{instance, bar, beat}` or `{bar, beat}`; `beat` optional) or `afterSection`; `linked` |
+| `arrangement_delete_region` | `sas arrangement silence` | Silence bars or beats (the song does **not** get shorter; to remove a section use `arrangement_delete_instance`) | `instance`, `track` or `tracks`, `fromBar`, `toBar`, `fromBeat`, `toBeat`; or `clip` |
 | `arrangement_duplicate` | `sas arrangement duplicate-selection` | Duplicate sections, a region or a clip right after itself (like ⌘D) | one of `sections`, `region`, `clip` |
-| `arrangement_split` | `sas arrangement split` | Split a layer's clip at a bar (no change in sound) | `track` or `tracks`, `bar` or `bars`, `instance` |
-| `arrangement_join` | `sas arrangement join` | Remove the splits inside a region (section starts always stay clip edges) | `instance`, `track` or `tracks`, `fromBar`, `toBar` |
+| `arrangement_split` | `sas arrangement split` | Split a layer's clip at a bar, or at a beat of it (no change in sound) | `track` or `tracks`, `bar` (+ `beat`) or `bars` (numbers or `{bar, beat}`), `instance` |
+| `arrangement_join` | `sas arrangement join` | Remove the splits inside a region (section starts always stay clip edges) | `instance`, `track` or `tracks`, `fromBar`, `toBar`, `fromBeat`, `toBeat` |
+| `arrangement_trim_clip` | `sas arrangement trim` | The editor's clip-edge drag: move a clip's start or end to a bar line or a beat. Inward trims, outward extends (more of the loop, never a stretch). The edge stays inside the clip's section and stops at the next clip; a clip keeps at least 1 bar (1 beat when `toBeat` is given). Returns the clip's new `span`. One undo step | `track` or `trackId`; the clip: `bar` (+ `beat`) inside it, `instance`; `edge` (`start` or `end`); `toBar` (+ `toBeat`) |
+| `arrangement_set_clip` | `sas arrangement clip` | Give **one clip** its own fades and level, the editor's clip fade handles and clip gain; every other clip of the layer keeps what it plays. The first clip edit on a layer hands the layer's own fades and gain to each of its clips, so nothing else changes sound. One undo step | `track` or `trackId`; the clip: `bar` (+ `beat`) inside it, `instance`; any of `fadeInBeats`, `fadeOutBeats` (quarter notes; 0 removes), `fadeInCurve`, `fadeOutCurve` (`equalPower`, `linear`, `exponential`, `sCurve`, or `default`), `gainDb` (±24, on top of the track fader) |
+
+For every clip of a layer at once, use `arrangement_set_layer`; for every layer
+at a section's edge, `arrangement_fade_section`.
 
 The clipboard is shared with the editor's ⌘C / ⌘X / ⌘V / ⌘D for the rest of
 the app session, one per project; the app shows what an agent copied.
@@ -467,10 +536,19 @@ and default):
 
 | Tool | CLI | What it does | Inputs |
 |---|---|---|---|
-| `arrangement_normalize_kick_levels` | `sas arrangement normalize-kicks` | The arranger's **Match scene levels** button: measures every scene from its layer stems and sets one level per scene (a scene gain, on top of faders and lane gains) so every scene plays at the same perceived loudness (`matchOn` `overall`, the default) or the same kick loudness (`kick`); the balance inside a scene is untouched. One undo step; running it again replaces the previous match (a run in the other mode is a new match). **Async** | `matchOn` (`overall`, the default, or `kick`), `apply` (default true; `false` is a dry run that measures and reports but changes nothing), `maxBoostDb` (default 6), `maxCutDb` (default 12, a positive number), `ceilingDbtp` (default −1), `exclude` (scene names or ids to leave exactly as they are) |
-| `arrangement_set_scene_gain` | `sas run arrangement_set_scene_gain` | Set one scene's level by hand: every layer of that scene, wherever it plays. One undo step | `scene` (name or id), `gainDb` (−24 to +24 dB in 0.1 dB steps, or `null` to clear it) |
+| `arrangement_normalize_kick_levels` | `sas arrangement normalize-kicks` | The arranger's **Match scene levels** button: measures every scene from its layer stems and sets each scene's level (the scene card's fader, the same value `scene_set_level` sets) so every scene plays at the same perceived loudness (`matchOn` `overall`, the default) or the same kick loudness (`kick`); the balance inside a scene is untouched. Running it again replaces the previous match, it never stacks (a run in the other mode is a new match). **Async** | `matchOn` (`overall`, the default, or `kick`), `apply` (default true; `false` is a dry run that measures and reports but changes nothing), `maxBoostDb` (default 6), `maxCutDb` (default 12, a positive number), `ceilingDbtp` (default −1), `exclude` (scene names or ids to leave exactly as they are) |
+| `scene_set_level` | `sas run scene_set_level` | Set a whole scene's level by hand, like its card's fader: one gain after the tracks and panel buses, so the balance inside the scene is untouched. Emits `scene:level-changed` | `scene` (name or id), `levelDb` (−60 to +6 dB; 0 is unity) |
+| `arrangement_set_scene_gain` | `sas run arrangement_set_scene_gain` | The same action as `scene_set_level`, under its older name | `scene` (name or id), `gainDb` (−60 to +6 dB, or `null` to reset it to 0 dB) |
 
 How they behave:
+
+- **One level per scene.** A scene has one level, heard wherever it plays: the
+  scene editor, either deck, the arrangement, and scene WAV and Ableton exports.
+  `sas_inspect_scene` reports it as `levelDb`. `deck_set_volume` on loop-b is a
+  performance trim on top of it and never changes it.
+- **Not undo steps.** Like a fader, a level change (by hand or by a match) is
+  not in the arrangement's undo history: a matched scene's previous level is
+  replaced. Run the match as a dry run first to see what it would change.
 
 - **Stems first.** The match renders any out-of-date layer stems before it
   measures. Rendering can't happen while something plays, so if a stem needs
@@ -492,12 +570,15 @@ How they behave:
   layers weren't heard, `not_measured[]` names them with a `reason`:
   `not-loaded` (a loop of a scene not opened since the project was opened:
   open that scene, then call again) or `no-stem` (its stem didn't render).
-- **A hand-set level** from `arrangement_set_scene_gain` is replaced by a later
-  match for any scene the match covers; pass that scene in `exclude` to keep it.
-- **Where it applies.** A scene's level reaches everything the arrangement
-  plays: playback, exports and the web arranger. A layer playing as a guest in
-  another scene's section keeps its own scene's level.
-- `arrangement_undo` takes either change back in one step.
+- **A hand-set level** from `scene_set_level` is replaced by a later match for
+  any scene the match covers; pass that scene in `exclude` to keep it.
+- **Guests keep their own level.** A layer playing as a guest in another
+  scene's section keeps its own scene's level.
+- **Older projects.** A scene whose arrangement still holds a gain from an
+  older match plays at its level plus that gain in the arrangement
+  (`sas_inspect_scene` shows it as `legacyArrangementGainDb`). Setting the
+  scene's level folds it in (`absorbedLegacyDb` in the result), and from then
+  on the scene has one level.
 
 ```bash
 # Dry run: what would change?
@@ -508,9 +589,9 @@ sas job wait "$JOB" --timeout 300
 JOB=$(sas arrangement normalize-kicks --match-on kick --json | jq -r '.data.changes.jobId')
 sas job wait "$JOB" --timeout 300
 
-# Set the chorus 1.5 dB down by hand, then clear it again
-sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-1.5
-sas run arrangement_set_scene_gain --json-body '{"scene": "Chorus", "gainDb": null}'
+# Set the chorus 1.5 dB down by hand, then back to unity
+sas run scene_set_level -p scene=Chorus -p levelDb=-1.5
+sas run scene_set_level -p scene=Chorus -p levelDb=0
 ```
 
 ### Undo and export
@@ -554,6 +635,10 @@ retry. Exports you start from the app's own Export dialog don't ask twice.
   plays (where it sounds, its fades, gains and placed effects); `false` leaves
   it out. **`scoreNotes: true`** adds the notes each layer plays, in audio
   frames (off by default, as in the app's **Include played notes (MIDI)**).
+  When any section of the song has words (see [Song lyrics](#song-lyrics)),
+  every section of the score carries its `lyrics` (`[]` for an instrumental
+  one) and its `role` when it has one, and `export.json` gains a
+  `lyricsHash`.
   See [Score](/contract/arrangement-export/#score).
 - **Ableton track order.** The Ableton hand-off lists its Live tracks in the
   order of the Arrange view's rows, as the user arranged them; the numbered
@@ -590,8 +675,196 @@ See the worked examples [15](./examples.md#_15-arrange-a-song-from-your-scenes),
 [16](./examples.md#_16-add-an-effect-to-one-bar),
 [17](./examples.md#_17-copy-a-part-from-one-section-to-another),
 [18](./examples.md#_18-export-the-song),
-[19](./examples.md#_19-match-the-scene-levels) and
-[20](./examples.md#_20-sing-the-first-verse-again).
+[19](./examples.md#_19-match-the-scene-levels),
+[20](./examples.md#_20-sing-the-first-verse-again),
+[21](./examples.md#_21-start-the-song-inside-the-verse) and
+[22](./examples.md#_22-fade-out-one-clip).
+
+## Measure and verify
+
+Before telling the user a change is done, measure it. `sas_measure` reads what a
+scene (or one track) is and how it sounds; `sas_verify_outcome` checks a
+written-down outcome against those measurements and returns a verdict with the
+evidence. Both are on the default surface, project-scoped, and run in one call
+(no `jobId`): one render, usually 5 to 30 seconds.
+
+| Tool | What it does | Inputs |
+|---|---|---|
+| `sas_measure` | Typed measurements of a scene, or one track. `structural-1` (bars, meter, BPM, the contract's key and genre, roles, every track's role, plugin, instrument, preset and whether it has notes, sample categories), `midi-1` (the chords' key, chord and note agreement), `lufs-1` (integrated loudness, sample and true peak, loudness range, the peak before any trim), `silence-1`, `tempo-1` (BPM), `key-1` (tonic and mode), `rf-1` (rhythm features of one track). The audio ones come from one honest render: faders and pans as authored, no normalising, no limiter, so clipping shows | `sceneId` (name or id; default the active scene), `trackId` (measure one track), `ids` (default `structural-1`, `midi-1`, `lufs-1`, `silence-1`, `tempo-1`, `key-1`, plus `rf-1` with a track), `render` (default true; `false` never renders and uses cached results) |
+| `sas_verify_outcome` | Judge an outcome against measured evidence: `achieved`, `partial` or `failed`, with every clause's measured value, threshold and measurement id | `outcome` (the spec, below) or `goalId` (a goal's stored outcome); `sceneId` / `trackId` (the scope for clauses that name none); `render` |
+
+Each measurement is an envelope: `id`, `subject`, `status` (`ok`,
+`insufficient_signal` when there is nothing to measure, such as silence,
+`unsupported` or `error`), `values`, `confidence` and `noiseFloor`.
+
+An **outcome** (`outcome-1`) is the user's sentence written as clauses:
+
+```json
+{
+  "version": "outcome-1",
+  "sentence": "a 16-bar chorus that doesn't clip",
+  "clauses": [
+    { "kind": "bars", "mode": "required",
+      "evidence": [{ "id": "structural-1", "field": "bars", "op": "eq", "value": 16 }] },
+    { "kind": "no_clipping", "mode": "required",
+      "evidence": [{ "id": "lufs-1", "field": "preTrimPeakDb", "op": "lte",
+                     "ref": "thresholds-v1:clipping.max_pre_trim_peak_db" }] }
+  ]
+}
+```
+
+- A clause's `mode` is `required`, `forbidden` or `preferred`; each evidence
+  item names a measurement, a field, an operator (`eq`, `ne`, `lt`, `lte`, `gt`,
+  `gte`, `approx`, `in`, `not_in`, `contains`, `not_contains`, `matches`,
+  `key_eq`, `exists`) and a `value`, or a `ref` into the app's thresholds file.
+- Clause kinds it can decide today: `bars`, `meter`, `tempo`, `key`,
+  `loudness`, `no_clipping`, `no_silence`, `role_present` and `provenance`.
+  Others read `unknown`.
+- Evidence that can't be measured never fails a clause; it caps the verdict at
+  `partial`. Tempo and key backed only by the project's own settings (not by
+  the audio) read `unknown` unless the clause says `structural_only_ok: true`.
+  `preferred` clauses never move the verdict.
+
+```bash
+sas run sas_measure --json-body '{"sceneId": "Chorus", "ids": ["lufs-1", "tempo-1", "key-1"]}'
+sas run sas_verify_outcome --json-body '{"sceneId": "Chorus", "outcome": {"version": "outcome-1", "clauses": [{"kind": "bars", "mode": "required", "evidence": [{"id": "structural-1", "field": "bars", "op": "eq", "value": 16}]}]}}'
+```
+
+See [example 23](./examples.md#_23-keep-a-goal-and-check-it-before-you-say-done).
+
+## Goals and memory
+
+A **goal** is a request that takes more than one step ("make the chorus hit
+harder"), kept with the project: the user's words verbatim, an outcome (the
+spec above), the decisions made along the way, blockers, the scenes it works on,
+and memories. Any agent, in any session, resumes a goal from its briefing
+instead of from a chat transcript. Goals travel with the project in a `.sas`
+file. The tools are deferred; in the CLI they are `sas goal …` and
+`sas memory …`.
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `goal_create` | `sas goal create` | Start a goal from the user's words; it becomes the current goal | `brief` (the user's words, verbatim), `title`, `outcome`, `thresholdsVersion`, `parentGoalId` (goals nest two deep), `scenes` (scene ids to claim), `claimMode` (`shared` or `exclusive`), `origin`, `activate` (default true; false makes a proposed goal) |
+| `goal_update` | `sas goal update` | Revise the title, the outcome (every revision is logged), the claimed scenes, or set and clear a blocker | `goal`; `title`, `outcome`, `thresholdsVersion`, `scenes`, `claimMode`, `blocker` (`consent_pending`, `missing_plugin`, `quota`, `engine_unreachable`, `needs_user_choice`) + `blockerDetail`, `clearBlocker` |
+| `goal_list` | `sas goal list` | Read-only: the project's goals, most recently touched first | `status` (`proposed`, `active`, `paused`, `blocked`, `achieved`, `abandoned`), `limit` |
+| `goal_show` | `sas goal show` | Read-only: one goal in full, with its latest events | `goal` (default the current goal), `events` (default 20, at most 200) |
+| `goal_current` | `sas goal current` | Read-only: which goal the user's words belong to: the one you activated, else the one claiming the active scene, else a clarification. Never guessed. `brief: true` prints its briefing | `goal`, `brief` |
+| `goal_briefing` | `sas goal briefing` | Read-only: the resumable summary (about 6 KB, and the same goal state always gives the same bytes): the brief, the outcome, the last verdict's open clauses, the last 8 decisions, blockers, the top 10 memories, what changed since the last run, the park note | `goal` (default the current goal) |
+| `goal_activate` | `sas goal activate` | Make a goal the one you work on: confirm a proposed goal, resume a parked one, reopen a finished one | `goal` |
+| `goal_park` | `sas goal park` | Pause a goal with a note on where you stopped and what is next, optionally pinning a checkpoint to come back to (a pinned checkpoint is never pruned) | `note`, `goal`, `checkpointId` |
+| `goal_abandon` | `sas goal abandon` | Stop a goal for good and release its scenes; its log stays and `goal_activate` can reopen it | `goal`, `reason` |
+| `goal_decide` | `sas goal decide` | Record a choice, what was not chosen and why, so a resumed agent doesn't argue it again | `choice`, `why`, `alternatives`, `evidence`, `by`, `goal` |
+| `goal_rebuild` | `sas goal rebuild` | Replay the goal log and rewrite every goal from it (the log is the truth); `changedGoalIds` empty means all was in order | none |
+| `memory_write` | `sas memory write` | Remember something lasting about the project or one goal | `statement`, `kind` (`fact`, `preference`, `know_how`, `rejected_option`, `constraint`); `scope` (`goal` or `project`), `goal`, `source` (`user_said`, `user_action`, `brain_inferred`, `verifier`), `subject`, `tags`, `confidence` (0 to 1), `evidence`, `supersedes` (the memory it replaces) |
+| `memory_query` | `sas memory query` | Read-only: the project's memories, narrowest scope first, then newest, most confident and best evidenced | `scope`, `goal`, `kind`, `tags`, `includeRetired`, `includeSuperseded`, `limit` (default 20, at most 100) |
+| `memory_retire` | `sas memory retire` | Retire a memory that no longer holds; it stays for history but leaves briefings and queries | `memory` |
+
+- **Start every turn on a goal from `goal_briefing`** (or
+  `sas goal current --brief`), not from the transcript.
+- **Pass the user's words as `brief`, never a paraphrase.** The brief never
+  changes; a new request is a new goal.
+- **Scene claims.** A goal claims the scenes it works on, `shared` by default. A
+  scene another goal holds `exclusive` refuses the claim with `goal_conflict`.
+- **What the user said wins.** A `user_said` memory beats an inferred one; a
+  contradiction is recorded as a conflict, never merged silently.
+- `goal` takes a goal id or a unique prefix of at least 4 characters (from
+  `sas goal list`). Changes emit `goal:*` and `memory:*` events.
+
+```bash
+sas goal create --brief "make the chorus hit harder, keep the 4-bar loop"
+sas goal decide --choice "Surge XT brass patch" --why "closest to a saxophone on this machine"
+sas memory write --statement "keep the kick dry, no reverb" --kind preference --source user_said
+sas goal park --note "verse done; next: the saxophone answer in bar 3"
+sas goal current --brief      # later, in any session
+```
+
+## Runs and the intent log
+
+A **run** records a span of an agent's work, bound to a goal, as one unit you
+can review: every call and event in a timeline, with before and after
+summaries, written under `~/.signals-and-sorcery/runs/<runId>/`. Nothing
+requires a run.
+
+| Tool | CLI | HTTP | What it does |
+|---|---|---|---|
+| `run_start` | `sas runs start` | `POST /api/v1/runs` | Open a run (`goalId`, `label`, both optional); returns its `runId` |
+| `run_end` | `sas runs end` | `POST /api/v1/runs/:id/end` | Close it (`status`: `completed`, `failed` or `aborted`; `note`). Consent granted for the run ends with it |
+| `run_get` | `sas runs get` | `GET /api/v1/runs/:id` (`/events` for the timeline) | One run, and a page of its timeline (`timeline`, `since`, `limit`) |
+| `run_list` | `sas runs list` | `GET /api/v1/runs` | Runs, newest first (a run left open by a restart reads `interrupted`) |
+
+Bind your calls to a run by sending its id as the `X-SAS-Run-Id` header, or set
+`SAS_RUN_ID` for the `sas` CLI. An unknown run id is answered with a warning
+header, never refused.
+
+**Who is calling.** At startup the app writes this session's token to
+`~/.signals-and-sorcery/api.json` (readable only by you), and the `sas` CLI
+sends it as a bearer token. The token identifies the caller; it doesn't change
+what a call may do. `GET /api/v1/whoami` shows who a request resolves to.
+
+**The intent log.** Every change made in the app, by you or by an agent, is
+recorded as an intent with who made it. `GET /api/v1/intents` reads it
+(`?since=<seq>`, `project=current|all|<id>`, `limit`). Events on
+`/api/v1/events/stream` carry a sequence number and replay from
+`Last-Event-ID` or `?since=` after a reconnect.
+
+**The tool list says more.** Each entry from `/api/v1/actions` also carries
+`readOnly`, `consentClass` (see [Capability tools](./capability-tools.md)),
+`asyncJob` and `category`.
+
+## Visible commands
+
+The `ui_*` tools have the app do something **on screen**, the way a click does,
+with the control's own handler: the user sees the scene card selected, the fader
+move, the Create button pressed. By default a command is `narrated` (a cursor
+glides to each step and highlights it); pass `performance: "instant"` to skip
+the animation. The end state is the same. A command whose effect is a registry
+tool reports it as `changes.effectTool` and counts as that tool's change; a view
+change (opening a panel, revealing a track) changes nothing in the project.
+The CLI groups them under `sas ui` (`ui_scene_select` is
+`sas ui scene select`).
+
+| Tool | CLI | What it does | Inputs |
+|---|---|---|---|
+| `ui_scene_select` | `sas ui scene select` | Select a scene, as a click on its card (same as `scene_activate`) | `sceneId` |
+| `ui_scene_create` | `sas ui scene create` | The scene list's **+** button (same as `scene_create`) | none |
+| `ui_panel_open` / `ui_panel_close` | `sas ui panel open` / `close` | Open or close a panel's section (view only) | `panelId` (a plugin id, or `scenes`, `chords`) |
+| `ui_track_reveal` | `sas ui track reveal` | Bring a track into view: its scene, its panel, its row scrolled to and focused (view only) | `trackId`; `sceneId`, `panelId`, `pulse` |
+| `ui_track_fader_set` | `sas ui track fader set` | Move a track's fader (0 to 1, same as `dsl_track_volume`) | `trackId`, `value` |
+| `ui_track_mute` / `ui_track_solo` | `sas ui track mute` / `solo` | Click the row's **M** or **S**; `muted` / `soloed` sets the state, omitted toggles | `trackId`; `muted` or `soloed` |
+| `ui_panel_prompt_type` | `sas ui panel prompt type` | Type into a panel's prompt field | `panelId`, `text`; `trackId` |
+| `ui_panel_generate_click` | `sas ui panel generate click` | Click a row's **Create** and wait until it finishes generating | `panelId`; `trackId` |
+| `ui_deck_play` / `ui_deck_stop` | `sas ui deck play` / `stop` | Press a deck's Play or Stop | `deckId` (`loop-a` or `loop-b`) |
+| `ui_transport_toggle` | `sas ui transport toggle` | Play or stop, as the **Space** key does: `context` `auto` (the default: the row the user last clicked or focused), `arrangement` or `scene` | `context` |
+| `ui_arrangement_play` / `ui_arrangement_stop` / `ui_arrangement_toggle` | `sas ui arrangement play` / `stop` / `toggle` | The arrangement row's Play, Stop and Play/Stop button, with its rules: Play waits for the audio to be ready and starts by itself, is refused while a freeze runs; Stop also cancels a queued Play | none |
+| `ui_scene_play_toggle` | `sas ui scene play-toggle` | Play or stop the selected scene on loop-a (a double Space). `sceneId` selects that scene first; `playing` sets the state, omitted toggles | `sceneId`, `playing` |
+| `ui_view_state` | `sas ui view-state` | Read-only: what is on screen now: the page, the decks, the scene Compose shows, open sections and drawers, the focused track, every visible track row, the arranger selection, open dialogs, the command being performed, and `transportContext` (the row, `arrangement` or `scene`, that Space and `ui_transport_toggle` play and stop) | none |
+| `ui_find` | `sas ui find` | Read-only: find elements by `data-testid` (a trailing `*` matches a prefix) or visible text; returns their bounds in the window, visible and disabled | `testId` and/or `text`; `trackId`, `limit` (default 25, at most 200) |
+| `ui_screenshot` | `sas ui screenshot` | Capture the app's window to a PNG in the system's temp folder; returns its `path` and size | none |
+
+Every command also takes `performance` (`narrated` or `instant`). Starting the
+arrangement stops the scene and the other way round, as on screen. The commands
+need the app's window: without one (a headless launch, or while the window is
+still loading) they fail with remediation `ui_unavailable`. A command that times
+out may still be running: read `ui_view_state` before trying again.
+
+```bash
+sas ui view-state --json | jq '.data.changes.transportContext'
+sas ui scene select --scene-id "$SCENE" --performance narrated
+sas ui track fader set --track-id "$TRACK" --value 0.6
+sas ui transport toggle
+```
+
+## Skills
+
+The app ships a set of how-to notes (S&S vocabulary, recipes such as finding a
+file's BPM or splitting stems). `skill_search` finds them by topic (an empty
+query lists them all) and `skill_load` returns one in full. Skills explain;
+tools act, so use `tool_search` to find a tool.
+
+```bash
+sas skill search --query "key detection"
+sas skill load --name sas-terminology
+```
 
 ## Pattern: observe → reason → act
 
@@ -610,6 +883,11 @@ canonical pattern is the [plan-as-artifact loop](./plan-loop.md):
 5. **Preview**: `sas preview` returns a content-addressed audio URL.
 6. **Iterate or undo**: `sas history undo <checkpoint>` restores the
    project byte-for-byte if the result missed.
+
+For work that spans many turns, keep a [goal](#goals-and-memory) and resume
+from its briefing, and before you say the work is done, check it with
+[`sas_verify_outcome`](#measure-and-verify) and report the verdict with its
+evidence.
 
 Direct tool calls (`scene_create`, `dsl_track_create`, …) still work
 and are the right choice for trivial one-shots, but the plan loop is

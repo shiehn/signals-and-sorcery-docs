@@ -137,7 +137,7 @@ sas inspect history [--limit n]      Recent checkpoints
 sas plan <intent…> [--plan-out f]    Free-text → typed JSON Plan
 sas validate <plan-file|->           Validate a plan against current state
 sas apply <plan-file|-> [--checkpoint name|--dry-run|--skip-checkpoint]
-sas preview [sceneId] [--track-id …] [--refresh] [--bpm …] [--bars …]
+sas preview [scene] [--track-id …] [--refresh] [--bpm …] [--bars …]
 sas history list [--limit n]         List checkpoints (newest first)
 sas history checkpoint <name> [--notes …]   Manual checkpoint
 sas history undo <name>              Restore to checkpoint
@@ -164,7 +164,7 @@ being recognised.
 | `--json` | Emit raw JSON envelopes (default is a human-friendly summary). This is an output switch; it does not take tool inputs (see [Passing JSON](#passing-json-arrays-and-objects)) |
 | `--host <host>` | Override API server host (default `localhost`) |
 | `--port <port>` | Override API server port (default `7655`) |
-| `--token <token>` | Bearer token (also read from `~/.sas/token`) |
+| `--token <token>` | Bearer token. Without it the CLI uses `SAS_API_TOKEN`, else the token the app writes to `~/.signals-and-sorcery/api.json` at startup, else `~/.sas/token`. The token identifies you to the app; it never changes what a call may do |
 | `--verbose` | Accepted; currently adds no extra output |
 | `--no-color` | Disable ANSI colour (also honours `NO_COLOR=1`) |
 | `-h`, `--help` | Top-level help, or per-command help if passed after a command |
@@ -177,8 +177,9 @@ timeout (composite tools like `make_beat` routinely run 30–120 s, so the
 default is intentionally generous). `NO_COLOR=1` disables colour output.
 `SAS_AUTO_REFRESH=1` refreshes the cached tool list automatically when the
 app's tools change (otherwise the CLI prints a one-line hint to run
-`sas refresh`).
-Config persists in `~/.sas/config.json`; the bearer token in
+`sas refresh`). `SAS_RUN_ID=<runId>` binds every call to an open
+[run](./for-agents.md#runs-and-the-intent-log) (sent as `X-SAS-Run-Id`).
+Config persists in `~/.sas/config.json`; a saved bearer token in
 `~/.sas/token` (mode `600`).
 
 ## Argument conventions
@@ -192,7 +193,9 @@ differently:
 - **By group and verb** (`sas scene compose --scene-name Verse …`,
   `sas arrangement insert …`): commands generated from the app's tool list
   (run `sas refresh` after updating the app). Each input is a declared
-  flag, and `sas <group> <verb> --help` lists them.
+  flag, and `sas <group> <verb> --help` lists them. Some commands have more
+  words (`sas ui scene select`, `sas ui track fader set`); `sas <group> --help`
+  lists what a group holds.
 
 Conventions:
 
@@ -505,21 +508,24 @@ Every command works on the project's one arrangement.
 | `sas arrangement remove-section --instance X` | `arrangement_delete_instance` | Remove a section (the song gets shorter) |
 | `sas arrangement resize --instance X --length-bars N [--unlink]` | `arrangement_resize_instance` | Resize (whole bars) |
 | `sas arrangement fade-section --instance X --edge in\|out --bars N` | `arrangement_fade_section` | Fade a whole section in or out |
+| `sas arrangement pickup --bars N` | `arrangement_set_pickup` | Pickup bars before bar 1 (0 to 64; `--bars 0` removes them): the song starts inside the first section's loop |
 | `sas arrangement assign-takes [--instance X --take N\|auto] [--scene S] [--track Y] [--apply false]` | `arrangement_assign_takes` | Pin a section to a take (`--take 1`), set it back to its position's take (`--take auto`), or with no section put every take back in order. Takes play one per section by position on their own, so this is only for changing that |
 | `sas arrangement mute --track Y --muted` (or `--no-muted`) | `arrangement_set_track_mute` | Mute or unmute a track for the whole arrangement |
 | `sas arrangement solo --track Y --soloed [--alone]` (or `--no-soloed`) | `arrangement_set_track_solo` | Solo or unsolo a track (`--alone` unsolos the others) |
 | `sas arrangement restore-track --track Y` | `arrangement_restore_track` | Put a track back to its default (mute, solo and sections stay) |
 | `sas arrangement layer --instance X --track Y …` | `arrangement_set_layer` | One layer in one section |
-| `sas arrangement silence --instance X --track Y --from-bar A --to-bar B` | `arrangement_delete_region` | Silence bars (the song keeps its length) |
-| `sas arrangement split --track Y --bar N [--instance X]` | `arrangement_split` | Split a clip |
+| `sas arrangement silence --instance X --track Y --from-bar A --to-bar B [--from-beat a --to-beat b]` | `arrangement_delete_region` | Silence bars or beats (the song keeps its length) |
+| `sas arrangement split --track Y --bar N [--beat b] [--instance X]` | `arrangement_split` | Split a clip at a bar or a beat |
 | `sas arrangement join --track Y [--instance X] [--from-bar A --to-bar B]` | `arrangement_join` | Join clips |
+| `sas arrangement trim --track Y --bar N --edge start\|end --to-bar M [--to-beat b]` | `arrangement_trim_clip` | Move a clip's start or end edge to a bar line or a beat (trim or extend) |
+| `sas arrangement clip --track Y --bar N [--fade-in-beats Q] [--fade-out-beats Q] [--gain-db G]` | `arrangement_set_clip` | Give one clip its own fades (and curves) and level |
 | `sas arrangement treatment --instance X --track Y --type T --bar N` | `arrangement_place_treatment` | Place an effect |
 | `sas arrangement untreat --instance X --track Y --bar N` | `arrangement_remove_treatment` | Remove an effect |
 | `sas arrangement copy --region '{…}'` (or `--run`, `--clip`, `--sections`) | `arrangement_copy` | Copy to the shared clipboard |
 | `sas arrangement paste --at '{…}'` (or `--after-section X`) | `arrangement_paste` | Paste |
 | `sas arrangement duplicate-selection --sections X` (or `--region`, `--clip`) | `arrangement_duplicate` | Duplicate sections, bars or a clip |
-| `sas arrangement normalize-kicks [--match-on overall\|kick] [--apply false] [--exclude A,B] [--max-boost-db N] [--max-cut-db N]` | `arrangement_normalize_kick_levels` | Match the scene levels: every scene at the same perceived loudness (the default), or `--match-on kick` for the same kick loudness, as one undo step (**async**: returns a `jobId`; `--apply false` is a dry run that changes nothing) |
-| `sas run arrangement_set_scene_gain -p scene=X -p gainDb=N` | `arrangement_set_scene_gain` | Set one scene's level by hand (−24 to +24 dB) |
+| `sas arrangement normalize-kicks [--match-on overall\|kick] [--apply false] [--exclude A,B] [--max-boost-db N] [--max-cut-db N]` | `arrangement_normalize_kick_levels` | Match the scene levels: every scene at the same perceived loudness (the default), or `--match-on kick` for the same kick loudness; like a fader it is not an undo step (**async**: returns a `jobId`; `--apply false` is a dry run that changes nothing) |
+| `sas run scene_set_level -p scene=X -p levelDb=N` | `scene_set_level` | Set one scene's level by hand (−60 to +6 dB), like its card's fader; `arrangement_set_scene_gain` (`gainDb`) is the same action under its older name |
 | `sas arrangement undo [--from-other-device]` / `redo` | `arrangement_undo` / `arrangement_redo` | The arrangement's own history (this computer's edits; `--from-other-device` reverts the latest changes from another device) |
 | `sas arrangement export [--stems] [--ableton] [--preset P] [--name N] [--tail auto\|S] [--path-free] [--score-notes] [--score false] …` | `arrangement_export` | Export (**async**: returns a `jobId`). `--name` names the new folder and its files (default: the project's last export name, else the project's name followed by "Bounce"); `--tail` is `auto` (until silent, up to 10 s) or a fixed number of seconds from 0 to 30; `--path-free` leaves every absolute path out of `export.json` (see [the export format](/contract/arrangement-export/#privacy)); `--score-notes` adds the notes each layer plays to `export.json`'s [score](/contract/arrangement-export/#score), which is written by default (`--score false` leaves it out). An earlier export's folder is never overwritten |
 | `sas arrangement export-cancel` | `arrangement_export_cancel` | Cancel the running export |
@@ -577,6 +583,100 @@ sas arrangement stop --leave-arrange-mode
 See [Arrangement tools](./for-agents.md#arrangement-tools) for how the tools
 behave and the worked examples
 [15 to 18](./examples.md#_15-arrange-a-song-from-your-scenes).
+
+## Song lyrics: `sas lyrics`
+
+| Command | Tool | Does |
+|---|---|---|
+| `sas lyrics get` | `lyrics_get` | The song's words, section by section in song order (read-only) |
+| `sas lyrics set-section --instance X [--role R] …` | `lyrics_set_section` | Write one section: its lines, role, repeat (`sameAs`) and more |
+| `sas lyrics set-description --description "…"` | `lyrics_set_description` | What the whole song is about |
+| `sas lyrics pin-takes` | `lyrics_pin_takes` | Pin every sung section to its take, so the words move with their sections |
+
+Lines with commas or line breaks are easiest to pass as JSON:
+
+```bash
+sas run lyrics_set_section --json-body '{"instance": "Verse (2)", "lines": ["first line, with a comma", "second line"]}'
+```
+
+See [Song lyrics](./for-agents.md#song-lyrics).
+
+## Goals and memory: `sas goal`, `sas memory`
+
+| Command | Tool | Does |
+|---|---|---|
+| `sas goal create --brief "…" [--scenes A,B] [--claim-mode exclusive]` | `goal_create` | Start a goal from the user's words |
+| `sas goal update --goal G …` | `goal_update` | Revise its title, outcome, scenes or blockers |
+| `sas goal list [--status S]` | `goal_list` | The project's goals (read-only) |
+| `sas goal show [--goal G] [--events N]` | `goal_show` | One goal in full (read-only) |
+| `sas goal current [--brief]` | `goal_current` | The goal being worked now; `--brief` prints its briefing (read-only) |
+| `sas goal briefing [--goal G]` | `goal_briefing` | The resumable summary (read-only) |
+| `sas goal activate --goal G` | `goal_activate` | Work on this goal |
+| `sas goal park --note "…" [--checkpoint-id C]` | `goal_park` | Pause it with a note on what is next |
+| `sas goal abandon --goal G --reason "…"` | `goal_abandon` | Stop it for good |
+| `sas goal decide --choice "…" --why "…" [--alternatives a,b]` | `goal_decide` | Record a decision |
+| `sas goal rebuild` | `goal_rebuild` | Rebuild every goal from its log |
+| `sas memory write --statement "…" --kind K [--source user_said]` | `memory_write` | Remember something lasting |
+| `sas memory query [--kind K] [--tags a,b]` | `memory_query` | Find memories (read-only) |
+| `sas memory retire --memory M` | `memory_retire` | Retire a memory |
+
+`--goal` takes a goal id or a unique prefix of at least 4 characters. See
+[Goals and memory](./for-agents.md#goals-and-memory).
+
+## Measure and verify
+
+```bash
+sas sas_measure --scene-id Chorus                 # tempo, key, loudness, clipping, parts
+sas run sas_verify_outcome --json-body '{"sceneId": "Chorus", "outcome": {…}}'
+```
+
+Both run in one call, with one render (no `jobId`). See
+[Measure and verify](./for-agents.md#measure-and-verify) for the measurements
+and the outcome spec.
+
+## Runs: `sas runs`
+
+| Command | Tool | Does |
+|---|---|---|
+| `sas runs start [--goal-id G] [--label "…"]` | `run_start` | Open a run; prints its `runId` |
+| `sas runs end --run-id R [--status completed\|failed\|aborted] [--note "…"]` | `run_end` | Close it |
+| `sas runs get --run-id R [--timeline] [--since N]` | `run_get` | One run and its timeline (read-only) |
+| `sas runs list` | `run_list` | Runs, newest first (read-only) |
+
+```bash
+RUN=$(sas runs start --label "first pass" --json | jq -r '.data.changes.runId')
+export SAS_RUN_ID="$RUN"      # every later call is recorded in this run
+# … work …
+sas runs end --run-id "$RUN"
+```
+
+## Visible commands: `sas ui`
+
+The `ui_*` tools, which have the app do things on screen the way a click does.
+Every command takes `--performance narrated` (the default: a cursor glides to
+each step) or `--performance instant`.
+
+| Command | Tool |
+|---|---|
+| `sas ui scene select --scene-id S` · `sas ui scene create` | `ui_scene_select`, `ui_scene_create` |
+| `sas ui scene play-toggle [--scene-id S] [--playing]` | `ui_scene_play_toggle` |
+| `sas ui panel open --panel-id P` · `sas ui panel close --panel-id P` | `ui_panel_open`, `ui_panel_close` |
+| `sas ui panel prompt type --panel-id P --text "…"` · `sas ui panel generate click --panel-id P` | `ui_panel_prompt_type`, `ui_panel_generate_click` |
+| `sas ui track reveal --track-id T` · `sas ui track fader set --track-id T --value V` | `ui_track_reveal`, `ui_track_fader_set` |
+| `sas ui track mute --track-id T` · `sas ui track solo --track-id T` | `ui_track_mute`, `ui_track_solo` |
+| `sas ui deck play` · `sas ui deck stop` | `ui_deck_play`, `ui_deck_stop` |
+| `sas ui transport toggle [--context auto\|arrangement\|scene]` | `ui_transport_toggle` (the Space key) |
+| `sas ui arrangement play` · `stop` · `toggle` | `ui_arrangement_play`, `ui_arrangement_stop`, `ui_arrangement_toggle` |
+| `sas ui view-state` · `sas ui find --test-id …` · `sas ui screenshot` | `ui_view_state`, `ui_find`, `ui_screenshot` (read-only) |
+
+See [Visible commands](./for-agents.md#visible-commands).
+
+## Skills: `sas skill`
+
+```bash
+sas skill search --query "bpm detection"    # an empty query lists every skill
+sas skill load --name sas-terminology
+```
 
 ## Plan-as-artifact surface
 
@@ -734,7 +834,7 @@ non-completed step. Step ids are deterministic (`${plan.id}.${idx}.${type}`).
 
 ```bash
 sas preview                              # active scene
-sas preview <sceneId>
+sas preview Chorus                       # a scene by name or id
 sas preview --track-id <trackId>         # bounce just this track
 sas preview <sceneId> --refresh          # force re-render (skip cache)
 sas preview <sceneId> --bpm 120 --bars 8 # render-time overrides

@@ -30,9 +30,32 @@ When the agent calls a capability tool, you see a native dialog showing:
 You click **Allow** or **Cancel**. Cancel returns a structured failure
 to the agent; it can ask you a different way or move on.
 
-**No persistent allowlist in v1.** Every call prompts every time. We
-may add an "always allow" toggle later based on real-world friction;
-for now, simplicity wins.
+**No persistent allowlist.** Every call prompts every time. There is no
+"always allow" setting, and an agent can never grant itself consent.
+
+### Consent classes
+
+Each tool that needs your consent belongs to a **consent class**, and the app
+checks the class before the tool runs:
+
+| Class | Tools here |
+|---|---|
+| `read_local` | `fs_list_directory`, `fs_read_file`, `fs_search` (other tools that read your own files outside the project, such as audio analysis of a file you name, are in it too) |
+| `destructive` | `fs_write_file` |
+| `shell` | `shell_exec` |
+
+The full list of classes is `download`, `install`, `paid`, `destructive`,
+`shell`, `screen`, `web`, `read_local` and `capture`. Each tool's entry in
+`/api/v1/actions` names its `consentClass`, and `GET /api/v1/consent` shows the
+classes and the current policy (read-only).
+
+For a scripted or headless launch (an evaluation run, a CI job), the app can be
+started with `SAS_HEADLESS_CONSENT`, for example
+`SAS_HEADLESS_CONSENT="allow:read_local;deny:shell,destructive"`: an allowed
+class runs without the dialog, a denied class is refused before the tool runs.
+A class in both lists is denied, and `paid` always asks. Without it, every call
+shows the dialog, as above. Every consent decision is recorded in the app's
+intent log.
 
 ## Tools
 

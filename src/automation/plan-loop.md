@@ -29,7 +29,8 @@ via `suggestedFix`, and the relationship to checkpoints.
 | Pure transport ("play", "stop") | Direct tool call (`sas dsl_play`). While tracks are being frozen, Play returns `FREEZE_IN_PROGRESS`; while audio is rendering, it fails with remediation `render_in_progress`. Both are retryable: wait, then call it again |
 | Anything you might want to undo | Plan loop |
 | State-dependent change ("revise the bass darker") | Plan loop; the validator catches missing preconditions |
-| Arranging scenes into a song ("the chorus twice after the verse"), matching its scene levels ("the chorus is louder than the verse"), or choosing which take a section sings ("verse 3 should sing the first verse's words again") | The [arrangement tools](./for-agents.md#arrangement-tools) directly (`arrangement_normalize_kick_levels` for the levels, `arrangement_assign_takes` for a take; takes otherwise follow their section's position by themselves); they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks |
+| Arranging scenes into a song ("the chorus twice after the verse"), matching its scene levels ("the chorus is louder than the verse"), or choosing which take a section sings ("verse 3 should sing the first verse's words again") | The [arrangement tools](./for-agents.md#arrangement-tools) directly (`arrangement_normalize_kick_levels` for the levels, `arrangement_assign_takes` for a take; takes otherwise follow their section's position by themselves); they keep their own undo history (`arrangement_undo`) and never touch scenes or tracks. A scene's level is set like a fader, outside that history |
+| A request that spans many turns, or that you must check before you report back | Keep a [goal](./for-agents.md#goals-and-memory) and resume it from `goal_briefing`; judge the result with [`sas_verify_outcome`](./for-agents.md#measure-and-verify) |
 
 The non-loop tools are still there. The loop is a *higher-leverage* path
 for changes the agent expects to think about: it forces a state check,
@@ -305,7 +306,8 @@ renders are cancelled.
 Checkpoints from the CLI and from `apply` expire after 24 h; checkpoints
 made through MCP expire after 1 h, and workflow checkpoints after 6 h.
 `sas history prune` evicts expired ones; eviction also runs at app
-startup.
+startup. A checkpoint pinned by a goal (`sas goal park --checkpoint-id`) or by a
+run is never evicted.
 
 ## Where each verb fits
 

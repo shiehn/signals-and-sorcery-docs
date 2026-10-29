@@ -562,9 +562,12 @@ sas job wait "$JOB" --timeout 300
 ```
 
 Each scene gets one level (`gain_db`), as loud as they can all go without any
-scene peaking above the song's current ceiling. The whole change is one undo
-step: `sas arrangement undo` takes it back. Running it again replaces the
-previous match instead of adding to it.
+scene peaking above the song's current ceiling. It is the scene's own level,
+the one its card's fader shows, so the scene sounds the same in the scene
+editor, on the decks and in exports. Like a fader, the match is not an undo
+step: each matched scene's previous level is replaced, which is why the dry run
+comes first. Running it again replaces the previous match instead of adding to
+it.
 
 To match the kicks instead ("the kick is louder in the chorus than in the
 verse"), pass `--match-on kick`: every scene with a clear kick then hits equally
@@ -573,10 +576,10 @@ hard, and scenes without one are matched on overall loudness
 
 If it fails because a stem needs rendering while the song plays, stop playback
 (`sas arrangement stop`) and run it again. To set one scene's level by hand
-instead, use `arrangement_set_scene_gain`:
+instead, use `scene_set_level` (−60 to +6 dB, 0 is unity):
 
 ```bash
-sas run arrangement_set_scene_gain -p scene=Chorus -p gainDb=-2
+sas run scene_set_level -p scene=Chorus -p levelDb=-2
 ```
 
 A later match replaces a hand-set level, unless that scene is in `--exclude`.
@@ -608,3 +611,91 @@ sas arrangement assign-takes
 `--take auto` unpins one section. Pinning a section whose scene has no set of
 takes fails with `no_takes`. The arranger's **Takes in order** button does what
 the last call does.
+
+## 21. Start the song inside the verse
+
+The user says: *"Don't start the song on silence. Start two bars before the
+verse's downbeat."*
+
+Pickup bars play the first section's loop up to its downbeat, so the song
+starts inside that loop:
+
+```bash
+#!/bin/bash
+set -e
+
+# Two pickup bars before bar 1. Bar 1 stays the verse's downbeat.
+sas arrangement pickup --bars 2
+
+# The song now starts two bars earlier.
+sas arrangement get --json | jq '.data.changes | {pickupBars, pickupQn, totalBars}'
+
+# Changed your mind? Remove them (or sas arrangement undo).
+sas arrangement pickup --bars 0
+```
+
+Every layer that sounds at the first section's downbeat carries back into the
+pickup; a layer that is silent there stays silent. If you move another section
+to the front, it fills the pickup instead.
+
+## 22. Fade out one clip
+
+The user says: *"Fade out the pad at the end of the second chorus, only there."*
+
+`arrangement_set_clip` gives one clip its own fades and level; every other clip
+of the layer keeps what it plays:
+
+```bash
+#!/bin/bash
+set -e
+
+# A four-beat fade-out (quarter notes) on the pad's clip in the second chorus.
+sas arrangement clip --instance "the second chorus" --track Pad --fade-out-beats 4
+
+# The bass clip starting on beat 3 of bar 5, 6 dB down.
+sas run arrangement_set_clip -p track=Bass -p bar=5 -p beat=3 -p gainDb=-6
+
+# Trim the kick's clip in bar 9 so it ends after beat 2 of bar 10.
+sas arrangement trim --track Kick --bar 9 --edge end --to-bar 10 --to-beat 2
+```
+
+Each call is one undo step (`sas arrangement undo`).
+
+## 23. Keep a goal and check it before you say done
+
+The user says: *"Make the chorus 16 bars and make sure nothing clips."*
+
+Keep the request as a goal, do the work, then let the app judge it from a
+render:
+
+```bash
+#!/bin/bash
+set -e
+
+# 1. The goal, in the user's own words, with what "done" means.
+sas goal create --brief "Make the chorus 16 bars and make sure nothing clips"
+
+# 2. Do the work with the usual tools, and record any real choice you make.
+sas goal decide --choice "doubled the loop, no new parts" --why "the user asked for length, not new material"
+
+# 3. Verify against measured evidence before reporting back.
+sas run sas_verify_outcome --json-body '{
+  "sceneId": "Chorus",
+  "outcome": {
+    "version": "outcome-1",
+    "sentence": "a 16-bar chorus that does not clip",
+    "clauses": [
+      {"kind": "bars", "mode": "required",
+       "evidence": [{"id": "structural-1", "field": "bars", "op": "eq", "value": 16}]},
+      {"kind": "no_clipping", "mode": "required",
+       "evidence": [{"id": "lufs-1", "field": "preTrimPeakDb", "op": "lte",
+                     "ref": "thresholds-v1:clipping.max_pre_trim_peak_db"}]}
+    ]
+  }
+}' --json | jq '.data.changes | {verdict, summary, clauses: [.clauses[] | {label, status}]}'
+```
+
+Report the verdict (`achieved`, `partial` or `failed`) with its evidence, not a
+guess. If the user moves on before it is finished, park the goal with a note
+(`sas goal park --note "…"`); the next session resumes it with
+`sas goal current --brief`.
