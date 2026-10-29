@@ -30,7 +30,7 @@ If you only want to use an existing plugin, skip this page and read
 
 ## Prerequisites
 
-- **Signals & Sorcery** v4.2.0 or later (plugin SDK contract 3.x); install the SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v3.22.2)
+- **Signals & Sorcery** v4.2.0 or later (plugin SDK contract 3.x); install the SDK with `npm install @signalsandsorcery/plugin-sdk` (currently v3.24.2; the `PLUGIN_SDK_VERSION` constant in that release reads `3.24.0`, the contract version)
 - **Node.js** 18+ (for building your plugin)
 - **TypeScript** recommended but not required
 
@@ -50,7 +50,21 @@ This gives you:
 - **Hooks**: `useSceneState` (scene-keyed state management), `usePanelBus` (panel mix bus), `useAnySolo`
 - **Constants**: `PLUGIN_SDK_VERSION` and `LLM_MODEL` (model roles). The valid track roles are fetched at runtime via `host.getValidRoles()`, not shipped as a static constant
 
-Host methods added in recent SDK versions are typed as optional on `PluginHost`. Feature-detect them (`typeof host.method === 'function'`) so your plugin still runs on older releases of the app.
+Host methods added in recent SDK versions are typed as optional on `PluginHost`. Feature-detect them (`typeof host.method === 'function'`) so your plugin still runs on older releases of the app. For the 3.23 and 3.24 methods the SDK exports guards that make the check and narrow the type:
+
+```typescript
+import { hasArrangementOutline, hasSongLyrics, hasTrackOnsets } from '@signalsandsorcery/plugin-sdk';
+
+if (hasArrangementOutline(host)) {
+  const outline = await host.getArrangementOutline(); // typed as present here
+}
+if (hasSongLyrics(host)) {
+  host.onSongLyricsChanged((doc) => { /* re-read the words */ });
+}
+// Absent on an older app: hide the feature instead of calling it.
+```
+
+The others are `hasUrlText` (`fetchUrlText`) and `hasSceneAudioTracks` (`listSceneAudioTracks`). The pure helpers for links, song lyrics and onsets are also published without React, as the subpaths `@signalsandsorcery/plugin-sdk/url-text`, `/song-lyrics` and `/track-onsets`, for code that runs outside a panel. For plugin tests, `createSongLyricsTestHost()` gives an in-memory song-lyrics host with the app's rules.
 
 ```typescript
 // Import types for your plugin class
@@ -188,7 +202,8 @@ Capabilities declare what platform features your plugin needs. The host enforces
     "network": {
       "allowedHosts": ["api.example.com", "cdn.example.com"]
     },
-    "fileDialog": true
+    "fileDialog": true,
+    "urlText": true
   }
 }
 ```
@@ -202,6 +217,7 @@ Capabilities declare what platform features your plugin needs. The host enforces
 | `fileDialog` | `false` | Plugin can show native file open/save dialogs |
 | `audioCapture` | `false` | Plugin records from a microphone or line input (`startTrackRecording()` and related methods) |
 | `externalApps` | `[]` | Process names of desktop apps the plugin may drive via `automateExternalApp()` |
+| `urlText` | `false` | Plugin may read a page or document the user links via `fetchUrlText()` (SDK 3.23.0). The user still allows each site once, per plugin |
 
 ## Implementing GeneratorPlugin
 

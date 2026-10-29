@@ -157,6 +157,7 @@ All methods below are available on the `host` object your plugin receives in `ac
 | `writeAudioClip` | `(trackId: string, filePath: string, position?: number) => Promise<void>` | Place an audio file (`.wav`, `.aiff`, `.mp3`, `.flac`, `.ogg`) on a track. **Ownership.** |
 | `generateAudioTexture` | `(request: PluginAudioTextureRequest) => Promise<PluginAudioTextureResult>` | Invoke audio generation. Request has `prompt`, optional `durationSeconds` and `bpm`. Returns `{ filePath, durationSeconds, cuePoints }`. |
 | `exportTrackAudio` | `(trackId: string) => Promise<ExportTrackAudioResult>` | **Optional.** Render only this track, offline, from its own scene (its length and time signature) to a temporary WAV; returns `{ path, bpm, durationMs }`. Throws a retryable `ENGINE_ERROR` while another render holds the engine. See [exportTrackAudio](./api-reference.md#exporttrackaudio-trackid). **Ownership.** |
+| `readTrackOnsets` | `(trackDbId: string, opts?: ReadTrackOnsetsOptions) => Promise<TrackOnsets \| null>` | **Optional (SDK 3.24.0).** Where any track's hits land, measured from its audio over one pass of its scene loop: `{ source, sampleRate, durationSec, bpm, onsets, truncated }`, each onset `{ timeSec, beat, strength }`. Read-only, not ownership-gated. While the transport plays or another render runs, an uncached read rejects with a retryable `ENGINE_ERROR` whose `details.reason` is `TRANSPORT_PLAYING` or `TRANSITION_RENDER_IN_PROGRESS`. Guard: `hasTrackOnsets`. See [readTrackOnsets](./api-reference.md#readtrackonsets-trackdbid-opts). |
 
 ### Plugin/Synth Operations
 
@@ -214,6 +215,19 @@ Each plugin can have one mix bus per scene: volume, mute, solo and an FX chain o
 | `getMusicalContext` | `() => Promise<MusicalContext>` | Lightweight context: `key`, `mode`, `bpm`, `bars`, `genre`, `timeSignature`, `chordProgression`, `contractPrompt`. No concurrent MIDI. |
 | `getActiveSceneId` | `() => string \| null` | Get the currently active scene ID. Synchronous. Returns `null` if no scene is selected. |
 | `getSceneList` | `() => Promise<PluginSceneInfo[]>` | Get all scenes in the project. Returns `{ id, name, isMuted }[]`. |
+| `getArrangementOutline` | `() => Promise<ArrangementOutline \| null>` | **Optional (SDK 3.23.0).** The song order: `{ sections, pickupBars? }`, each section `{ instanceId, sceneId, sceneName, label?, role?, startBar, bars, occurrence }` in play order, in 1-based song bars. `null` with no arrangement. Guard: `hasArrangementOutline`. See [getArrangementOutline](./api-reference.md#getarrangementoutline). |
+| `listSceneAudioTracks` | `() => Promise<SceneAudioTrackSummary[]>` | **Optional (SDK 3.24.0).** The active scene's sample and audio tracks, `{ dbId, name, kind: 'sample' \| 'audio', pluginId?, category?, tags?, description? }`, the ones `listSceneTracks` (MIDI only) leaves out. Guard: `hasSceneAudioTracks`. See [listSceneAudioTracks](./api-reference.md#listsceneaudiotracks). |
+
+### Song Lyrics
+
+One host-owned lyric document per arrangement, keyed by section placement (the outline's `instanceId`), shared by the arrangement's Lyrics tab, the agent and vocal plugins. All four methods are **Optional (SDK 3.24.0)**: feature-check them together with `hasSongLyrics(host)`. See [Song Lyrics](./api-reference.md#song-lyrics).
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `getSongLyrics` | `() => Promise<SongLyrics \| null>` | The document: `{ version, arrangementId, description, sections, spare, updatedAt }`. Walk the outline for order (`songLyricsInOrder`). |
+| `setSectionLyrics` | `(instanceId: string, patch: SongLyricsSectionPatch) => Promise<void>` | Change the fields present in `patch` (`null` clears): `lines`, `locks`, `hints`, `role`, `sameAs`, `take`, `renderedSig`, `voiceTrackDbId`. Rejects with `NOT_OWNED` for another plugin's section or a track you don't own, else `VALIDATION_ERROR` with `details.reason`. |
+| `setSongDescription` | `(description: string) => Promise<void>` | The song's one description; `''` clears it. |
+| `onSongLyricsChanged` | `(listener: (doc, change?) => void) => UnsubscribeFn` | Fires after any writer changes the document; `change` is `{ instanceIds?, description?, byPluginId? }`. |
 
 ### Transport & Events
 
@@ -310,11 +324,12 @@ The two dialog methods require the `fileDialog` capability in the manifest. `dow
 
 ### Network
 
-Requires the `network` capability with `allowedHosts` in the manifest.
+`httpRequest` requires the `network` capability with `allowedHosts` in the manifest; `fetchUrlText` requires `urlText`.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `httpRequest` | `(options: PluginHttpRequestOptions) => Promise<PluginHttpResponse>` | Make an HTTP request to an allowed host. Options: `url`, `method`, `headers`, `body`, `timeoutMs`. Returns `{ status, statusText, headers, body }`. |
+| `fetchUrlText` | `(request: UrlTextRequest) => Promise<UrlTextResult>` | **Optional (SDK 3.23.0).** Read a page or document the user linked as readable text: `{ url, maxChars?, purpose }` → `{ ok, reason?, text?, title?, finalUrl?, truncated?, ... }`. The host asks the user once per plugin and site; one GET with no credentials, public addresses only, 2 MB and 20 s. Never rejects for a failed fetch. Guard: `hasUrlText`. See [fetchUrlText](./api-reference.md#fetchurltext-request). |
 
 ### Secure Storage
 
@@ -412,5 +427,6 @@ These ship with Signals & Sorcery and serve as reference implementations:
 
 - **Ownership scoping**: Plugins can only modify tracks they created (enforced at runtime)
 - **Capability gating**: Network and file system access require manifest declarations
+- **Consent for links**: `fetchUrlText` reads a site only after the user allows it, per plugin and site, and never from a private or local address
 - **Secret isolation**: Each plugin's secrets are encrypted and scoped per plugin
 - **Track limits**: 16 tracks per plugin per scene (configurable)

@@ -532,5 +532,7 @@ Ideas for extending this plugin:
 - **Live preview**: use `host.auditionNote()` to preview patterns before committing
 - **LLM-assisted patterns**: use `host.generateWithLLM()` to suggest interesting step/pulse combinations based on the genre (declare `"requiresLLM": true` in `capabilities` first)
 - **Transport sync**: use `host.onDeckBoundary()` to regenerate patterns on each loop
+- **Lock to a drum loop**: find the scene's loops with `host.listSceneAudioTracks()` and read where their hits land with `host.readTrackOnsets()` (both optional, SDK 3.24.0: guard with `hasSceneAudioTracks` and `hasTrackOnsets`), then rotate each layer so its pulses fall on the loop's strong beats
+- **Know the song**: `host.getArrangementOutline()` (optional, SDK 3.23.0, guard `hasArrangementOutline`) says which sections play this scene, so a pattern can thin out for a verse and fill in for a chorus
 
 See the [API Reference](./api-reference.md) for the complete list of available methods.

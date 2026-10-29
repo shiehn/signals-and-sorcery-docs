@@ -6,7 +6,7 @@ sidebar: auto
 
 Complete reference for the `PluginHost` API, the scoped interface that plugins use to interact with Signals & Sorcery. Each plugin receives its own `PluginHost` instance with ownership-scoped access.
 
-Methods described as optional are declared with `?` on `PluginHost` because older hosts may not have them. Check `typeof host.method === 'function'` before calling one.
+Methods described as optional are declared with `?` on `PluginHost` because older hosts may not have them. Check `typeof host.method === 'function'` before calling one. For the 3.23 and 3.24 methods the SDK also exports guards that make that check and narrow the type: `hasUrlText`, `hasArrangementOutline`, `hasSongLyrics` (all four lyrics methods), `hasTrackOnsets` and `hasSceneAudioTracks`.
 
 ## Track Management
 
@@ -633,6 +633,84 @@ Try again once that render has finished.
 
 ---
 
+### readTrackOnsets(trackDbId, opts?)
+
+*Optional (SDK 3.24.0).* Where a track's hits land, measured from its **audio** as heard in
+its scene: an audio loop, a frozen track, a rendered drum lane. Use it for the groove a MIDI
+read can't see, such as the backbeat of a drum loop.
+
+```typescript
+readTrackOnsets?(trackDbId: string, opts?: ReadTrackOnsetsOptions): Promise<TrackOnsets | null>
+
+interface ReadTrackOnsetsOptions {
+  maxCount?: number;   // keep at most this many (the strongest): 1 to 4096, default 512
+}
+
+interface TrackOnsets {
+  source: 'audio';     // only 'audio' today; ignore other values
+  sampleRate: number;
+  durationSec: number; // one pass of the scene loop
+  bpm: number;         // the scene tempo `beat` is counted at
+  onsets: TrackOnset[]; // in time order
+  truncated: boolean;  // more than maxCount were found; the weakest were dropped
+}
+
+interface TrackOnset {
+  timeSec: number;     // seconds from the scene's first downbeat
+  beat: number;        // quarter-notes from the first downbeat (timeSec * bpm / 60)
+  strength: number;    // 0..1, the loudest hit of this reading is 1
+}
+```
+
+The selector is any track DB id in the bound project (`SceneTrackSummary.dbId`,
+`SceneAudioTrackSummary.dbId` from [listSceneAudioTracks](#listsceneaudiotracks),
+`ImportCandidateTrack.dbId`). The reading covers one pass of the track's scene loop, with clip
+offset, stretch and the loop span already applied. Like `readImportableTrackMidi`, it is
+read-only and **not** ownership-gated, and it needs no capability.
+
+It resolves `null` when no project is bound, the id is not a track of this project, or the
+track has no sound to measure. A silent track reads as `onsets: []`.
+
+The host caches a reading until the track's sound changes and reads a fresh freeze stem
+directly; any other uncached read bounces the track. When it can't bounce now, the read
+rejects with `ENGINE_ERROR` and `details: { retryable: true, reason }`, where `reason` is a
+`TrackOnsetsBusyReason`. That means busy, not broken:
+
+| `reason` | Retry when |
+|----------|------------|
+| `'TRANSPORT_PLAYING'` | the transport stops |
+| `'TRANSITION_RENDER_IN_PROGRESS'` | the other render finishes |
+
+```typescript
+import { PluginError, hasTrackOnsets } from '@signalsandsorcery/plugin-sdk';
+
+if (hasTrackOnsets(host)) {
+  try {
+    const reading = await host.readTrackOnsets(loop.dbId, { maxCount: 256 });
+    const strongHits = reading?.onsets.filter((o) => o.strength > 0.5) ?? [];
+  } catch (err) {
+    if (err instanceof PluginError && err.details?.retryable) {
+      // err.details.reason: 'TRANSPORT_PLAYING' | 'TRANSITION_RENDER_IN_PROGRESS'
+      // Try again at the right moment, or go on without this track's evidence.
+    }
+  }
+}
+```
+
+One drum hit can give more than one onset: synth kicks, for example, give a weaker secondary
+onset about 0.25 beat after each hit. Weight onsets by `strength` and merge near-duplicates
+before counting hits.
+
+Helpers: `hasTrackOnsets(host)`, `TRACK_ONSETS_LIMITS` (`{ defaultMaxCount: 512, maxCount: 4096 }`),
+`TRACK_ONSETS_BUSY_REASONS`, `resolveTrackOnsetsMaxCount(opts)` (the `maxCount` a reading uses,
+`null` for a value the host refuses). `finishTrackOnsets` and `RawTrackOnsets` are the host's
+own step on a detector's output. The helpers and types are also on the React-free subpath
+`@signalsandsorcery/plugin-sdk/track-onsets`.
+
+**Errors:** `VALIDATION_ERROR` (a bad `maxCount`), `TIMEOUT`, `ENGINE_ERROR`
+
+---
+
 ### generateAudioTexture(request)
 
 Invoke the host's audio texture generation pipeline.
@@ -954,6 +1032,260 @@ getSceneList(): Promise<PluginSceneInfo[]>
 | `id` | `string` | Scene UUID |
 | `name` | `string` | Scene name |
 | `isMuted` | `boolean` | Whether the scene is muted |
+
+---
+
+### getArrangementOutline()
+
+*Optional (SDK 3.23.0).* The song order: the project's arrangement as a list of sections in
+play order, each one an occurrence of a scene. A plugin writing for one scene learns where it
+sits in the song ("the second chorus, after the bridge").
+
+```typescript
+getArrangementOutline?(): Promise<ArrangementOutline | null>
+
+interface ArrangementOutline {
+  sections: ArrangementOutlineSection[]; // in play order
+  pickupBars?: number;                   // bars that lead in to bar 1; absent or 0 when none
+}
+
+interface ArrangementOutlineSection {
+  instanceId: string;  // this occurrence's id, stable while the section stays placed
+  sceneId: string;
+  sceneName: string;
+  label?: string;      // the user's own name for the section ("Chorus", "Verse 2")
+  role?: string;       // song-form role, lower-case, only when the arrangement carries one
+  startBar: number;    // first song bar, 1-based
+  bars: number;
+  occurrence: number;  // 1-based: which time this scene plays (the 2nd chorus = 2)
+}
+```
+
+Bars are **song bars**, 1-based: the first section's downbeat is bar 1. Pickup bars come
+before it, are not a section, and are counted in `pickupBars`. `role` appears only when the
+arrangement carries one; hosts never guess it from names.
+
+It resolves `null` when no project is bound or the project has no arrangement yet, and
+`{ sections: [] }` for an arrangement with nothing placed. Read-only, no capability needed.
+
+```typescript
+import { hasArrangementOutline, sectionsOfScene, formatSongOrder } from '@signalsandsorcery/plugin-sdk';
+
+if (hasArrangementOutline(host)) {
+  const outline = await host.getArrangementOutline();
+  const mine = sectionsOfScene(outline, sceneId);              // this scene's placements, in song order
+  const order = formatSongOrder(outline, { currentSceneId: sceneId });
+}
+```
+
+```text
+1. Intro · scene "Dawn" · bars 1–4
+2. Chorus 1 · scene "Lift" · bars 5–12 ← this scene
+3. Verse 2 · scene "Road" · bars 13–20
+4. Chorus 2 · scene "Lift" · bars 21–28 ← this scene
+```
+
+`formatSongOrder` writes one numbered line per section, for a prompt or a tooltip. A section is
+named by its label, else its role, else its scene, and pickup bars get their own first line.
+
+---
+
+### listSceneAudioTracks()
+
+*Optional (SDK 3.24.0).* The active scene's sample and audio tracks: loops from the sample
+library (`kind: 'sample'`) and imported, recorded or generated audio (`kind: 'audio'`). These
+are the tracks `listSceneTracks()` leaves out (it lists MIDI tracks only, unchanged), so the two
+calls together list every track in the scene.
+
+```typescript
+listSceneAudioTracks?(): Promise<SceneAudioTrackSummary[]>
+
+interface SceneAudioTrackSummary {
+  dbId: string;              // stable DB row id
+  name: string;              // display only, never an identifier
+  kind: 'sample' | 'audio';
+  pluginId?: string;         // the panel that made the track, when stamped
+  category?: string;         // a sample's library category, as stored
+  tags?: string[];           // a sample's library tags, as stored
+  description?: string;      // audio: the stored description, when there is one
+}
+```
+
+Unfiltered by plugin family or ownership, and read-only. Returns `[]` when no project or scene
+is bound. These tracks have no MIDI, so `readImportableTrackMidi` doesn't apply: pass the `dbId`
+to [readTrackOnsets](#readtrackonsets-trackdbid-opts) to read where a loop's hits land.
+
+```typescript
+import { hasSceneAudioTracks } from '@signalsandsorcery/plugin-sdk';
+
+if (hasSceneAudioTracks(host)) {
+  const audio = await host.listSceneAudioTracks();
+  const drumLoop = audio.find((t) => t.kind === 'sample' && t.tags?.includes('drums'));
+}
+```
+
+---
+
+## Song Lyrics
+
+*Optional (SDK 3.24.0).* One host-owned lyric document per arrangement holds the song's words,
+keyed by section placement. The Lyrics tab in the arrangement row, the agent and vocal plugins
+all read and write this one copy. The four methods come together: feature-check them with
+`hasSongLyrics(host)`.
+
+```typescript
+import { hasSongLyrics, songLyricsInOrder } from '@signalsandsorcery/plugin-sdk';
+
+if (hasSongLyrics(host) && typeof host.getArrangementOutline === 'function') {
+  const [outline, doc] = await Promise.all([host.getArrangementOutline(), host.getSongLyrics()]);
+  for (const { section, lines } of songLyricsInOrder(outline, doc)) {
+    // section.instanceId, section.role, lines (a repeat's words already followed)
+  }
+}
+```
+
+### getSongLyrics()
+
+```typescript
+getSongLyrics?(): Promise<SongLyrics | null>
+
+interface SongLyrics {
+  version: 1;
+  arrangementId: string;
+  description: string;                          // the one song description; '' when none
+  sections: Record<string, SongLyricsSection>;  // by the outline's instanceId
+  spare: SongLyricsSpareVerse[];                // words that lost their placement
+  updatedAt: number;                            // epoch ms
+}
+
+interface SongLyricsSection {
+  sceneId: string;
+  voiceTrackDbId: string | null; // the track that sings here; null = instrumental or not claimed yet
+  role?: SongRole;
+  lines: string[];               // the words sung in THIS placement, one line per phrase
+  locks: number[];               // locked line indexes, ascending
+  hints: SongLyricsHint[];       // this section's words chat, oldest first
+  sameAs?: string;               // sings the words of that placement (same scene)
+  take?: number;                 // 0-based take, once rendered
+  renderedSig?: string;          // signature of the lines the last render sang
+  writtenAt?: number;            // epoch ms of the last change to lines
+}
+```
+
+Sections have no order of their own: walk `getArrangementOutline()` for the song order
+(`songLyricsInOrder(outline, doc)` does it). A placed section the document doesn't hold yet
+reads as empty, and a section with `sameAs` sings that section's words (the host keeps its
+`lines` a copy). `SongLyricsHint` is `{ role: 'user' | 'model', text, at }`, and
+`SongLyricsSpareVerse` is `{ sceneId, voiceTrackDbId, lines, from? }`.
+
+`SongRole` is free text, stored lower-case. `SONG_ROLE_SUGGESTIONS` lists the common forms
+(intro, verse, pre-chorus, chorus, post-chorus, hook, refrain, bridge, breakdown, build, drop,
+interlude, solo, outro), not a closed list.
+
+Resolves `null` when no project is bound, the project has no arrangement, or nothing has been
+written yet. Read-only, no capability needed.
+
+### setSectionLyrics(instanceId, patch)
+
+Write one section's words, locks, hints, role, repeat, take or singing track. Only the fields
+present in `patch` change, and `null` clears an optional field. The first write creates the
+document and the section.
+
+```typescript
+setSectionLyrics?(instanceId: string, patch: SongLyricsSectionPatch): Promise<void>
+
+interface SongLyricsSectionPatch {
+  lines?: string[];
+  locks?: number[];
+  hints?: SongLyricsHint[];
+  role?: SongRole | null;
+  sameAs?: string | null;
+  take?: number | null;
+  renderedSig?: string | null;
+  voiceTrackDbId?: string | null;
+}
+```
+
+- `instanceId` must be placed in the bound arrangement.
+- `lines`: one string per phrase, no line breaks, within `SONG_LYRICS_LIMITS` (64 lines of 300
+  characters). Refused while the section has `sameAs`, unless the same patch clears it.
+- `locks`: line indexes; out-of-range ones are dropped.
+- `hints`: the whole thread. The host keeps the latest 40 and cuts each to 600 characters.
+- `role`: free text, stored lower-case and trimmed.
+- `sameAs`: another placement of the **same** scene, with no cycle. The section then mirrors
+  its lines, and a rewrite carries to every repeat.
+- `voiceTrackDbId`: must be a track this plugin owns. A section already claimed by another
+  plugin's track, while that track exists, can't be written at all.
+- Unknown patch fields are refused (`SONG_LYRICS_PATCH_KEYS` lists the accepted ones).
+
+An ownership refusal rejects with `PluginError('NOT_OWNED')`. Anything else rejects with
+`VALIDATION_ERROR` and `details.reason`, a `SongLyricsWriteFailure`:
+
+| `reason` | Meaning |
+|----------|---------|
+| `no-arrangement` | No project bound, or it has no arrangement |
+| `unknown-section` | `instanceId` is not placed in the bound arrangement |
+| `invalid-patch` | Wrong type, unknown field, or a line break in a line |
+| `too-long` | Over a `SONG_LYRICS_LIMITS` cap that is not trimmed |
+| `same-as-lines` | Lines written to a section that repeats another |
+| `same-as-unknown` | `sameAs` names no placement, or itself |
+| `same-as-other-scene` | `sameAs` names a placement of another scene |
+| `same-as-cycle` | `sameAs` would loop |
+| `not-owned` | Comes with code `NOT_OWNED` |
+
+A successful write fires `onSongLyricsChanged`.
+
+**Telling a stale take.** After a render, store `renderedSig: songLinesSignature(linesYouSang)`
+with the `take`. `isSectionTakeStale(doc, instanceId)` is then true once the section's words
+have moved past what was sung; the Lyrics tab uses the same rule. The signature ignores case
+and spacing within a line; line order and count matter.
+
+### setSongDescription(description)
+
+Set the song's one description ("a late-night confession, hopeful by the end"); `''` clears it.
+At most 2000 characters after trimming. Rejects like `setSectionLyrics` (`no-arrangement`,
+`too-long`).
+
+```typescript
+setSongDescription?(description: string): Promise<void>
+```
+
+### onSongLyricsChanged(listener)
+
+Called after **any** writer changes the document: the Lyrics tab, the agent, another plugin, or
+this one. `doc` is the whole new document, or `null` when the bound project changes to one
+without a document. Returns an `UnsubscribeFn`.
+
+```typescript
+onSongLyricsChanged?(
+  listener: (doc: SongLyrics | null, change?: SongLyricsChange) => void
+): UnsubscribeFn
+
+interface SongLyricsChange {
+  instanceIds?: string[]; // the sections written (mirrors of a written section included)
+  description?: boolean;  // the description changed
+  byPluginId?: string;    // the writing plugin; absent for the tab, the agent and arrangement edits
+}
+```
+
+### Song lyrics helpers and the test host
+
+| Export | What it does |
+|--------|--------------|
+| `hasSongLyrics(host)` | True when the host has all four methods |
+| `songLyricsInOrder(outline, doc)` | The song in play order: `{ section, lyrics, lines }[]` |
+| `resolveSectionLines(doc, instanceId)` | The words a section sings, following `sameAs` |
+| `songLinesSignature(lines)` / `isSectionTakeStale(doc, instanceId)` | The shared staleness rule for `renderedSig` |
+| `SONG_LYRICS_LIMITS` | The caps: lines, line length, hints, description, role, signature |
+| `SONG_LYRICS_WRITE_FAILURES`, `SONG_LYRICS_PATCH_KEYS`, `SONG_ROLE_SUGGESTIONS`, `SONG_LYRICS_VERSION` | The lists behind the types |
+| `emptySongLyrics`, `emptySongLyricsSection`, `applySongLyricsPatch`, `applySongDescription` | The pure write rules a host runs |
+| `createSongLyricsTestHost(options)` | An in-memory host with the same rules and ownership, for plugin tests |
+
+`createSongLyricsTestHost` takes `{ pluginId?, arrangementId?, outline?, ownedTrackDbIds?,
+otherTrackOwners?, doc?, now? }` and returns `{ host, document(), events, setOutline(),
+hostWrite(), unbind() }`; spread `host` into your mock `PluginHost`. The pure helpers and the
+document types are also on the React-free subpath `@signalsandsorcery/plugin-sdk/song-lyrics`
+(the test host is on the root import only).
 
 ---
 
@@ -1467,7 +1799,8 @@ importFile(sourcePath: string, destFilename: string): Promise<string>
 
 ## Network
 
-Requires the `network` capability with `allowedHosts` in the manifest.
+`httpRequest` requires the `network` capability with `allowedHosts` in the manifest.
+`fetchUrlText` has its own capability, `urlText`, and asks the user before each new site.
 
 ### httpRequest(options)
 
@@ -1490,6 +1823,78 @@ httpRequest(options: PluginHttpRequestOptions): Promise<PluginHttpResponse>
 **Returns:** `PluginHttpResponse` with `status`, `statusText`, `headers`, and `body`.
 
 **Errors:** `CAPABILITY_DENIED` (if host not in allowedHosts)
+
+---
+
+### fetchUrlText(request)
+
+*Optional (SDK 3.23.0).* Read a web page or document the **user** gave you (lore, lyrics notes,
+a story bible) and get it back as readable text. It is narrow on purpose: one GET, no cookies or
+credentials, no headers or body from the plugin. For an API your plugin talks to, use
+`httpRequest` instead.
+
+```typescript
+fetchUrlText?(request: UrlTextRequest): Promise<UrlTextResult>
+
+interface UrlTextRequest {
+  url: string;        // https: (or http:, consented separately)
+  maxChars?: number;  // the host clamps it to 200 000
+  purpose: string;    // one line shown in the consent prompt
+}
+
+interface UrlTextResult {
+  ok: boolean;
+  reason?: UrlTextFailureReason; // when !ok
+  detail?: string;               // human-readable, never needed to branch on
+  status?: number;               // the final HTTP status, when a response arrived
+  text?: string;
+  title?: string;                // the page's <title>
+  finalUrl?: string;             // after redirects and the Google Docs rewrite
+  contentType?: string;          // e.g. 'text/html'
+  truncated?: boolean;           // text was cut at the character cap
+}
+```
+
+Declare `"urlText": true` in the manifest's `capabilities`. The declaration only lets the plugin
+ask: the host asks the user once per plugin and origin (scheme, host, port), shows your `purpose`
+in that prompt, and remembers the answer. A redirect to another origin needs its own consent.
+
+The host refuses loopback, private and link-local addresses (checked after DNS, and again on
+each redirect), follows at most 5 redirects, reads at most 2 MB in 20 seconds, and accepts only
+text bodies (`text/*`, HTML, XHTML, JSON, XML). HTML is reduced to its readable text with the
+`<title>` returned as `title`, and a Google Docs link (`docs.google.com/document/d/<id>/…`) is
+read as its plain-text export. `text` is at most `min(maxChars, 200 000)` characters.
+
+It **never rejects** for a failed fetch: read `ok` and `reason`.
+
+| `reason` | Meaning |
+|----------|---------|
+| `capability-denied` | The manifest does not declare `capabilities.urlText` |
+| `denied` | The user refused, or dismissed, consent for this plugin and origin |
+| `invalid-url` | The URL does not parse |
+| `unsupported-scheme` | Not `https:` or `http:` |
+| `blocked-address` | The host or a redirect resolves to a non-public address |
+| `too-many-redirects` | More than 5 redirects |
+| `not-text` | The body is not text (an image, a PDF, a binary) |
+| `too-large` | The body passed 2 MB |
+| `http-error` | The final response was not 2xx; see `status` |
+| `timeout` | The fetch took longer than 20 seconds (consent time not counted) |
+| `network` | DNS, TLS or connection failure |
+
+```typescript
+import { hasUrlText, describeUrlTextFailure } from '@signalsandsorcery/plugin-sdk';
+
+if (hasUrlText(host)) {
+  const res = await host.fetchUrlText({ url: link, maxChars: 20_000, purpose: 'Use this page as the lyric context' });
+  if (res.ok) setLyricContext(res.text ?? '');
+  else host.showToast('warning', 'Could not read the link', describeUrlTextFailure(res, link));
+}
+```
+
+Helpers: `hasUrlText(host)`, `describeUrlTextFailure(result, url?)` (one sentence for the panel),
+`URL_TEXT_LIMITS`, `URL_TEXT_FAILURE_REASONS`, `clampUrlTextChars`, and the host-side
+`googleDocsExportUrl`, `isUrlTextContentType`, `htmlToReadableText`. They are also on the
+React-free subpath `@signalsandsorcery/plugin-sdk/url-text`.
 
 ---
 
