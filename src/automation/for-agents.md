@@ -939,6 +939,29 @@ clarification to pick from; a name that matches none fails with
 `scene_not_found`, and `changes.availableScenes` lists the project's scenes.
 `scene_get_all` and `sas inspect` list the same scenes.
 
+**Engine failures say whether to retry.** When the audio engine can't do what a
+tool asked, `remediation.category` and `retryable` tell the cases apart:
+
+- `engine_unreachable` with `retryable: true`: the engine could not be
+  reached (not started yet, or the connection dropped). Wait for it, then make
+  the same call again.
+- `engine_unreachable` with `retryable: false`: the engine did not answer in
+  time, so the change may already have been applied. Read the state back
+  before you re-issue the call; a blind retry can apply it twice.
+- `engine_feature_unavailable` with `retryable: false`: the engine answered,
+  but this build of it does not offer that operation. Retrying can never
+  succeed; tell the user instead.
+
+**A failed read changes nothing.** When a tool has to read the engine's
+current state before it acts and that read fails, it stops there instead of
+treating the answer as empty. `dsl_load_fx_chain` with `clearExisting` fails
+without loading anything if it can't read the track's plugins or remove one
+of them, so a new chain is never stacked on the old one. `scene_delete` deletes
+nothing if it can't read the scene's tracks. `scene_move_track` moves nothing
+if it can't take the track out of its current scene, and if the add to the
+target scene fails, `changes.restoredToSourceScene` says whether the track
+went back.
+
 **Some calls wait for the composition to stop.** Opening the editor of an
 instrument on a frozen track while the composition plays
 (`instrument_open_editor`) returns `deferred_until_stop` with remediation
