@@ -311,6 +311,7 @@ with. Tools marked **deferred** require `tool_search` to discover.
 | **Runs** *(deferred)* | `run_start`, `run_end`, `run_get`, `run_list`. See [Runs and the intent log](#runs-and-the-intent-log) |
 | **Visible commands** *(deferred)* | The `ui_*` tools: the app performs a command on screen the way a click does (`ui_scene_select`, `ui_track_fader_set`, `ui_transport_toggle`, …), plus `ui_view_state`, `ui_find`, `ui_screenshot`. See [Visible commands](#visible-commands) |
 | **Skills** *(deferred)* | `skill_search`, `skill_load`: the app's how-to notes (terms, recipes). See [Skills](#skills) |
+| **New engine** *(experimental, deferred)* | `project_create_new_engine`, plus `scene_generate_contract`, `panel_create_track`, `project_document_read`, `project_intent_log` while a project made with the new engine is open. See [Projects made with the new engine](#projects-made-with-the-new-engine-experimental) |
 
 ## Arrangement tools
 
@@ -805,7 +806,9 @@ what a call may do. `GET /api/v1/whoami` shows who a request resolves to.
 recorded as an intent with who made it. `GET /api/v1/intents` reads it
 (`?since=<seq>`, `project=current|all|<id>`, `limit`). Events on
 `/api/v1/events/stream` carry a sequence number and replay from
-`Last-Event-ID` or `?since=` after a reconnect.
+`Last-Event-ID` or `?since=` after a reconnect. A project made with the new
+engine also keeps its own log of changes, read with `project_intent_log` (see
+[Projects made with the new engine](#projects-made-with-the-new-engine-experimental)).
 
 **The tool list says more.** Each entry from `/api/v1/actions` also carries
 `readOnly`, `consentClass` (see [Capability tools](./capability-tools.md)),
@@ -865,6 +868,41 @@ tools act, so use `tool_search` to find a tool.
 sas skill search --query "key detection"
 sas skill load --name sas-terminology
 ```
+
+## Projects made with the new engine (experimental)
+
+Signals & Sorcery is trialling a new audio engine. It is **experimental and
+off by default**: it is turned on in **Settings > Advanced > Engine
+(experimental)**, and even then a plain New still makes a normal project. Only
+**File > New project (new engine)**, or the tool below, makes a project that
+uses the new engine. Everything else on this page describes normal projects.
+
+A few tools exist only for these projects. `project_create_new_engine` is
+deferred and always listed; the other four are listed only while a project
+made with the new engine is open, and are refused before they run otherwise.
+
+| Tool | What it does | Inputs |
+|---|---|---|
+| `project_create_new_engine` | Create a project that uses the new engine and open it, as File > New project (new engine) does. It replaces the open project (its edits are kept). Refused with `CORE_DISABLED`, naming the setting, while the new engine is off. **Async**: the result has `projectId`, `name`, `path` and `kind: "core"`, and the project opens with one empty scene | `name` (default `"Untitled"`), `dependsOn` |
+| `scene_generate_contract` | Generate a scene's musical contract (key, chords, tempo, genre) from a description, as typing it into the scene's Contract box does. The scene must have no tracks yet. A bar count (`"8 bars"`) or a meter (`"in 3/4"`) in the prompt is taken by the scene. The tempo follows the contract only while the project has one scene; one undo step reverts the whole contract | `prompt` (required), `sceneId` (default: the active scene) |
+| `panel_create_track` | Make a track in a panel the way the panel's own "add track" does: the track belongs to that panel, joins its bus when it has one, and gets an instrument when `loadSynth` is true (Surge XT unless you name one). A failed instrument load takes the new track out again and says why | `panel` (required: `drums`, `instruments`, `synths`, `bass`, `pads`, `arps`, `ensemble`, `loops`, or a generator plugin id), `name`, `role`, `loadSynth`, `synthName` or `instrumentPluginId`, `trackIndex`, `sceneId` (the active scene only) |
+| `project_document_read` | Read-only: the project as the new engine holds it. With no `path`, a summary (scenes, track ids, session); `path` as `scene:<id>`, `track:<id>` or `clip:<id>` for one item; `full: true` for the whole document (refused past 256 KiB). Clip notes are in ticks, 48000 per quarter note | `path`, `full` |
+| `project_intent_log` | Read-only: the changes the new engine logged for the project, each with who made it (`app`, `agent:<run>`, `cli`, `mcp`, `plugin:<id>`), the command and what it touched. An entry with command `intent.skipped` is an edit set aside when the project opened because a file it needs is missing; it changed nothing and is never undone | `fromSeq` (default: the last 50), `limit` (1 to 1000, default 50) |
+
+On a normal project the same jobs are done by `create_project`,
+`compose_contract` or `set_musical_context`, and `dsl_track_create` or
+`add_instrument`.
+
+```bash
+sas run project_create_new_engine -p name="Trial Song"
+sas run scene_generate_contract -p prompt="a waltz in 3/4, dreamy"
+sas run panel_create_track -p panel=synths -p name="Lead" -p loadSynth=true
+sas run project_intent_log -p limit=20
+```
+
+`arrangement_start` works on these projects too: it creates the arrangement
+when there is none, then renders the layers that are missing or out of date,
+and the new engine builds the arrangement for playback itself.
 
 ## Pattern: observe → reason → act
 
@@ -991,6 +1029,14 @@ broken: wait a few seconds, then make the same call again. Check
 `remediation.category`, not `error`, which differs from tool to tool. A
 `sample_preview` that waits for the next bar has already returned when its
 start is refused, so the app shows the user a notice instead.
+
+**Some samples are too long to preview.** On a project made with the
+[new engine](#projects-made-with-the-new-engine-experimental),
+`sample_preview` refuses a file longer than about 87 seconds with error
+`FILE_TOO_LONG_FOR_PREVIEW`, remediation category `unsupported_value` and
+`retryable: false`. The sample is untouched and still plays in the project:
+preview a shorter one, or add it to the scene (`dsl_sample_add`) to hear it
+there.
 
 **One output: the newest Play wins.** The composition's decks and the
 arrangement share one output, so when two Plays race, the later one keeps it:

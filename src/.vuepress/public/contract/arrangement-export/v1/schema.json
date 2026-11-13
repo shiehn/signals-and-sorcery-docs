@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://signalsandsorcery.com/contract/arrangement-export/v1/schema.json",
-  "title": "Signals & Sorcery arrangement export 1.x (latest: 1.4.0)",
+  "title": "Signals & Sorcery arrangement export 1.x (latest: 1.5.0)",
   "description": "The export.json written beside an arrangement export's audio. Semantics: SPEC.md. Readers ignore properties they don't know, accept a higher minor version and refuse an unknown major.",
   "type": "object",
   "required": [
@@ -248,6 +248,216 @@
             "sourceSceneId": {
               "type": "string",
               "minLength": 1
+            }
+          }
+        },
+        "harmony": {
+          "type": "object",
+          "description": "The song's key and chords through time, as its scenes plan them (SPEC.md \"Harmony\"); absent when the writer gave none.",
+          "required": [
+            "source",
+            "key",
+            "keyStatus",
+            "keyMap",
+            "chords",
+            "tuning"
+          ],
+          "properties": {
+            "source": {
+              "const": "scene-chords",
+              "description": "Each section's scene chord plan, tiled through its loop. Not detected from audio."
+            },
+            "key": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "tonic",
+                    "mode"
+                  ],
+                  "properties": {
+                    "tonic": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "As the scene spells it: C, F#, Bb …"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Lower-case: major, minor, dorian …"
+                    }
+                  }
+                }
+              ],
+              "description": "The song's one key when every section with a key agrees; null when it changes or none is known."
+            },
+            "keyStatus": {
+              "enum": [
+                "single",
+                "partial",
+                "changes",
+                "unknown"
+              ]
+            },
+            "keyMap": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "bar",
+                  "beat",
+                  "frame",
+                  "key"
+                ],
+                "properties": {
+                  "bar": {
+                    "type": "integer",
+                    "description": "Song bar: 1 = the first section's downbeat; the pickup bars are 0, −1 …"
+                  },
+                  "beat": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "frame": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "key": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "tonic",
+                          "mode"
+                        ],
+                        "properties": {
+                          "tonic": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "As the scene spells it: C, F#, Bb …"
+                          },
+                          "mode": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Lower-case: major, minor, dorian …"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "chords": {
+              "type": "array",
+              "description": "Contiguous from frame 0 to the last bar's end. symbol null = no chord known there.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "section",
+                  "bar",
+                  "beat",
+                  "endBeat",
+                  "startFrame",
+                  "endFrame",
+                  "symbol",
+                  "root",
+                  "quality",
+                  "bass",
+                  "pitchClasses"
+                ],
+                "properties": {
+                  "section": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bar": {
+                    "type": "integer",
+                    "description": "Song bar: 1 = the first section's downbeat; the pickup bars are 0, −1 …"
+                  },
+                  "beat": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "endBeat": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "startFrame": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "endFrame": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "root": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "quality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "bass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pitchClasses": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 11
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "tuning": {
+              "type": "object",
+              "required": [
+                "a4Hz",
+                "status"
+              ],
+              "properties": {
+                "a4Hz": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "status": {
+                  "enum": [
+                    "authored",
+                    "assumed"
+                  ]
+                }
+              }
             }
           }
         },
@@ -512,6 +722,40 @@
               }
             }
           }
+        }
+      }
+    },
+    "harmonyHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SPEC.md \"Change detection\"; present when the score carries harmony."
+    },
+    "exporter": {
+      "type": "object",
+      "description": "Who wrote the file and what it can write (SPEC.md \"Exporter\"): a feature listed here but absent from the file means the song has none or the options left it out.",
+      "required": [
+        "name",
+        "version",
+        "writes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "writes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         }
       }
     },

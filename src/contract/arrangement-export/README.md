@@ -9,16 +9,16 @@ description: The published, versioned format of a Signals & Sorcery arrangement 
 When you export a song from [Arrange mode](/arrange/#exporting-your-song), Signals & Sorcery
 writes a folder of audio files plus one JSON file, `<name> - export.json`, that describes them:
 the song's tempo, its bars and sections down to the audio frame, which layer plays when (and,
-if you ask for them, the notes each layer plays), the words sung in each section, and every file. That JSON is a **published,
+if you ask for them, the notes each layer plays), the words sung in each section, the song's key and chords through time, and every file. That JSON is a **published,
 versioned format**. A visual tool, a game engine or an analysis script can read an export and
 cut, animate or analyse to the bar, without opening the project file and without knowing how
 the app works inside.
 
-- **Current version:** 1.4.0
-- **JSON Schemas:** [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
+- **Current version:** 1.5.0
+- **JSON Schemas:** [1.5.0](/contract/arrangement-export/1.5.0/schema.json), [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json), and [v1](/contract/arrangement-export/v1/schema.json): the latest 1.x, which every 1.x file validates against
 - **Changelog:** [what changed, version by version](/contract/arrangement-export/changelog.html)
 - **Source:** [github.com/shiehn/sas-arrangement-export-contract](https://github.com/shiehn/sas-arrangement-export-contract), with the specification, the schemas and the [fixtures](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures)
-- **Reader:** [the reference reader](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader) (TypeScript) and its `sas-export` command, which checks an export against its version's schema and recomputes its `timingHash` and `scoreHash` (see [Validating](#validating))
+- **Reader:** [the reference reader](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader) (TypeScript) and its `sas-export` command, which checks an export against its version's schema and recomputes the hashes it carries (`timingHash`, `scoreHash`, `lyricsHash`, `harmonyHash`; see [Validating](#validating))
 - **Your tool's checks:** if your tool reads these exports, add what it relies on as a [consumer fixture](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures/consumers), and every change to the format is checked against it
 - **Licence:** MIT, for everything in the contract: the specification, the schemas and the fixtures
 
@@ -39,7 +39,7 @@ were made. This document says what every part of that JSON means, so a consumer 
 tool, a game engine, an analysis script) can read an export without opening the project file
 that made it.
 
-- The JSON Schemas: [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
+- The JSON Schemas: [1.5.0](/contract/arrangement-export/1.5.0/schema.json), [1.4.0](/contract/arrangement-export/1.4.0/schema.json), [1.3.0](/contract/arrangement-export/1.3.0/schema.json), [1.2.0](/contract/arrangement-export/1.2.0/schema.json), [1.1.0](/contract/arrangement-export/1.1.0/schema.json), [1.0.0](/contract/arrangement-export/1.0.0/schema.json). One per format version, plus [`v1`](/contract/arrangement-export/v1/schema.json): the latest 1.x.
 - What changed and when: [the changelog](/contract/arrangement-export/changelog.html).
 - Fixtures that prove each rule below through Signals & Sorcery's own arrangement code:
   [`fixtures/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures).
@@ -52,12 +52,12 @@ Everything here is stated from the code that writes and plays the export, not fr
 
 - `schema` is always `"sas-arrangement-export/1"`. It names the format family.
 - `exportVersion` is the format's own [semantic version](https://semver.org). A file without
-  it is `1.0.0`; files written to this document carry `1.4.0`.
+  it is `1.0.0`; files written to this document carry `1.5.0`.
   - A **patch** clarifies wording only.
   - A **minor** adds optional fields; a reader for an older minor keeps working.
   - A **major** removes a field or changes a meaning. It is announced in the changelog first.
 - `$schema` (1.1) is the URL of the exact schema version the file was written against, e.g.
-  [`https://signalsandsorcery.com/contract/arrangement-export/1.4.0/schema.json`](/contract/arrangement-export/1.4.0/schema.json).
+  [`https://signalsandsorcery.com/contract/arrangement-export/1.5.0/schema.json`](/contract/arrangement-export/1.5.0/schema.json).
   signalsandsorcery.com serves every version's schema at its URL;
   [`https://signalsandsorcery.com/contract/arrangement-export/v1/schema.json`](/contract/arrangement-export/v1/schema.json) is the latest 1.x.
   The same files ship with the arrangement contract package, in `export/schema/`.
@@ -355,6 +355,7 @@ Each of these is a plausible reading of the arrangement data, and each is wrong:
 | `splits` restart or fade the loop. | They change nothing that plays. | [`splits-have-no-audio-effect`](/contract/arrangement-export/fixtures/semantics/splits-have-no-audio-effect.json) |
 | A lane's fades are every clip's fades (0.13.0). | Only where a clip has none of its own: a `clips` entry gives one clip its own fades and level, and changes no other. | `fixtures/literal/clip-fades`, `fixtures/literal/clip-gains` |
 | Every take (or every fill) of a scene plays in every section. | One unit of an alternatives group plays per section, by position or picked; the others rest. | [`alternatives-play-one-take-per-section`](/contract/arrangement-export/fixtures/semantics/alternatives-play-one-take-per-section.json) |
+| A chord event says what the audio plays, or a missing chord means silence (1.5). | Chords are each scene's **plan**, tiled through its loop; a guest layer, a phase offset, an audio loop or a recording can play something else. `symbol: null` means no chord is known there, never "no harmony". | [`score-harmony-follows-the-loop`](/contract/arrangement-export/fixtures/semantics/score-harmony-follows-the-loop.json) |
 | A section without `lyrics` is instrumental, or a scene's words are the same wherever it plays (1.4). | When the song has words, **every** section has `lyrics`, and an instrumental one has `"lines": []`. Words belong to each section, so verse 2 can differ from verse 1 on the same scene. | [`score-lyrics-per-section`](/contract/arrangement-export/fixtures/semantics/score-lyrics-per-section.json) |
 
 ---
@@ -533,6 +534,79 @@ frame, then pitch. A layer without MIDI (an audio loop, a recording) has none.
 Proof: [`fixtures/semantics/score-notes-follow-the-loop.json`](/contract/arrangement-export/fixtures/semantics/score-notes-follow-the-loop.json)
 and [`fixtures/semantics/score-effects-and-notes.json`](/contract/arrangement-export/fixtures/semantics/score-effects-and-notes.json).
 
+### Harmony
+
+`score.harmony` (1.5) is the song's key and chords through time, as its scenes plan them:
+
+```json
+"harmony": {
+  "source": "scene-chords",
+  "key": { "tonic": "C", "mode": "major" },
+  "keyStatus": "partial",
+  "keyMap": [
+    { "bar": 1, "beat": 0, "frame": 0, "key": { "tonic": "C", "mode": "major" } },
+    { "bar": 13, "beat": 48, "frame": 1152000, "key": null }
+  ],
+  "chords": [
+    { "section": "…:i1", "bar": 1, "beat": 0, "endBeat": 8, "startFrame": 0, "endFrame": 192000,
+      "symbol": "C", "root": "C", "quality": "maj", "bass": null, "pitchClasses": [0, 4, 7] },
+    { "section": "…:i3", "bar": 13, "beat": 48, "endBeat": 60, "startFrame": 1152000, "endFrame": 1440000,
+      "symbol": null, "root": null, "quality": null, "bass": null, "pitchClasses": null }
+  ],
+  "tuning": { "a4Hz": 440, "status": "assumed" }
+}
+```
+
+- **Where it comes from** (`source: "scene-chords"`). Each scene in Signals & Sorcery has a key
+  and a chord plan, written by the user or by the app's writer, that its instruments' parts are
+  generated against. The export places that plan; it does not detect chords from the audio.
+- **Chords are events, not section labels.** Each section reads its scene's plan the way its
+  home layers read the loop ([Loop position](#loop-position)): loop position 0 at the section's
+  downbeat, wrapping each loop, so a 4-bar plan repeats through an 8-bar section. The
+  [pickup bars](#pickup-bars) read the first section's plan up to its downbeat, so two pickup
+  bars before a 4-bar verse carry its bars 3 and 4. A scene that plays twice plays its plan
+  twice, the same way.
+- `chords[]` **partitions the song**: from frame 0 to the last bar's end, contiguous, in
+  order, never across a section boundary. `beat` / `endBeat` are quarter notes from the song
+  start, `bar` is the song bar the event starts in, and the frames follow [Timing](#timing).
+  Consecutive beats of the same chord are one event.
+- `symbol` is the chord as the app spells it (`C`, `Am`, `G7`, `Fmaj7`, `Bm7b5`, `Dsus4`), with
+  `root` and `quality` (`maj`, `min`, `7`, `maj7`, `min7`, `m7b5`, `dim`, `dim7`, `aug`, `sus2`,
+  `sus4`, `6`, `m6`, `9`, `maj9`, `min9`, `add9`, `m(add9)`, or the stored name). `pitchClasses`
+  are its tones, 0 = C … 11 = B, the root first, then upward by interval; `null` for a type the
+  app doesn't know. `bass` names a slash chord's bass note; the plans have no slash chords
+  today, so it is `null`: read the `bass` bucket's notes ([Notes](#notes)) for what the bass
+  plays.
+- **Unknown is explicit.** Beats a scene's plan doesn't cover, and every section of a scene with
+  no plan, are events with `symbol`, `root`, `quality`, `bass` and `pitchClasses` all `null`.
+  That means "no chord is known here", not "no harmony" and not "drums only": don't
+  pitch-correct to it.
+- **Keys.** `keyMap[]` has an entry at the song's first bar and wherever the key, or knowing
+  it, changes from one section to the next (`key: null` = no key known from there). The
+  `mode` is lower-case (`major`, `minor`, `dorian` …). `keyStatus` sums it up:
+
+  | `keyStatus` | `key` | Meaning |
+  |---|---|---|
+  | `single` | the key | every section is in it |
+  | `partial` | the key | the sections that have a key are all in it; some have none |
+  | `changes` | `null` | the sections are in more than one key: read `keyMap` |
+  | `unknown` | `null` | no section has a key |
+
+- `tuning` is the concert pitch: `a4Hz` and `status`. `"assumed"` means the project doesn't set
+  one and the app's instruments play at their default, A4 = 440 Hz; audio loops and recordings
+  in the song are not checked against it. `"authored"` would mean the project sets it.
+- What the plan cannot tell you: a guest layer from another scene, a phase offset, an audio
+  loop or a recording can play other harmony than the section's scene plans. The notes, when
+  the export has them, say what the instruments actually play.
+- The harmony is not timing and not what plays: `timingHash`, `arrangementHash` and `scoreHash`
+  leave it out; `harmonyHash` covers it ([Change detection](#change-detection)).
+- Signals & Sorcery writes `harmony` in every score from 1.5 on. A score without it was written
+  by an exporter that doesn't support it: check [`exporter.writes`](#exporter).
+
+Proof: [`fixtures/semantics/score-harmony-follows-the-loop.json`](/contract/arrangement-export/fixtures/semantics/score-harmony-follows-the-loop.json)
+(two pickup bars, a verse stretched past its loop, a chorus with a gap in its plan and a bridge
+with none).
+
 ---
 
 ## Ids and stability
@@ -576,6 +650,7 @@ These hashes tell a consumer in one comparison what changed between two exports 
 | `files[].sha256` | each audio file, byte for byte | swap the audio; nothing about the arrangement moved |
 | `scoreHash` (1.2, with `score`) | `timingHash`, plus the score: the sections' scenes and roles, and every layer's role, bucket, drum class, silence, spans, effects and notes (names aside) | refresh what follows the layers or notes; the timing is the same |
 | `lyricsHash` (1.4, when the score has [lyrics](#lyrics)) | each section's words, by section id | refresh the words (captions, a lyric sheet); nothing else moved |
+| `harmonyHash` (1.5, when the score has [harmony](#harmony)) | the score's `harmony` as written: keys, key map, chord events (their frames included), tuning | refresh what follows the chords (pitch targets, a chord chart); what plays is the same |
 
 Each hash is the SHA-256, in lower-case hex, of the UTF-8 bytes of the **canonical JSON** of a
 payload. Canonical JSON has object keys sorted (by code unit) at every level, no whitespace,
@@ -676,6 +751,15 @@ Lyrics payload, version 1 (1.4), present only when the score has [lyrics](#lyric
 - It doesn't include the timing. Retiming a song with the same words keeps the `lyricsHash`;
   `timingHash` tells you the sections moved.
 
+Harmony payload, version 1 (1.5), present only when the score has [harmony](#harmony):
+
+```json
+{ "v": 1, "harmony": { "source": "scene-chords", "key": null, "keyStatus": "…", "keyMap": [], "chords": [], "tuning": {} } }
+```
+
+- `harmony` is the score's own, unchanged. Its frames follow the timing, so a re-timed song
+  changes `harmonyHash` too; when only `harmonyHash` changed, a chord or key was edited.
+
 Every fixture in [`fixtures/semantics/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/fixtures/semantics) carries its payloads and hashes.
 
 ---
@@ -698,6 +782,35 @@ states are never exported. Stems are optional: an export may hold only the maste
 
 The score (1.2) holds no paths. Its notes are the layers' MIDI, written only when the user asks
 (`options.scoreNotes`). Like stems, they are optional.
+
+---
+
+## Exporter
+
+`exporter` (1.5) says who wrote the file and what that writer can write:
+
+```json
+"exporter": { "name": "signals-and-sorcery", "version": "1.9.0",
+  "writes": ["mix", "master", "stems", "editableStems", "pickup", "score", "notes", "roles", "lyrics", "harmony", "tuning"] }
+```
+
+- `name` is the application, `version` its version (`null` when unknown).
+- `writes` lists every feature the writer supports. Use it to tell **absent** from
+  **unsupported**: a feature listed there but missing from the file means the song has none, or
+  the export's options left it out (`notes` without `options.scoreNotes`, `stems` without
+  `options.stems`). A feature not listed means the writer can't say, which is also how to read a
+  file without `exporter` (every file before 1.5).
+
+| Feature | In the file |
+|---|---|
+| `mix`, `master`, `stems`, `editableStems` | `files[]` of that kind |
+| `pickup` | `arrangement.pickup`, `score.pickup` |
+| `score` | `score`, `scoreHash` |
+| `notes` | `score.layers[].notes` |
+| `roles` | `score.sections[].role` |
+| `lyrics` | `score.sections[].lyrics`, `lyricsHash` |
+| `harmony` | `score.harmony` (keys and chords), `harmonyHash` |
+| `tuning` | `score.harmony.tuning` |
 
 ---
 
@@ -726,7 +839,7 @@ The schemas give every field's type and whether it is required.
 
 The reference reader and its `sas-export` command, in [`reader/`](https://github.com/shiehn/sas-arrangement-export-contract/tree/main/export/reader), check a file
 against the schema of its version and recompute the hashes it carries that its content covers
-(`timingHash`, `scoreHash` with a score, and `lyricsHash` with words):
+(`timingHash`, `scoreHash` with a score, `lyricsHash` with words, and `harmonyHash` with harmony):
 
 ```sh
 cd reader && npm install && npm run build

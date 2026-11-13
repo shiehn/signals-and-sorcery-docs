@@ -1,0 +1,710 @@
+{
+  "rule": "The score's harmony reads each section's scene chord plan as its home layers read the loop: from the section's downbeat, wrapping every loop, so a plan repeats through a longer section and the pickup bars play the plan's last bars. Beats the plan doesn't cover, and sections whose scene has no plan, are explicit unknown events (symbol null), and so is a section without a key in the key map. The harmony is not timing and not what plays: timingHash, arrangementHash and scoreHash ignore it; harmonyHash covers it.",
+  "spec": "SPEC.md#harmony",
+  "bpm": 120,
+  "sampleRate": 48000,
+  "catalog": {
+    "scenes": [
+      {
+        "id": "sc_a",
+        "name": "verse",
+        "loopBars": 4,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_b",
+        "name": "chorus",
+        "loopBars": 8,
+        "meter": "4/4"
+      },
+      {
+        "id": "sc_c",
+        "name": "bridge",
+        "loopBars": 4,
+        "meter": "3/4"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "t_a_kick",
+        "homeSceneId": "sc_a",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick1"
+      },
+      {
+        "id": "t_a_bass",
+        "homeSceneId": "sc_a",
+        "panelId": "bass",
+        "role": "bass",
+        "name": "bass1"
+      },
+      {
+        "id": "t_a_pad",
+        "homeSceneId": "sc_a",
+        "panelId": "pad",
+        "role": "pads",
+        "name": "pad1"
+      },
+      {
+        "id": "t_b_kick",
+        "homeSceneId": "sc_b",
+        "panelId": "drum",
+        "role": "kick",
+        "name": "kick2"
+      },
+      {
+        "id": "t_b_lead",
+        "homeSceneId": "sc_b",
+        "panelId": "instrument",
+        "role": "lead",
+        "name": "lead1"
+      },
+      {
+        "id": "t_b_chords",
+        "homeSceneId": "sc_b",
+        "panelId": "pad",
+        "role": "chords",
+        "name": "chord1"
+      },
+      {
+        "id": "t_c_perc",
+        "homeSceneId": "sc_c",
+        "panelId": "drum",
+        "role": "perc",
+        "name": "perc1"
+      },
+      {
+        "id": "t_c_bell",
+        "homeSceneId": "sc_c",
+        "panelId": "instrument",
+        "role": "keys",
+        "name": "bell1"
+      }
+    ]
+  },
+  "doc": {
+    "schema": "sas-arrangement/1",
+    "id": "arr-harmony",
+    "projectId": "proj-literal",
+    "name": "harmony",
+    "instances": {
+      "arr-harmony:i1": {
+        "id": "arr-harmony:i1",
+        "orderKey": "a0",
+        "variantId": "arr-harmony:v1"
+      },
+      "arr-harmony:i2": {
+        "id": "arr-harmony:i2",
+        "orderKey": "a1",
+        "variantId": "arr-harmony:v2"
+      },
+      "arr-harmony:i3": {
+        "id": "arr-harmony:i3",
+        "orderKey": "a2",
+        "variantId": "arr-harmony:v3"
+      }
+    },
+    "variants": {
+      "arr-harmony:v1": {
+        "id": "arr-harmony:v1",
+        "sceneId": "sc_a",
+        "lengthBars": 6,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-harmony:v2": {
+        "id": "arr-harmony:v2",
+        "sceneId": "sc_b",
+        "lengthBars": 8,
+        "newLayers": "on",
+        "layers": {}
+      },
+      "arr-harmony:v3": {
+        "id": "arr-harmony:v3",
+        "sceneId": "sc_c",
+        "lengthBars": 4,
+        "newLayers": "on",
+        "layers": {}
+      }
+    },
+    "pickupBars": 2
+  },
+  "tracks": {
+    "t_a_pad": {
+      "role": "pads"
+    },
+    "t_b_chords": {
+      "role": "chords"
+    }
+  },
+  "scenes": {
+    "sc_a": {
+      "key": {
+        "tonic": "C",
+        "mode": "major"
+      },
+      "chords": [
+        {
+          "startQn": 0,
+          "endQn": 8,
+          "root": "C",
+          "quality": "maj",
+          "symbol": "C",
+          "pitchClasses": [
+            0,
+            4,
+            7
+          ]
+        },
+        {
+          "startQn": 8,
+          "endQn": 16,
+          "root": "A",
+          "quality": "min",
+          "symbol": "Am",
+          "pitchClasses": [
+            9,
+            0,
+            4
+          ]
+        }
+      ]
+    },
+    "sc_b": {
+      "key": {
+        "tonic": "C",
+        "mode": "major"
+      },
+      "chords": [
+        {
+          "startQn": 0,
+          "endQn": 16,
+          "root": "F",
+          "quality": "maj",
+          "symbol": "F",
+          "pitchClasses": [
+            5,
+            9,
+            0
+          ]
+        },
+        {
+          "startQn": 16,
+          "endQn": 24,
+          "root": "G",
+          "quality": "7",
+          "symbol": "G7",
+          "pitchClasses": [
+            7,
+            11,
+            2,
+            5
+          ]
+        }
+      ]
+    }
+  },
+  "expected": {
+    "timingHash": "e5fb510d2fd1f79a6fe5a407e28b57085963065c357aafef590fe966524f081a",
+    "score": {
+      "v": 1,
+      "tempoMap": [
+        {
+          "bar": -1,
+          "beat": 0,
+          "frame": 0,
+          "bpm": 120
+        }
+      ],
+      "meterMap": [
+        {
+          "bar": -1,
+          "beat": 0,
+          "frame": 0,
+          "numerator": 4,
+          "denominator": 4
+        },
+        {
+          "bar": 15,
+          "beat": 64,
+          "frame": 1536000,
+          "numerator": 3,
+          "denominator": 4
+        }
+      ],
+      "bars": [
+        {
+          "index": -1,
+          "startFrame": 0,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 0,
+          "startFrame": 96000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 1,
+          "startFrame": 192000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 2,
+          "startFrame": 288000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 3,
+          "startFrame": 384000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 4,
+          "startFrame": 480000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 5,
+          "startFrame": 576000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 6,
+          "startFrame": 672000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 7,
+          "startFrame": 768000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 8,
+          "startFrame": 864000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 9,
+          "startFrame": 960000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 10,
+          "startFrame": 1056000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 11,
+          "startFrame": 1152000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 12,
+          "startFrame": 1248000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 13,
+          "startFrame": 1344000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 14,
+          "startFrame": 1440000,
+          "lengthFrames": 96000
+        },
+        {
+          "index": 15,
+          "startFrame": 1536000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 16,
+          "startFrame": 1608000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 17,
+          "startFrame": 1680000,
+          "lengthFrames": 72000
+        },
+        {
+          "index": 18,
+          "startFrame": 1752000,
+          "lengthFrames": 72000
+        }
+      ],
+      "sections": [
+        {
+          "instanceId": "arr-harmony:i1",
+          "sourceSceneId": "sc_a",
+          "firstBar": 1,
+          "lengthBars": 6
+        },
+        {
+          "instanceId": "arr-harmony:i2",
+          "sourceSceneId": "sc_b",
+          "firstBar": 7,
+          "lengthBars": 8
+        },
+        {
+          "instanceId": "arr-harmony:i3",
+          "sourceSceneId": "sc_c",
+          "firstBar": 15,
+          "lengthBars": 4
+        }
+      ],
+      "layers": [
+        {
+          "layerId": "t_a_bass",
+          "name": "bass1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "pickup",
+              "startBar": -1,
+              "endBar": 1,
+              "startFrame": 0,
+              "endFrame": 192000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-harmony:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 192000,
+              "endFrame": 768000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_a_kick",
+          "name": "kick1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "pickup",
+              "startBar": -1,
+              "endBar": 1,
+              "startFrame": 0,
+              "endFrame": 192000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-harmony:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 192000,
+              "endFrame": 768000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_a_pad",
+          "name": "pad1",
+          "role": "pads",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "pickup",
+              "startBar": -1,
+              "endBar": 1,
+              "startFrame": 0,
+              "endFrame": 192000,
+              "gainDb": 0,
+              "gainPoints": []
+            },
+            {
+              "section": "arr-harmony:i1",
+              "startBar": 1,
+              "endBar": 7,
+              "startFrame": 192000,
+              "endFrame": 768000,
+              "gainDb": 0,
+              "gainPoints": [],
+              "continues": true
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_chords",
+          "name": "chord1",
+          "role": "chords",
+          "bucket": "harmony",
+          "spans": [
+            {
+              "section": "arr-harmony:i2",
+              "startBar": 7,
+              "endBar": 15,
+              "startFrame": 768000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_kick",
+          "name": "kick2",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-harmony:i2",
+              "startBar": 7,
+              "endBar": 15,
+              "startFrame": 768000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_b_lead",
+          "name": "lead1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-harmony:i2",
+              "startBar": 7,
+              "endBar": 15,
+              "startFrame": 768000,
+              "endFrame": 1536000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_c_bell",
+          "name": "bell1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-harmony:i3",
+              "startBar": 15,
+              "endBar": 19,
+              "startFrame": 1536000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        },
+        {
+          "layerId": "t_c_perc",
+          "name": "perc1",
+          "role": null,
+          "bucket": null,
+          "spans": [
+            {
+              "section": "arr-harmony:i3",
+              "startBar": 15,
+              "endBar": 19,
+              "startFrame": 1536000,
+              "endFrame": 1824000,
+              "gainDb": 0,
+              "gainPoints": []
+            }
+          ],
+          "treatments": []
+        }
+      ],
+      "pickup": {
+        "firstBar": -1,
+        "bars": 2,
+        "instanceId": "arr-harmony:i1",
+        "sourceSceneId": "sc_a"
+      },
+      "noteFields": [
+        "frame",
+        "pitch",
+        "velocity",
+        "durationFrames"
+      ],
+      "harmony": {
+        "source": "scene-chords",
+        "key": {
+          "tonic": "C",
+          "mode": "major"
+        },
+        "keyStatus": "partial",
+        "keyMap": [
+          {
+            "bar": -1,
+            "beat": 0,
+            "frame": 0,
+            "key": {
+              "tonic": "C",
+              "mode": "major"
+            }
+          },
+          {
+            "bar": 15,
+            "beat": 64,
+            "frame": 1536000,
+            "key": null
+          }
+        ],
+        "chords": [
+          {
+            "section": "pickup",
+            "bar": -1,
+            "beat": 0,
+            "endBeat": 8,
+            "startFrame": 0,
+            "endFrame": 192000,
+            "symbol": "Am",
+            "root": "A",
+            "quality": "min",
+            "bass": null,
+            "pitchClasses": [
+              9,
+              0,
+              4
+            ]
+          },
+          {
+            "section": "arr-harmony:i1",
+            "bar": 1,
+            "beat": 8,
+            "endBeat": 16,
+            "startFrame": 192000,
+            "endFrame": 384000,
+            "symbol": "C",
+            "root": "C",
+            "quality": "maj",
+            "bass": null,
+            "pitchClasses": [
+              0,
+              4,
+              7
+            ]
+          },
+          {
+            "section": "arr-harmony:i1",
+            "bar": 3,
+            "beat": 16,
+            "endBeat": 24,
+            "startFrame": 384000,
+            "endFrame": 576000,
+            "symbol": "Am",
+            "root": "A",
+            "quality": "min",
+            "bass": null,
+            "pitchClasses": [
+              9,
+              0,
+              4
+            ]
+          },
+          {
+            "section": "arr-harmony:i1",
+            "bar": 5,
+            "beat": 24,
+            "endBeat": 32,
+            "startFrame": 576000,
+            "endFrame": 768000,
+            "symbol": "C",
+            "root": "C",
+            "quality": "maj",
+            "bass": null,
+            "pitchClasses": [
+              0,
+              4,
+              7
+            ]
+          },
+          {
+            "section": "arr-harmony:i2",
+            "bar": 7,
+            "beat": 32,
+            "endBeat": 48,
+            "startFrame": 768000,
+            "endFrame": 1152000,
+            "symbol": "F",
+            "root": "F",
+            "quality": "maj",
+            "bass": null,
+            "pitchClasses": [
+              5,
+              9,
+              0
+            ]
+          },
+          {
+            "section": "arr-harmony:i2",
+            "bar": 11,
+            "beat": 48,
+            "endBeat": 56,
+            "startFrame": 1152000,
+            "endFrame": 1344000,
+            "symbol": "G7",
+            "root": "G",
+            "quality": "7",
+            "bass": null,
+            "pitchClasses": [
+              7,
+              11,
+              2,
+              5
+            ]
+          },
+          {
+            "section": "arr-harmony:i2",
+            "bar": 13,
+            "beat": 56,
+            "endBeat": 64,
+            "startFrame": 1344000,
+            "endFrame": 1536000,
+            "symbol": null,
+            "root": null,
+            "quality": null,
+            "bass": null,
+            "pitchClasses": null
+          },
+          {
+            "section": "arr-harmony:i3",
+            "bar": 15,
+            "beat": 64,
+            "endBeat": 76,
+            "startFrame": 1536000,
+            "endFrame": 1824000,
+            "symbol": null,
+            "root": null,
+            "quality": null,
+            "bass": null,
+            "pitchClasses": null
+          }
+        ],
+        "tuning": {
+          "a4Hz": 440,
+          "status": "assumed"
+        }
+      }
+    },
+    "scoreHash": "45c5a561be2fe4a1929654a3d617e7bd4606fd937590f0480c91520d399bc149",
+    "harmonyHash": "c724fd889a3f431df8ba3f9fd82359bc696a6aaf64381f0e049f70f178632e3a"
+  }
+}

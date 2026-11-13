@@ -11,6 +11,30 @@ Releases of Signals & Sorcery's arrangement semantics (`contractVersion`) are li
 format version that was current then, with what they changed in an export's audio or meaning,
 or "nothing".
 
+## 1.5.0
+
+Optional fields only, so 1.0–1.4 readers keep working on every export.
+
+Added:
+- `score.harmony`: the song's key and chords through time, as each section's scene plans them.
+  See [Harmony](/contract/arrangement-export/#harmony).
+  - `chords[]`: timed chord events that partition the song (bar, beats, frames, `symbol`,
+    `root`, `quality`, `bass`, `pitchClasses`), tiled through each section's loop the way its
+    home layers play it, the pickup bars included. Where no chord is known the event's fields
+    are `null`: explicit, never a default.
+  - `key`, `keyStatus` (`single`, `partial`, `changes`, `unknown`) and `keyMap[]`: the song's
+    key and where it changes.
+  - `tuning`: the concert pitch, `{a4Hz: 440, status: "assumed"}` today.
+- `harmonyHash`: SHA-256 of the harmony payload, present with harmony. `timingHash`,
+  `arrangementHash`, `scoreHash` and `lyricsHash` leave the harmony out.
+- `exporter` `{name, version, writes}`: the writer and the features it supports, so a reader can
+  tell a song without (say) words from a writer that can't write them. See [Exporter](/contract/arrangement-export/#exporter).
+- The schema for 1.5.0; `v1/schema.json` is now 1.5.0.
+
+Changed: nothing. Every hash of 1.4 covers exactly what it did.
+
+Arrangement releases while 1.5.0 was current: none yet (0.14.0 still).
+
 ## 1.4.0
 
 Optional fields only, present only when the song has words or roles, so 1.0–1.3 readers keep
